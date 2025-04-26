@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS postReactions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    postId INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    userId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    reactionType INTEGER NOT NULL CHECK (reactionType IN (-1, 0, 1)),
+    UNIQUE(postId, userId)
+);

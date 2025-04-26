@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS commentReactions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    commentId INTEGER NOT NULL REFERENCES comments(id) ON DELETE CASCADE,
+    userId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    reactionType INTEGER NOT NULL CHECK (reactionType IN (-1, 0, 1)),
+    UNIQUE(commentId, userId)
+);

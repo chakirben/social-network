@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT,
+    eventDate DATETIME,
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+);

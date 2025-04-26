@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS groupsMembers (
+    memberId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    groupId INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+    PRIMARY KEY (memberId, groupId)
+);

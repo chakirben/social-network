@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS eventsAttendance (
+    memberId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    eventId INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+    isGoing BOOLEAN,
+    PRIMARY KEY (memberId, eventId)
+);
