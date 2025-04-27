@@ -13,20 +13,20 @@ import (
     _ "github.com/mattn/go-sqlite3"
 )
 
-var socialDB *sql.DB
+var SocialDB *sql.DB
 
 const dbPath = "dataBase/socialN.db"
 
 func DbInit() {
 	var err error
-	socialDB, err = sql.Open("sqlite3", "./dataBase/socialN.db")
+	SocialDB, err = sql.Open("sqlite3", "./dataBase/socialN.db")
 	if err != nil {
 		fmt.Println("in 20 " , err)
 		return
 	} else {
 		fmt.Println("db connection opened successfully ! ")
 	}
-	_, err = socialDB.Exec("PRAGMA foreign_keys = ON") ;  if err != nil {
+	_, err = SocialDB.Exec("PRAGMA foreign_keys = ON") ;  if err != nil {
 		fmt.Println(err)
 		return
 	}
