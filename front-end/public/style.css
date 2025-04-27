@@ -1,0 +1,45 @@
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 350px;
+    padding: 20px;
+    border-radius: 20px;
+    position: relative;
+    color: #fff;
+}
+
+body {
+    height: 100vh;
+    background-color: #111827;
+}
+#__next {
+    height: 100%;
+}
+.tocenter {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    align-self: center;
+}
+.title {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -1px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-left: 30px;
+    color: #00bfff;
+}
+
+.flex {
+    display: flex;
+    width: 100%;
+    gap: 6px;
+}
+
+.form label {
+    position: relative;
+}
