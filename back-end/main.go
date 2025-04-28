@@ -5,20 +5,32 @@ import (
 	"net/http"
 
 	auth "socialN/Handlers/auth"
+	Comment "socialN/Handlers/comments"
+	Post "socialN/Handlers/posts"
 	db "socialN/dataBase"
-	Comment"socialN/Handlers/comments"
 )
 
 func setupHandlers() {
-
-	//Serve Images
+	// Serve Images
 	http.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
+
 	// auth
 	http.HandleFunc("/api/checkAuth", AccessMiddleware(auth.CheckAuth))
-	http.HandleFunc("/api/register",AccessMiddleware(auth.RegisterUser))
+	http.HandleFunc("/api/register", AccessMiddleware(auth.RegisterUser))
 	http.HandleFunc("/api/login", AccessMiddleware(auth.LogUser))
 	http.HandleFunc("/api/logout", AccessMiddleware(auth.LogoutHandler))
 	http.HandleFunc("/api/profile", AccessMiddleware(auth.ProfileHandler))
+
+	// comments
+	http.HandleFunc("/api/GetComments", AccessMiddleware(SessionMiddleware(Comment.GetCommentsHandler)))
+	http.HandleFunc("/api/SetComment", AccessMiddleware(SessionMiddleware(Comment.SetCommentHandler)))
+
+	// posts
+	http.HandleFunc("/api/GetCreatedPosts", AccessMiddleware(SessionMiddleware(Post.GetCreatedPostsHandler)))
+	http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.GetPostHandler)))
+	// http.HandleFunc("/api/CreatePost", Post.SetPostHandler)
+	http.HandleFunc("/api/GetPosts", Post.GetPostsHandler)
+	// http.HandleFunc("/api/GetLikedPosts", Post.GetLikedPostsHandler)
 
 	// // chat
 	// http.HandleFunc("/api/Chat", chat.ChatHandler)
@@ -26,16 +38,6 @@ func setupHandlers() {
 	// http.HandleFunc("/api/GetDiscussions", chat.GetDiscussionsListHandler)
 	// http.HandleFunc("/api/GetOnlineUsers", chat.GetOnlineUsersHandler)
 
-	// // posts
-	// http.HandleFunc("/api/CreatePost", Post.SetPostHandler)
-	// http.HandleFunc("/api/GetPosts", Post.GetPostsHandler)
-	// http.HandleFunc("/api/GetPost", Post.GetPostHandler)
-	// http.HandleFunc("/api/GetLikedPosts", Post.GetLikedPostsHandler)
-	// http.HandleFunc("/api/GetCreatedPosts", Post.GetCreatedPostsHandler)
-
-	//comments
-	http.HandleFunc("/api/GetComments", AccessMiddleware(Comment.GetCommentsHandler))
-	http.HandleFunc("/api/SetComment", AccessMiddleware(Comment.SetCommentHandler))
 	// http.HandleFunc("/api/Like", handlers.ReactionHandler)
 	http.HandleFunc("/api/Profile", auth.ProfileHandler)
 	http.HandleFunc("/api/CheckAuth", auth.CheckAuth)
@@ -64,6 +66,7 @@ func SessionMiddleware(fun http.HandlerFunc) http.HandlerFunc {
 		fun(w, r)
 	}
 }
+
 func AccessMiddleware(fun http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
