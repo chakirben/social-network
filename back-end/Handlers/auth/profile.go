@@ -23,7 +23,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var uu UserProfile
-	errD := db.SocialDB.QueryRow(`SELECT nickname, email , age, first_name, last_name FROM users WHERE id = ?`,
+	errD := db.SocialDB.QueryRow(`SELECT nickname, email , age, firstName, lastName FROM Users WHERE id = ?`,
 		userID).Scan(&uu.Nickname, &uu.Email, &uu.Age, &uu.FirstName, &uu.LastName)
 	if errD == sql.ErrNoRows {
 		http.Error(w, "User not found", http.StatusNotFound)

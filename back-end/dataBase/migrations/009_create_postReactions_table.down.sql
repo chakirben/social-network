@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS postReactions;
+DROP TABLE IF EXISTS PostReactions;

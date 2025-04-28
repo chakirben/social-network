@@ -33,9 +33,6 @@ type User struct {
 }
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	if r.Method != http.MethodPost {
 		fmt.Println(r.Method)
 		http.Error(w, "Only POST method is allowed", http.StatusMethodNotAllowed)
@@ -75,7 +72,6 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusConflict)
 		return
 	}
-	fmt.Println("here")
 
 	avatarPath, err := handleAvatarUpload(r, w)
 	if err != nil {
@@ -94,7 +90,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = db.SocialDB.QueryRow("SELECT id FROM users WHERE email = ?", user.Email).Scan(&user.ID)
+	err = db.SocialDB.QueryRow("SELECT id FROM Users WHERE email = ?", user.Email).Scan(&user.ID)
 	if err != nil {
 		http.Error(w, "Error retrieving user ID", http.StatusInternalServerError)
 		return
@@ -168,7 +164,7 @@ func checkUserExistence(nickname, email string) error {
 	fmt.Println(nickname , email)
 	if nickname != "" {
 		var existingNickname string
-		err := db.SocialDB.QueryRow("SELECT nickname FROM users WHERE nickname = ?", nickname).Scan(&existingNickname)
+		err := db.SocialDB.QueryRow("SELECT nickname FROM Users WHERE nickname = ?", nickname).Scan(&existingNickname)
 		if err == nil {
 			return fmt.Errorf("nickname already exists")
 		} else if err != sql.ErrNoRows {
@@ -177,7 +173,7 @@ func checkUserExistence(nickname, email string) error {
 	}
 
 	var existingEmail string
-	err := db.SocialDB.QueryRow("SELECT email FROM users WHERE email = ?", email).Scan(&existingEmail)
+	err := db.SocialDB.QueryRow("SELECT email FROM Users WHERE email = ?", email).Scan(&existingEmail)
 	if err == nil {
 		return fmt.Errorf("email already exists")
 	} else if err != sql.ErrNoRows {
@@ -188,7 +184,7 @@ func checkUserExistence(nickname, email string) error {
 
 func insertUser(db *sql.DB, user User, hashedPassword string) error {
 	query := `
-		INSERT INTO users (nickname, email, password, firstName, lastName, dateOfBirth, avatar, about)
+		INSERT INTO Users (nickname, email, password, firstName, lastName, dateOfBirth, avatar, about)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 	`
 	_, err := db.Exec(query,

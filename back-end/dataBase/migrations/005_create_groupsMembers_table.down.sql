@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS groupsMembers;
+DROP TABLE IF EXISTS GroupsMembers;

@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS eventsAttendance;
+DROP TABLE IF EXISTS EventsAttendance;

@@ -6,14 +6,19 @@ import (
 
 	auth "socialN/Handlers/auth"
 	db "socialN/dataBase"
+	Comment"socialN/Handlers/comments"
 )
 
 func setupHandlers() {
+
+	//Serve Images
+	http.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
 	// auth
-	http.HandleFunc("/api/checkAuth", auth.CheckAuth)
-	http.HandleFunc("/api/register",auth.RegisterUser)
-	http.HandleFunc("/api/Login", SessionMiddleware(auth.LogUser))
-	http.HandleFunc("/api/Logout", SessionMiddleware(auth.LogoutHandler))
+	http.HandleFunc("/api/checkAuth", AccessMiddleware(auth.CheckAuth))
+	http.HandleFunc("/api/register",AccessMiddleware(auth.RegisterUser))
+	http.HandleFunc("/api/login", AccessMiddleware(auth.LogUser))
+	http.HandleFunc("/api/logout", AccessMiddleware(auth.LogoutHandler))
+	http.HandleFunc("/api/profile", AccessMiddleware(auth.ProfileHandler))
 
 	// // chat
 	// http.HandleFunc("/api/Chat", chat.ChatHandler)
@@ -28,18 +33,17 @@ func setupHandlers() {
 	// http.HandleFunc("/api/GetLikedPosts", Post.GetLikedPostsHandler)
 	// http.HandleFunc("/api/GetCreatedPosts", Post.GetCreatedPostsHandler)
 
-	// // comments
-	// http.HandleFunc("/api/GetComments", Comment.GetCommentsHandler)
-	// http.HandleFunc("/api/SetComment", Comment.SetCommentHandler)
+	//comments
+	http.HandleFunc("/api/GetComments", AccessMiddleware(Comment.GetCommentsHandler))
+	http.HandleFunc("/api/SetComment", AccessMiddleware(Comment.SetCommentHandler))
 	// http.HandleFunc("/api/Like", handlers.ReactionHandler)
-	// http.HandleFunc("/api/Profile", auth.ProfileHandler)
-	// http.HandleFunc("/api/CheckAuth", auth.CheckAuth)
+	http.HandleFunc("/api/Profile", auth.ProfileHandler)
+	http.HandleFunc("/api/CheckAuth", auth.CheckAuth)
 }
 
 func main() {
 	db.DbInit()
 	setupHandlers()
-	//http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { fmt.Println("in here")})
 	fmt.Println("https://localhost:8080")
 	http.ListenAndServe(":8080", nil)
 }
@@ -50,13 +54,24 @@ func Shandler(fun http.HandlerFunc, w http.ResponseWriter, r *http.Request) {
 }
 
 func SessionMiddleware(fun http.HandlerFunc) http.HandlerFunc {
-	fmt.Println("sess")
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("hhhh")
 		_, err := auth.ValidateSession(r, db.SocialDB)
 		if err != nil {
 			fmt.Println("uno")
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+		fun(w, r)
+	}
+}
+func AccessMiddleware(fun http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
 			return
 		}
 		fun(w, r)

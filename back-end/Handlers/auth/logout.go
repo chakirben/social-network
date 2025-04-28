@@ -10,7 +10,7 @@ import (
 )
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("session_id")
+	cookie, err := r.Cookie("sessionId")
 	if err != nil {
 		if err == http.ErrNoCookie {
 			http.Error(w, "No session found", http.StatusUnauthorized)
@@ -22,7 +22,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 
 	sessionID := cookie.Value
 
-	_, err = db.SocialDB.Exec("DELETE FROM sessions WHERE id = ?", sessionID)
+	_, err = db.SocialDB.Exec("DELETE FROM Sessions WHERE id = ?", sessionID)
 	if err != nil {
 		log.Println("Failed to delete session:", err)
 		http.Error(w, "Failed to logout", http.StatusInternalServerError)
@@ -30,7 +30,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:     "session_id",
+		Name:     "sessionId",
 		Value:    "",
 		Expires:  time.Unix(0, 0),
 		HttpOnly: true,

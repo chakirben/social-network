@@ -23,7 +23,7 @@ func CheckAuth(w http.ResponseWriter, r *http.Request) {
 }
 
 func ValidateSession(r *http.Request, db *sql.DB) (int, error) {
-	cookie, err := r.Cookie("session_id")
+	cookie, err := r.Cookie("sessionId")
 	if err != nil {
 		if err == http.ErrNoCookie {
 			return 0, fmt.Errorf("no session cookie")
@@ -34,7 +34,7 @@ func ValidateSession(r *http.Request, db *sql.DB) (int, error) {
 	sessionID := cookie.Value
 	var userID int
 	var expiresAt time.Time
-	query := `SELECT user_id, expires_at FROM sessions WHERE id = ?`
+	query := `SELECT userId, expiresAt FROM Sessions WHERE id = ?`
 	err = db.QueryRow(query, sessionID).Scan(&userID, &expiresAt)
 	if err != nil {
 		return 0, fmt.Errorf("session not found: %v", err)
@@ -42,5 +42,6 @@ func ValidateSession(r *http.Request, db *sql.DB) (int, error) {
 	if time.Now().After(expiresAt) {
 		return 0, fmt.Errorf("session expired")
 	}
+	
 	return userID, nil
 }

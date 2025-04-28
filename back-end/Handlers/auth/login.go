@@ -15,13 +15,12 @@ import (
 )
 
 type LoginRequest struct {
-	Nickname string `json:"nickname"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
 func LogUser(w http.ResponseWriter, r *http.Request) {
 	db := db.SocialDB
-
 	if r.Method != http.MethodPost {
 		http.Error(w, "Only POST method is allowed", http.StatusMethodNotAllowed)
 		return
@@ -35,8 +34,8 @@ func LogUser(w http.ResponseWriter, r *http.Request) {
 
 	var userID int
 	var passwordHash string
-	query := `SELECT id, password_hash FROM users WHERE nickname = ?`
-	err := db.QueryRow(query, loginRequest.Nickname).Scan(&userID, &passwordHash)
+	query := `SELECT id, password FROM Users WHERE email = ?`
+	err := db.QueryRow(query, loginRequest.Email).Scan(&userID, &passwordHash)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "User not found", http.StatusUnauthorized)
@@ -59,9 +58,10 @@ func LogUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:     "session_id",
+		Name:     "sessionId",
 		Value:    sessionID,
 		Expires:  expiration,
+		Domain:   "localhost",
 		HttpOnly: true,
 		Secure:   false,
 		Path:     "/",
@@ -73,8 +73,8 @@ func LogUser(w http.ResponseWriter, r *http.Request) {
 
 func CreateSession(db *sql.DB, userID int) (string, time.Time, error) {
 	sessionID := uuid.New().String()
-	expiration := time.Now().Add(2 * time.Hour)
-	query := `INSERT INTO sessions (id, userId, expiresAt) VALUES (?, ?, ?)`
+	expiration := time.Now().AddDate(1000, 0, 0)
+	query := `INSERT INTO Sessions (id, userId, expiresAt) VALUES (?, ?, ?)`
 	_, err := db.Exec(query, sessionID, userID, expiration)
 	if err != nil {
 		log.Println("Error storing session in database:", err)

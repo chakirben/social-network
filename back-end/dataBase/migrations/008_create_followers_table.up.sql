@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS followers (
+CREATE TABLE IF NOT EXISTS Followers (
     followerId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     followedId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     PRIMARY KEY (followerId, followedId)
