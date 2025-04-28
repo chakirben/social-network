@@ -1,9 +1,14 @@
 import { useState } from 'react';
 import '../public/styles/global.css';
 import '../public/styles/register.css';
+import { useRouter } from 'next/router';
+import AvatarUpload from '@/public/components/avatar';
+import { validateForm } from '@/public/utils/formValidation';
 
 export default function Register() {
+  const router = useRouter();
   const [avatar, setAvatar] = useState(null);
+  const [avatarFile, setAvatarFile] = useState(null); 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [dob, setDob] = useState('');
@@ -12,35 +17,6 @@ export default function Register() {
   const [nickname, setNickname] = useState('');
   const [about, setAbout] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-
-  const handleAvatarChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setAvatar(URL.createObjectURL(e.target.files[0]));
-    }
-  };
-
-  const validateForm = (firstName, lastName, dob, email, password) => {
-    if (!firstName || !lastName || !dob || !email || !password) {
-      return { valid: false, message: "All required fields must be filled" };
-    }
-
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    if (!emailRegex.test(email)) {
-      return { valid: false, message: "Please enter a valid email address" };
-    }
-
-    if (password.length < 6) {
-      return { valid: false, message: "Password must be at least 6 characters long" };
-    }
-    const validateDob = (dob) => {
-      const age = (new Date() - new Date(dob)) / (1000 * 60 * 60 * 24 * 365);
-      return age >= 16;
-    };
-    if (!validateDob(dob)) {
-      return { valid: false, message: "user must have more than 16yo!" };
-    }
-    return { valid: true, message: "" };
-  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -60,28 +36,23 @@ export default function Register() {
     formData.append('password', password);
     formData.append('nickname', nickname);
     formData.append('about', about);
-    if (avatar) {
-      const avatarFile = document.querySelector('#avatarUpload').files[0];
+    if (avatarFile) {
       formData.append('avatar', avatarFile);
     }
 
-    try {
-      const response = await fetch(`http://localhost:8080/api/register`, {
-        method: 'POST',
-        body: formData, 
-      });
+    const response = await fetch(`http://localhost:8080/api/register`, {
+      method: 'POST',
+      credentials: 'include',
+      body: formData,
+    });
 
-      if (!response.ok) {
-        throw new Error('Registration failed');
-      }
-
-      const data = await response.json();
-    } catch (error) {
-      console.error(error);
-      setErrorMessage('An error occurred during registration');
+    if (!response.ok) {
+      let resp = await response.text();
+      setErrorMessage(resp);
+    } else {
+      router.push('/');
     }
-  };
-
+  }
 
   return (
     <div className="container">
@@ -89,24 +60,10 @@ export default function Register() {
         <h1>Register</h1>
         <p>Enter your details</p>
 
-
-
-        <div className="avatarContainer">
-          <label htmlFor="avatarUpload" className="avatarLabel">
-            {avatar ? (
-              <img src={avatar} alt="Avatar" className="avatarImage" />
-            ) : (
-              <div className="avatarPlaceholder">👤</div>
-            )}
-          </label>
-          <input
-            id="avatarUpload"
-            type="file"
-            accept="image/*"
-            onChange={handleAvatarChange}
-            style={{ display: 'none' }}
-          />
-        </div>
+        <AvatarUpload avatar={avatar} onAvatarChange={(url, file) => {
+          setAvatar(url);
+          setAvatarFile(file);
+        }} />
 
         <form className="form flex col" onSubmit={handleRegister}>
           <div className="flex">
@@ -164,7 +121,7 @@ export default function Register() {
         </form>
 
         <p className="registerLink">
-          Don't have an account? <a href="/register">Register</a>
+          Already have an account? <a href="/login">Login</a>
         </p>
       </div>
     </div>
