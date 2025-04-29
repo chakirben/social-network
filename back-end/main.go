@@ -37,6 +37,7 @@ func setupHandlers() {
 	http.HandleFunc("/api/CreatGroup", AccessMiddleware(SessionMiddleware(Group.Creat_Groups)))
 	http.HandleFunc("/api/JoinGroup", AccessMiddleware(SessionMiddleware(Group.JoinGroup)))
 	http.HandleFunc("/api/MyGroups", Group.GetMyGroups)
+	http.HandleFunc("/api/NotMyGroups", Group.GetGroupsUserNotJoined)
 
 	// // chat
 	// http.HandleFunc("/api/Chat", chat.ChatHandler)
