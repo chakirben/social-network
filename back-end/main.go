@@ -6,9 +6,9 @@ import (
 
 	auth "socialN/Handlers/auth"
 	Comment "socialN/Handlers/comments"
+	Group "socialN/Handlers/groups"
 	Post "socialN/Handlers/posts"
 	db "socialN/dataBase"
-	Group "socialN/Handlers/groups"
 )
 
 func setupHandlers() {
@@ -33,11 +33,10 @@ func setupHandlers() {
 	http.HandleFunc("/api/GetPosts", Post.GetPostsHandler)
 	// http.HandleFunc("/api/GetLikedPosts", Post.GetLikedPostsHandler)
 
-
 	// groups Creat_Groups
 	http.HandleFunc("/api/CreatGroup", AccessMiddleware(SessionMiddleware(Group.Creat_Groups)))
 	http.HandleFunc("/api/JoinGroup", AccessMiddleware(SessionMiddleware(Group.JoinGroup)))
-	//http.HandleFunc("/api/Groups", AccessMiddleware(SessionMiddleware(Group.GetGroups)))
+	http.HandleFunc("/api/MyGroups", AccessMiddleware(SessionMiddleware(Group.GetMyGroups)))
 
 	// // chat
 	// http.HandleFunc("/api/Chat", chat.ChatHandler)
