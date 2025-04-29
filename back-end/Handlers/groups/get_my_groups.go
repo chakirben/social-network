@@ -10,6 +10,7 @@ import (
 )
 
 type Groups struct {
+	Id          int
 	Title       string
 	Description string
 	Members     int
@@ -29,12 +30,13 @@ func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 	query := `
 	SELECT id , title , description 
 	FROM Groups g 
-	JOIN GroupsMembers gm WHERE g.id = gm.groupId
+	JOIN GroupsMembers gm ON g.id = gm.groupId
 	WHERE gm.memberId = ?
 	`
 
 	rows, err := dataB.SocialDB.Query(query, userID)
 	if err != nil {
+		fmt.Println(err)
 		http.Error(w, "error to get my groups :(", http.StatusInternalServerError)
 		return
 	}
@@ -43,17 +45,24 @@ func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 	var groups []Groups
 	for rows.Next() {
 		var g Groups
-		if err := rows.Scan(&g.Title, &g.Description); err != nil {
+		if err := rows.Scan(&g.Id, &g.Title, &g.Description); err != nil {
 			fmt.Println("error to get groups", err)
 			http.Error(w, "error to get groups", http.StatusInternalServerError)
 			return
 		}
+		members, err := GetMembersGroups(g.Id)
+		if err != nil {
+			fmt.Println("error to get members", err)
+			http.Error(w, "error to get members of groups", http.StatusInternalServerError)
+			return
+		}
+		g.Members = members
 		groups = append(groups, g)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(groups); err != nil {
-		fmt.Println("JSON encode error" , err)
+		fmt.Println("JSON encode error", err)
 		http.Error(w, "JSON encode error", http.StatusInternalServerError)
 	}
 }
