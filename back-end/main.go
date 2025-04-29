@@ -8,6 +8,7 @@ import (
 	Comment "socialN/Handlers/comments"
 	Post "socialN/Handlers/posts"
 	db "socialN/dataBase"
+	Group "socialN/Handlers/groups"
 )
 
 func setupHandlers() {
@@ -31,6 +32,11 @@ func setupHandlers() {
 	// http.HandleFunc("/api/CreatePost", Post.SetPostHandler)
 	http.HandleFunc("/api/GetPosts", Post.GetPostsHandler)
 	// http.HandleFunc("/api/GetLikedPosts", Post.GetLikedPostsHandler)
+
+
+	// groups Creat_Groups
+	http.HandleFunc("/api/CreatGroup", Group.Creat_Groups)
+
 
 	// // chat
 	// http.HandleFunc("/api/Chat", chat.ChatHandler)
