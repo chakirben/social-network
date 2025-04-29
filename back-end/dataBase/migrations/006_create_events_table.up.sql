@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS Events (
     title TEXT NOT NULL,
     description TEXT,
     eventDate DATETIME,
-    creatorId INTEGER REFERENCES Users(id),
-    groupId INTEGER REFERENCES Groups(id),
+    creatorId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    groupId INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );
