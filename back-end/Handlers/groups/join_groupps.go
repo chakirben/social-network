@@ -13,6 +13,7 @@ type JoinGroupRequest struct {
 	GroupID int `json:"groupId"`
 }
 
+// Insert the GroupsMembers in the database....
 func JoinGroup(w http.ResponseWriter, r *http.Request) {
 	userID, err := auth.ValidateSession(r, dataB.SocialDB)
 	if err != nil {
