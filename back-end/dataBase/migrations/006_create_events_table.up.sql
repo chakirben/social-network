@@ -3,5 +3,7 @@ CREATE TABLE IF NOT EXISTS Events (
     title TEXT NOT NULL,
     description TEXT,
     eventDate DATETIME,
+    creatorId INTEGER REFERENCES Users(id),
+    groupId INTEGER REFERENCES Groups(id),
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );

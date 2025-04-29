@@ -8,6 +8,7 @@ import (
 	Comment "socialN/Handlers/comments"
 	Post "socialN/Handlers/posts"
 	db "socialN/dataBase"
+	event "socialN/Handlers/events"
 )
 
 func setupHandlers() {
@@ -32,6 +33,10 @@ func setupHandlers() {
 	http.HandleFunc("/api/GetPosts", Post.GetPostsHandler)
 	// http.HandleFunc("/api/GetLikedPosts", Post.GetLikedPostsHandler)
 
+	// Events
+	http.HandleFunc("/api/CreateEvent", event.SetEventHandler)
+
+	
 	// // chat
 	// http.HandleFunc("/api/Chat", chat.ChatHandler)
 	// http.HandleFunc("/api/GetMessages", chat.GetMessagesHandler)
@@ -50,16 +55,10 @@ func main() {
 	http.ListenAndServe(":8080", nil)
 }
 
-func Shandler(fun http.HandlerFunc, w http.ResponseWriter, r *http.Request) {
-	auth.ValidateSession(r, db.SocialDB)
-	fun(w, r)
-}
-
 func SessionMiddleware(fun http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, err := auth.ValidateSession(r, db.SocialDB)
 		if err != nil {
-			fmt.Println("uno")
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
@@ -69,7 +68,7 @@ func SessionMiddleware(fun http.HandlerFunc) http.HandlerFunc {
 
 func AccessMiddleware(fun http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Origin", `http://localhost:3000`)
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
