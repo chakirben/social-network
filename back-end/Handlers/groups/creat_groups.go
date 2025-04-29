@@ -2,6 +2,7 @@ package groups
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -9,11 +10,12 @@ import (
 )
 
 type Group struct {
-	Title       string `json:"Title"`
-	Description string `json:"Description"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
 }
 
 func Creat_Groups(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("kdhlt")
 	// userID, err := auth.ValidateSession(r, dataB.SocialDB)
 	// if err != nil {
 	// 	http.Error(w, "Invalid session", http.StatusUnauthorized)
@@ -24,10 +26,10 @@ func Creat_Groups(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&group)
 	if err != nil {
-		// http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		 http.Error(w, "Invalid JSON", http.StatusBadRequest)
 		return
 	}
-
+	
 	query := `
 	  INSERT INTO groups (title , description , adminId) VALUES (?,?,?);
 	`
@@ -37,4 +39,5 @@ func Creat_Groups(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error to insert groups in db:", err)
 		return
 	}
+	w.WriteHeader(http.StatusCreated)
 }
