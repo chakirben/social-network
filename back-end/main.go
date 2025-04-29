@@ -34,7 +34,7 @@ func setupHandlers() {
 	// http.HandleFunc("/api/GetLikedPosts", Post.GetLikedPostsHandler)
 
 	// groups Creat_Groups
-	http.HandleFunc("/api/CreatGroup", AccessMiddleware(SessionMiddleware(Group.Creat_Groups)))
+	http.HandleFunc("/api/CreatGroup", Group.Creat_Groups)
 	http.HandleFunc("/api/JoinGroup", AccessMiddleware(SessionMiddleware(Group.JoinGroup)))
 	http.HandleFunc("/api/MyGroups", AccessMiddleware(SessionMiddleware(Group.GetMyGroups)))
 	http.HandleFunc("/api/NotMyGroups", AccessMiddleware(SessionMiddleware(Group.GetGroupsUserNotJoined)))
