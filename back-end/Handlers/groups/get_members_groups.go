@@ -4,6 +4,7 @@ import (
 	dataB "socialN/dataBase"
 )
 
+// Get count of the members in the group... 
 func GetMembersGroups(idgroup int) (int, error) {
 	query := `
 	SELECT count(*)

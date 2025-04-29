@@ -15,6 +15,7 @@ type MyGroups struct {
 	Members     int
 }
 
+// Get all groups that the user has joined...
 func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid Method", http.StatusMethodNotAllowed)
