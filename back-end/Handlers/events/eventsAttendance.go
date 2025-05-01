@@ -27,8 +27,7 @@ func SetAttendanceHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var grID int
-	err := database.SocialDB.QueryRow(`SELECT 1 FROM GroupsMembers WHERE memberId = ? AND groupId = ? LIMIT 1`, userID, eveAttendence.GroupId).Scan(&grID)
+	err := database.SocialDB.QueryRow(`SELECT 1 FROM GroupsMembers WHERE memberId = ? AND groupId = ? LIMIT 1`, userID, eveAttendence.GroupId).Scan(new(interface{}))
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "You are not a member of this group", http.StatusForbidden)

@@ -36,6 +36,7 @@ func setupHandlers() {
 	// Events
 	http.HandleFunc("/api/CreateEvent", event.SetEventHandler)
 	http.HandleFunc("/api/SetAttendance", event.SetAttendanceHandler)
+	http.HandleFunc("/api/GetEvents", event.GetEventsHandler)
 
 	
 	// // chat
