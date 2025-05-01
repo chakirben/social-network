@@ -8,7 +8,11 @@ import (
 	Comment "socialN/Handlers/comments"
 	Post "socialN/Handlers/posts"
 	db "socialN/dataBase"
+<<<<<<< HEAD
 	event "socialN/Handlers/events"
+=======
+	Group "socialN/Handlers/groups"
+>>>>>>> yojaouhar
 )
 
 func setupHandlers() {
@@ -38,7 +42,11 @@ func setupHandlers() {
 	http.HandleFunc("/api/SetAttendance", event.SetAttendanceHandler)
 	http.HandleFunc("/api/GetEvents", event.GetEventsHandler)
 
-	
+	// groups Creat_Groups
+	http.HandleFunc("/api/CreatGroup", AccessMiddleware(SessionMiddleware(Group.Creat_Groups)))
+	http.HandleFunc("/api/JoinGroup", AccessMiddleware(SessionMiddleware(Group.JoinGroup)))
+	//http.HandleFunc("/api/Groups", AccessMiddleware(SessionMiddleware(Group.GetGroups)))
+
 	// // chat
 	// http.HandleFunc("/api/Chat", chat.ChatHandler)
 	// http.HandleFunc("/api/GetMessages", chat.GetMessagesHandler)
