@@ -65,6 +65,5 @@ func Creat_Groups(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to create group. Please try again later. :(", http.StatusInternalServerError)
 		return
 	}
-
 	w.WriteHeader(http.StatusCreated)
 }
