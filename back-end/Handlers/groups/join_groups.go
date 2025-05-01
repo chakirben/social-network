@@ -5,12 +5,12 @@ import (
 	"log"
 	"net/http"
 
-	"socialN/Handlers/auth"
 	dataB "socialN/dataBase"
 )
 
 type JoinGroupRequest struct {
 	GroupID int `json:"groupId"`
+	UserId  int `json:"userId"`
 }
 
 // Insert the GroupsMembers in the database....
@@ -19,14 +19,9 @@ func JoinGroup(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid Method", http.StatusMethodNotAllowed)
 		return
 	}
-	userID, err := auth.ValidateSession(r, dataB.SocialDB)
-	if err != nil {
-		http.Error(w, "Invalid session :(", http.StatusUnauthorized)
-		return
-	}
 
 	var req JoinGroupRequest
-	err = json.NewDecoder(r.Body).Decode(&req)
+	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		http.Error(w, "Invalid JSON :(", http.StatusBadRequest)
 		return
@@ -40,7 +35,7 @@ func JoinGroup(w http.ResponseWriter, r *http.Request) {
 	query := `
 		INSERT INTO GroupsMembers (memberId, groupId) VALUES (?, ?)
 	`
-	_, err = dataB.SocialDB.Exec(query, userID, req.GroupID)
+	_, err = dataB.SocialDB.Exec(query, req.UserId , req.GroupID)
 	if err != nil {
 		log.Println("Error to insert members in db :(", err)
 		http.Error(w, "Failed to join group. Please try again later. :(", http.StatusInternalServerError)
