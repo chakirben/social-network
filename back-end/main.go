@@ -9,8 +9,8 @@ import (
 	Group "socialN/Handlers/groups"
 	Post "socialN/Handlers/posts"
 	db "socialN/dataBase"
-
 	event "socialN/Handlers/events"
+	followers "socialN/Handlers/followers"
 )
 
 func setupHandlers() {
@@ -56,6 +56,15 @@ func setupHandlers() {
 	// http.HandleFunc("/api/Like", handlers.ReactionHandler)
 	http.HandleFunc("/api/Profile", auth.ProfileHandler)
 	http.HandleFunc("/api/CheckAuth", auth.CheckAuth)
+
+
+	//this just for testing you can delete it
+	//the function has the id of loggedin user as a parameter, you can get it from session
+	fmt.Print("Followers of loggedin user ");
+	fmt.Println(followers.GetFollowedUsers(2));
+
+	fmt.Print("Auther users without followers one ");
+	fmt.Println(followers.GetUnfollowedUsers(2, followers.GetFollowedUsers(2)));
 }
 
 func main() {

@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	
     "github.com/golang-migrate/migrate/v4"
-    _ "github.com/golang-migrate/migrate/v4/database/sqlite3" 
-    _ "github.com/golang-migrate/migrate/v4/source/file"      
+    _ "github.com/golang-migrate/migrate/v4/database/sqlite3"
+    _ "github.com/golang-migrate/migrate/v4/source/file" 
     _ "github.com/mattn/go-sqlite3"
 )
 
@@ -42,7 +42,11 @@ func ApplyMigrations() error {
 	if err != nil {
 		return err
 	}
-	migrationsPath := "file://" + filepath.Join(wd, "dataBase", "migrations")
+	
+	path := filepath.Join(wd, "dataBase", "migrations")
+	// Convert to file URL format (forward slashes)
+	path = filepath.ToSlash(path)
+	migrationsPath := "file://" + path
 
 	// creating the migration
 	m, err := migrate.New(migrationsPath, "sqlite3://"+dbPath)
