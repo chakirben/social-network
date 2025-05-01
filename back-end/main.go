@@ -8,11 +8,9 @@ import (
 	Comment "socialN/Handlers/comments"
 	Post "socialN/Handlers/posts"
 	db "socialN/dataBase"
-<<<<<<< HEAD
 	event "socialN/Handlers/events"
-=======
 	Group "socialN/Handlers/groups"
->>>>>>> yojaouhar
+
 )
 
 func setupHandlers() {
