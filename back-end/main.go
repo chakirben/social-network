@@ -34,7 +34,7 @@ func setupHandlers() {
 	// http.HandleFunc("/api/CreatePost", Post.SetPostHandler)
 	http.HandleFunc("/api/GetPosts", Post.GetPostsHandler)
 	// http.HandleFunc("/api/GetLikedPosts", Post.GetLikedPostsHandler)
-
+//lsdkjslkd
 	// Events
 	http.HandleFunc("/api/CreateEvent", event.SetEventHandler)
 	http.HandleFunc("/api/SetAttendance", event.SetAttendanceHandler)
