@@ -1,7 +1,6 @@
 'use client'
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import '../globals.css';
 import '../../public/styles/register.css';
 
 export default function Login() {
