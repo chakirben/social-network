@@ -60,7 +60,7 @@ func setupHandlers() {
 
 	//this just for testing you can delete it
 	//the function has the id of loggedin user as a parameter, you can get it from session
-	fmt.Print("Followers of loggedin user ");
+	fmt.Print("Followers of loggedin user");
 	fmt.Println(followers.GetFollowedUsers(2));
 
 	fmt.Print("Auther users without followers one ");

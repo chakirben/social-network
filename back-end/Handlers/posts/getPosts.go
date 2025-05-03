@@ -31,22 +31,36 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 
 	baseQuery := `
 		SELECT
-			p.id,
-			p.title,
-			p.image,
-			p.content, 
-			u.firstName,
-			u.lastName, 
-			(SELECT COUNT(*) FROM postReactions WHERE postId = p.id AND reactionType = 1) AS likeCount,
-			(SELECT COUNT(*) FROM postReactions WHERE postId = p.id AND reactionType = -1) AS dislikeCount,
-			(SELECT reactionType FROM postReactions WHERE postId = p.id AND userId = ?) AS userReaction,
-			p.createdAt
-		FROM Posts p
-		JOIN Users u ON p.creatorId = u.id
-		ORDER BY p.createdAt DESC
-		LIMIT 10 OFFSET ?
+				p.id,
+				p.title,
+				p.image,
+				p.content, 
+				u.firstName,
+				u.lastName, 
+				(SELECT COUNT(*) FROM postReactions WHERE postId = p.id AND reactionType = 1) AS likeCount,
+				(SELECT COUNT(*) FROM postReactions WHERE postId = p.id AND reactionType = -1) AS dislikeCount,
+				(SELECT reactionType FROM PostReactions WHERE postId = p.id AND userId = ?) AS userReaction,
+				p.createdAt
+			FROM Posts p
+			JOIN Users u ON p.creatorId = u.id
+			WHERE 
+				(
+					(p.groupId IS NOT NULL AND EXISTS (
+						SELECT 1 FROM GroupsMembers WHERE groupId = p.groupId AND memberId = ?
+					))
+					OR (p.privacy = 'public')
+					OR (p.privacy = "almostPrivate" AND EXISTS (
+						SELECT 1 FROM Followers WHERE followedId = p.creatorId AND followerId = ?
+					))
+					OR (p.privacy = "private" AND EXISTS (
+						SELECT 1 FROM PostViewPermissions WHERE postId = p.id AND userId = ?
+					))
+				)
+			ORDER BY p.createdAt DESC
+			LIMIT 10 OFFSET ?;
+
 	`
-	rows, err := dataB.SocialDB.Query(baseQuery, 1, offsetInt)
+	rows, err := dataB.SocialDB.Query(baseQuery, 1, 1, 1, 1, offsetInt)
 	if err != nil {
 		log.Println("Error fetching posts:", err)
 		http.Error(w, "Error fetching posts", http.StatusInternalServerError)
