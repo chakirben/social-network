@@ -24,6 +24,31 @@ body {
     width: 200px;
 }
 
+.sidebar.collapsed {
+
+    width: fit-content;
+}
+.sidebar.collapsed .logo {
+    display: none;
+}
+
+.hideIcon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+.hideIcon.rotated {
+
+    transform: rotate(180deg);
+}
+.logoAndHide {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
 .navBar {
     display: flex;
     flex-direction: column;
