@@ -1,0 +1,117 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    color: white;
+    font-family: 'Arial', sans-serif;
+}
+
+input,
+textarea {
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.103);
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+}
+.flex {
+    display: flex;
+    gap: 8px;
+}
+.col {
+    flex-direction: column;
+}
+.grw {
+    flex-grow: 1;
+    min-width: 20px;
+}
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #0A0A0A;
+    color: white;
+}
+
+.logo {
+    width: 84px;
+    height: 24px;
+}
+
+.layout {
+    display: flex;
+
+}
+
+.sidebar {
+    margin: 24px 29px 32px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 200px;
+    border-right: 1px solid rgba(255, 255, 255, 0.123);
+    height: 100vh;
+    padding: 24px;
+}
+
+.sidebar.collapsed {
+
+    width: fit-content;
+}
+.sidebar.collapsed .logo {
+    display: none;
+}
+
+.hideIcon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+.hideIcon.rotated {
+
+    transform: rotate(180deg);
+}
+.logoAndHide {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+}
+.sidebar.collapsed .logoAndHide {
+    display: flex;
+    justify-content: center;
+}
+
+.navBar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+}
+
+.navLink {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+    opacity: 0.4;
+}
+
+.navLink:hover {
+    background-color: #1a1a1a;
+}
+
+.navLink.active {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.123);
+}
+
+.navLink img {
+    width: 20px;
+    height: 20px;
+}
