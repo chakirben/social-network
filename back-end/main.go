@@ -47,6 +47,7 @@ func setupHandlers() {
 
 	//follows
 	http.HandleFunc("/api/follow", followers.HandleFollow)
+	http.HandleFunc("/api/acceptFollowRequest", followers.AcceptFollowRequest)
 }
 
 func main() {

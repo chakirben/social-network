@@ -7,5 +7,6 @@ CREATE TABLE IF NOT EXISTS Users (
     lastName TEXT NOT NULL,
     dateOfBirth DATETIME NOT NULL,
     avatar TEXT,
-    about TEXT
+    about TEXT,
+    accountType TEXT
 );
