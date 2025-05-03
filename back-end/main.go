@@ -6,11 +6,11 @@ import (
 
 	auth "socialN/Handlers/auth"
 	Comment "socialN/Handlers/comments"
+	event "socialN/Handlers/events"
+	followers "socialN/Handlers/followers"
 	Group "socialN/Handlers/groups"
 	Post "socialN/Handlers/posts"
 	db "socialN/dataBase"
-	event "socialN/Handlers/events"
-	followers "socialN/Handlers/followers"
 )
 
 func setupHandlers() {
@@ -33,6 +33,7 @@ func setupHandlers() {
 	http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.GetPostHandler)))
 	// http.HandleFunc("/api/CreatePost", Post.SetPostHandler)
 	http.HandleFunc("/api/GetPosts", Post.GetPostsHandler)
+	http.HandleFunc("/api/CreatPost", Post.Reactpost)
 	// http.HandleFunc("/api/GetLikedPosts", Post.GetLikedPostsHandler)
 
 	// Events
@@ -57,14 +58,13 @@ func setupHandlers() {
 	http.HandleFunc("/api/Profile", auth.ProfileHandler)
 	http.HandleFunc("/api/CheckAuth", auth.CheckAuth)
 
+	// this just for testing you can delete it
+	// the function has the id of loggedin user as a parameter, you can get it from session
+	fmt.Print("Followers of loggedin user ")
+	fmt.Println(followers.GetFollowedUsers(2))
 
-	//this just for testing you can delete it
-	//the function has the id of loggedin user as a parameter, you can get it from session
-	fmt.Print("Followers of loggedin user ");
-	fmt.Println(followers.GetFollowedUsers(2));
-
-	fmt.Print("Auther users without followers one ");
-	fmt.Println(followers.GetUnfollowedUsers(2, followers.GetFollowedUsers(2)));
+	fmt.Print("Auther users without followers one ")
+	fmt.Println(followers.GetUnfollowedUsers(2, followers.GetFollowedUsers(2)))
 }
 
 func main() {
