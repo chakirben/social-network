@@ -17,37 +17,48 @@ body {
 }
 
 .sidebar {
-    margin: 24px 29px 32px 24px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 200px;
+    padding: 10px;
+    margin: 12px;
+    border-right: 1px solid white;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    width: 200px;
 }
+
 
 .sidebar.collapsed {
 
     width: fit-content;
 }
+
+.sidebar.collapsed .logoAndHide {
+    justify-content: center;
+}
+
 .sidebar.collapsed .logo {
     display: none;
 }
 
 .hideIcon {
-    width: 20px;
-    height: 20px;
     cursor: pointer;
 }
+
 .hideIcon.rotated {
 
     transform: rotate(180deg);
 }
+
 .logoAndHide {
     display: flex;
     gap: 10px;
     justify-content: space-between;
     align-items: center;
 }
-
 
 .navBar {
     display: flex;
@@ -81,4 +92,11 @@ body {
 .navLink img {
     width: 20px;
     height: 20px;
+}
+
+.mainContent {
+    margin-left: 215px;
+    padding: 24px;
+    height: 100vh;
+    overflow-y: auto;
 }
