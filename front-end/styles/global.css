@@ -14,17 +14,21 @@ textarea {
     padding: 10px;
     border-radius: 6px;
 }
+
 .flex {
     display: flex;
     gap: 8px;
 }
+
 .col {
     flex-direction: column;
 }
+
 .grw {
     flex-grow: 1;
     min-width: 20px;
 }
+
 body {
     margin: 0;
     padding: 0;
@@ -47,7 +51,6 @@ body {
 }
 
 .sidebar {
-    margin: 24px 29px 32px 24px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -61,6 +64,7 @@ body {
 
     width: fit-content;
 }
+
 .sidebar.collapsed .logo {
     display: none;
 }
@@ -70,16 +74,19 @@ body {
     height: 20px;
     cursor: pointer;
 }
+
 .hideIcon.rotated {
 
     transform: rotate(180deg);
 }
+
 .logoAndHide {
     display: flex;
     gap: 10px;
     justify-content: space-between;
     align-items: center;
 }
+
 .sidebar.collapsed .logoAndHide {
     display: flex;
     justify-content: center;
@@ -117,4 +124,22 @@ body {
 .navLink img {
     width: 20px;
     height: 20px;
+}
+
+.divider {
+    align-self: stretch;
+    width: 100%;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.137);
+}
+
+button {
+
+    background: #007AFF;
+    border-radius: 36px;
+    padding: 8px 16px;
+    color: white;
+    font-weight: 800;
+    outline: none;
+    border: none;
 }

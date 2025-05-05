@@ -9,23 +9,28 @@
     height: 24px;
     border-radius: 40px;
 }
+
 .postContent {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
+
 .userData {
     display: flex;
     align-items: center;
     padding: 0px;
     gap: 8px;
 }
+
 .pic.nrml {
     width: 40%;
 }
+
 h4 {
     margin: 0;
 }
+
 h5 {
     margin: 0;
     font-size: 14px;
@@ -35,7 +40,7 @@ h5 {
 
 .content {
 
-    font-family: 'Inter' , "sans-serif";
+    font-family: 'Inter', "sans-serif";
     font-style: normal;
     font-weight: 400;
     font-size: 16px;
@@ -44,7 +49,60 @@ h5 {
     color: #FFFFFF;
 
 }
+
 .post {
-    padding: 24px ;
+    padding: 40px 40px;
     border-bottom: rgba(255, 255, 255, 0.137) solid 1px;
+}
+
+.SearchBar {
+    width: 100%;
+    padding: 0px 40px;
+    display: flex;
+    gap: 16px;
+    border-bottom: rgba(255, 255, 255, 0.137) solid 1px;
+}
+
+.searchInput {
+    border: none;
+    height: 56px;
+}
+
+.searchInput:focus {
+    border: none;
+    outline: none;
+}
+
+.creatPostForm {
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    width: 100%;
+}
+
+.Myselect {
+    background: none;
+    color: white;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 0;
+    gap: 8px;
+}
+.Myselect option {
+    background: none;
+}
+.Myselect:active {
+    color: black;
+}
+.group {
+    display: flex;
+    gap: 16px;
+}
+.spB {
+    display: flex;
+    padding: 24px 0px;
+    justify-content: space-between;
 }

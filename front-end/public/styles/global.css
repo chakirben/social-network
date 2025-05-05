@@ -25,3 +25,9 @@ textarea {
     flex-grow: 1;
     min-width: 20px;
 }
+.divider {
+    align-self: stretch;
+    width: 100%;
+    height: 1px;
+    color: rgba(255, 255, 255, 0.103);
+}
