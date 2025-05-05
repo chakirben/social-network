@@ -11,7 +11,6 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     if (!email || !password) {
       setErrorMessage('Please fill in all fields.');
       return;

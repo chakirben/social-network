@@ -3,12 +3,12 @@ import { useState } from 'react';
 import '../../styles/global.css';
 import "./register.css"
 //import '../public/styles/register.css';
-//import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import AvatarUpload from '@/public/components/avatar';
 import { validateForm } from '@/public/utils/formValidation';
 
 export default function Register() {
-  //const router = useRouter();
+  const router = useRouter();
   const [avatar, setAvatar] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
   const [firstName, setFirstName] = useState('');
@@ -52,7 +52,7 @@ export default function Register() {
       let resp = await response.text();
       setErrorMessage(resp);
     } else {
-      router.push('/');
+      router.push('/home');
     }
   }
 

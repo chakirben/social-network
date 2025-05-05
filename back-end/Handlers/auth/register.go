@@ -103,11 +103,12 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:     "session_id",
+		Name:     "sessionId",
 		Value:    sessionID,
 		Expires:  expiration,
-		HttpOnly: true,
-		Secure:   true,
+		HttpOnly: false,
+		Secure:   false,
+		SameSite: http.SameSiteLaxMode,
 		Path:     "/",
 	})
 
