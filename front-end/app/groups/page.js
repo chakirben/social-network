@@ -1,16 +1,15 @@
 "use client";
+import Goups from "@/components/groups";
 import SideBar from "@/components/sidebar";
 import { useEffect, useState } from "react";
-import { Goups } from "@/components/groups"
- 
-export default function Groups() {
+export default function GroupsPage() {
     const [Groups, setGroups] = useState([])
 
     useEffect(() => {
         const fetchGroups = async () => {
             try {
                 const response = await fetch("http://localhost:8080/api/MyGroups", {
-                    method : "POST"
+                    credentials:"include",
                 } ); 
                 const data = await response.json();
                 console.log(data)
@@ -29,7 +28,7 @@ export default function Groups() {
                             <div>Loading groups...</div>
                         ) : (
                             Groups.map((Group) => (
-                                <Goups key={Group._id} grp={Group}/>
+                                <Goups grp={Group}/>
                             ))
                         )}
                     </div>
