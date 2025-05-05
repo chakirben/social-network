@@ -34,7 +34,7 @@ export default function Home() {
                         <div>Loading posts...</div>
                     ) : (
                         posts.map((post) => (
-                            <Post pst={post} />
+                            <Post key={post.id || post._id} pst={post} />
                         ))
                     )}
                 </div>

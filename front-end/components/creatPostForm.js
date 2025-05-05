@@ -6,7 +6,8 @@ import Divider from './divider';
 export default function CreatePost() {
   const inputRef = useRef(null);
   const [imageSrc, setImageSrc] = useState(null);
-  const [selectedOption, setSelectedOption] = useState('');
+  const [selectedOption, setSelectedOption] = useState('public');
+  const [text, setText] = useState('');
 
   const handleImageClick = () => {
     inputRef.current.click();
@@ -27,13 +28,42 @@ export default function CreatePost() {
     setSelectedOption(e.target.value);
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const file = inputRef.current.files[0];
+    const formData = new FormData();
+    formData.append('text', text);
+    formData.append('audience', selectedOption);
+    if (file) {
+      formData.append('image', file);
+    }
+
+    try {
+      const res = await fetch('http://localhost:8080/api/CreatePost', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
+      const result = await res.json();
+      console.log('Post submitted:', result);
+      setText('');
+      setSelectedOption('public');
+      setImageSrc(null);
+      inputRef.current.value = null;
+    } catch (err) {
+      console.error('Post failed:', err);
+    }
+  };
+
   return (
-    <div className="creatPostForm">
+    <form className="creatPostForm" onSubmit={handleSubmit}>
       <div className="searchBar">
         <img src="/user-icon.png" />
         <input
           className="searchInput"
           placeholder="What’s happening ?"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
         />
       </div>
 
@@ -42,6 +72,7 @@ export default function CreatePost() {
       </div>
 
       <Divider />
+
       <div className='spB'>
         <div className='group'>
           <img
@@ -64,7 +95,6 @@ export default function CreatePost() {
         </div>
         <button type='submit'>post</button>
       </div>
-
-    </div>
+    </form>
   );
 }
