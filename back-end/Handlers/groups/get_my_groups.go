@@ -12,7 +12,7 @@ type MyGroups struct {
 	Id          int
 	Title       string
 	Description string
-	Members     int
+	MembersCount     int
 }
 
 // Get all groups that the user has joined...
@@ -26,13 +26,20 @@ func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 	// 	http.Error(w, "Invalid session :(", http.StatusUnauthorized)
 	// 	return
 	// }
-
+	fmt.Println("HII YOSF")
 	query := `
-	SELECT id , title , description 
-	FROM Groups g 
-	JOIN GroupsMembers gm ON g.id = gm.groupId
-	WHERE gm.memberId = ?
+	SELECT 
+		g.id, 
+		g.title, 
+		g.description, 
+		COUNT(gm2.memberId) AS members_count
+	FROM Groups g
+	JOIN GroupsMembers gm1 ON g.id = gm1.groupId
+	LEFT JOIN GroupsMembers gm2 ON g.id = gm2.groupId
+	WHERE gm1.memberId = ?
+	GROUP BY g.id, g.title, g.description
 	`
+	
 
 	rows, err := dataB.SocialDB.Query(query, 1)
 	if err != nil {
@@ -45,18 +52,11 @@ func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 	var groups []MyGroups
 	for rows.Next() {
 		var g MyGroups
-		if err := rows.Scan(&g.Id, &g.Title, &g.Description); err != nil {
+		if err := rows.Scan(&g.Id, &g.Title, &g.Description , &g.MembersCount); err != nil {
 			fmt.Println("error to get groups", err)
 			http.Error(w, "error to get groups", http.StatusInternalServerError)
 			return
 		}
-		members, err := GetMembersGroups(g.Id)
-		if err != nil {
-			fmt.Println("error to get members", err)
-			http.Error(w, "error to get members of groups", http.StatusInternalServerError)
-			return
-		}
-		g.Members = members
 		groups = append(groups, g)
 	}
 

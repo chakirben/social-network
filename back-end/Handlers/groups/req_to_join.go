@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
 	"socialN/Handlers/auth"
 	dataB "socialN/dataBase"
 )
@@ -23,7 +24,6 @@ func Req_To_Join_Groups(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid session :(", http.StatusUnauthorized)
 		return
 	}
-	fmt.Println(userID)
 
 	var req ReqJoinGroup
 	err = json.NewDecoder(r.Body).Decode(&req)
@@ -41,6 +41,7 @@ func Req_To_Join_Groups(w http.ResponseWriter, r *http.Request) {
 	query := `SELECT adminId FROM Groups WHERE id = ?`
 	err = dataB.SocialDB.QueryRow(query, req.GroupID).Scan(adminId)
 	if err != nil {
+		fmt.Println(err)
 		log.Println("Error to select admin in db :(", err)
 		http.Error(w, "Failed to join group. Please try again later. :(", http.StatusInternalServerError)
 		return
@@ -52,6 +53,8 @@ func Req_To_Join_Groups(w http.ResponseWriter, r *http.Request) {
 		Admin:  adminId,
 		Userid: userID,
 	}
+
+	// this is a just a test until we  creat ws ...
 	w.Header().Set("Content-Type", "applicaton/json")
 	if err := json.NewEncoder(w).Encode(SendToAdmin); err != nil {
 		fmt.Println("JSON encode error", err)

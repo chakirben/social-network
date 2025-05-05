@@ -2,14 +2,14 @@ package groups
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
-	"socialN/Handlers/auth"
 	dataB "socialN/dataBase"
 )
 
-type Group struct {
+type Grouppp struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
@@ -20,16 +20,19 @@ func Creat_Groups(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid Method", http.StatusMethodNotAllowed)
 		return
 	}
-	userID, err := auth.ValidateSession(r, dataB.SocialDB)
-	if err != nil {
-		http.Error(w, "Invalid session :(", http.StatusUnauthorized)
-		return
-	}
+	// userID, err := auth.ValidateSession(r, dataB.SocialDB)
+	// if err != nil {
+	// 	http.Error(w, "Invalid session :(", http.StatusUnauthorized)
+	// 	return
+	// }
 
-	var group Group
+	var group Grouppp
 
-	err = json.NewDecoder(r.Body).Decode(&group)
+	fmt.Println(r.Body)
+	err := json.NewDecoder(r.Body).Decode(&group)
 	if err != nil {
+		fmt.Println("hiiii yosf")
+		
 		http.Error(w, "Invalid JSON :(", http.StatusBadRequest)
 		return
 	}
@@ -43,14 +46,14 @@ func Creat_Groups(w http.ResponseWriter, r *http.Request) {
 	  INSERT INTO groups (title , description , adminId) VALUES (?,?,?);
 	`
 
-	ress , err := dataB.SocialDB.Exec(query, group.Title, group.Description, userID)
+	ress, err := dataB.SocialDB.Exec(query, group.Title, group.Description, 1)
 	if err != nil {
 		log.Println("Error to insert groups in db :(", err)
 		http.Error(w, "Failed to create group. Please try again later. :(", http.StatusInternalServerError)
 		return
 	}
 
-	lastIDgroup , err := ress.LastInsertId()
+	lastIDgroup, err := ress.LastInsertId()
 	if err != nil {
 		http.Error(w, "Failed to create group. Please try again later. :(", http.StatusInternalServerError)
 		log.Fatal(err)
@@ -59,7 +62,7 @@ func Creat_Groups(w http.ResponseWriter, r *http.Request) {
 	queryy := `
 		INSERT INTO GroupsMembers (memberId, groupId) VALUES (?, ?)
 	`
-	_, err = dataB.SocialDB.Exec(queryy, userID, lastIDgroup)
+	_, err = dataB.SocialDB.Exec(queryy, 1, lastIDgroup)
 	if err != nil {
 		log.Println("Error to insert members in db :(", err)
 		http.Error(w, "Failed to create group. Please try again later. :(", http.StatusInternalServerError)
