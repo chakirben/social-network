@@ -1,0 +1,83 @@
+.comment {
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: start;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    width: 100%;
+}
+
+.authorAndTime {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.headerContainer {
+    display: flex;
+    gap: 8px;
+}
+.commentHeader {
+    display: flex;
+    flex-direction: column;
+    gap:4px;
+    align-items: start;
+    margin-bottom: 0.5rem;
+}
+
+.commentAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.commentAuthor {
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 0px;
+    margin: 0px;
+   
+}
+
+.commentTime {
+    font-size: 0.75rem;
+    color: #aaa;
+}
+
+.commentContent {
+    font-size: 0.95rem;
+    margin: 0px;
+}
+
+.commentImage {
+    max-height: 200px;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+.commentActions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.likeBtn,
+.dislikeBtn {
+    background: #2c2c2e;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background 0.2s ease;
+}
+
+.likeBtn:hover,
+.dislikeBtn:hover {
+    background: #3a3a3c;
+}
