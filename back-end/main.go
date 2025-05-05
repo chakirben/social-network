@@ -31,8 +31,9 @@ func setupHandlers() {
 	// posts
 	http.HandleFunc("/api/GetCreatedPosts", AccessMiddleware(SessionMiddleware(Post.GetCreatedPostsHandler)))
 	http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.GetPostHandler)))
+	http.HandleFunc("/api/GetOnePost", AccessMiddleware((Post.CreatePostHandler)))
 	// http.HandleFunc("/api/CreatePost", Post.SetPostHandler)
-	http.HandleFunc("/api/GetPosts", Post.GetPostsHandler)
+	http.HandleFunc("/api/GetPosts", AccessMiddleware( Post.GetPostsHandler))
 	// http.HandleFunc("/api/GetLikedPosts", Post.GetLikedPostsHandler)
 
 	// Events
@@ -55,7 +56,7 @@ func setupHandlers() {
 
 	// http.HandleFunc("/api/Like", handlers.ReactionHandler)
 	http.HandleFunc("/api/Profile", auth.ProfileHandler)
-	http.HandleFunc("/api/CheckAuth", auth.CheckAuth)
+	//http.HandleFunc("/api/CheckAuth", AccessMiddleware(auth.CheckAuth))
 
 
 	//this just for testing you can delete it
@@ -89,7 +90,7 @@ func AccessMiddleware(fun http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", `http://localhost:3000`)
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Cookie")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)

@@ -61,9 +61,9 @@ func LogUser(w http.ResponseWriter, r *http.Request) {
 		Name:     "sessionId",
 		Value:    sessionID,
 		Expires:  expiration,
-		Domain:   "localhost",
-		HttpOnly: true,
+		HttpOnly: false,
 		Secure:   false,
+		SameSite: http.SameSiteLaxMode,
 		Path:     "/",
 	})
 

@@ -13,12 +13,14 @@ import (
 )
 
 func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
+
 	offset := r.URL.Query().Get("offset")
 	if offset == "" {
 		offset = "0"
 	}
 	offsetInt, err := strconv.Atoi(offset)
 	if err != nil {
+		fmt.Println(err)
 		http.Error(w, "Invalid offset", http.StatusBadRequest)
 		return
 	}
@@ -63,6 +65,7 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 	rows, err := dataB.SocialDB.Query(baseQuery, 1, 1, 1, 1, offsetInt)
 	if err != nil {
 		log.Println("Error fetching posts:", err)
+		fmt.Println(err)
 		http.Error(w, "Error fetching posts", http.StatusInternalServerError)
 		return
 	}
@@ -84,6 +87,7 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 		)
 		err := rows.Scan(&id, &title, &image, &content, &firstName, &lastName, &likeCount, &dislikeCount, &userReaction, &createdAt)
 		if err != nil {
+			fmt.Println(err)
 			log.Println("Error scanning row:", err)
 			continue
 		}
@@ -106,6 +110,7 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(posts); err != nil {
 		log.Println("Error encoding response:", err)
+		fmt.Println(err)
 		http.Error(w, "Error encoding response", http.StatusInternalServerError)
 	}
 }
