@@ -31,9 +31,9 @@ func setupHandlers() {
 	// posts
 	http.HandleFunc("/api/GetCreatedPosts", AccessMiddleware(SessionMiddleware(Post.GetCreatedPostsHandler)))
 	http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.GetPostHandler)))
-	http.HandleFunc("/api/GetOnePost", AccessMiddleware((Post.CreatePostHandler)))
+	//http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.CreatePostHandler)))
 	// http.HandleFunc("/api/CreatePost", Post.SetPostHandler)
-	http.HandleFunc("/api/GetPosts", AccessMiddleware( Post.GetPostsHandler))
+    http.HandleFunc("/api/GetPosts", AccessMiddleware( Post.GetPostsHandler))
 	// http.HandleFunc("/api/GetLikedPosts", Post.GetLikedPostsHandler)
 
 	// Events

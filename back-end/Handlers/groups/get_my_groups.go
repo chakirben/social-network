@@ -26,7 +26,6 @@ func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 	// 	http.Error(w, "Invalid session :(", http.StatusUnauthorized)
 	// 	return
 	// }
-	fmt.Println("HII YOSF")
 	query := `
 	SELECT 
 		g.id, 
