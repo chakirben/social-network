@@ -1,8 +1,45 @@
-.groupc {
-    width: 500px;
-    background-color: red;
-
+.home {
+    display: flex;
 }
-.groupContent{
+.groups {
+    width: fit-content;
+    width: 500px;
+}
+.groupbar {
+    background-color: black;
+    width: 100%;
+    height: 68px;
+    display: flex;
+    justify-content: left;
+    padding-left: 10px;
+    border-bottom: 2px solid rgb(73, 73, 73);
+}
+
+.groupbar img {
+    width: 20px;
+}
+
+.groupbar p {
+    padding-left: 10px;
+    padding-top: 8px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.groupc {
+    width: 80%;
     background-color: red;
+    display: flex;
+;
+}
+.groupc .groupContent {
+    width: 80%;
+    padding-left: 20px;
+}
+
+.groupc .groupContent h3 {
+    display: flex;
+    background-color: black;
+
 }

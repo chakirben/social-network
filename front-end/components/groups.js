@@ -1,9 +1,6 @@
 export default function Group({ group }) {
     return (
-           <div className="groupc">
-                <div className="groupbar">
-                    <i></i>Groups<p></p>
-                </div>
+        <div className="groupc">
             <div className="groupContent">
                 <h3>{group.Title}</h3>
                 <p>{group.Description}</p>
@@ -17,10 +14,9 @@ export default function Group({ group }) {
     );
 }
 
-// export default function groupbar() {
-//     return (
-//         <div className="groupbar">
-//             <i></i>Groups<p></p>
-//         </div>
-//     )
-// }
+/*
+ <div className="groupbar">
+                   <img src="./images/arrow-left.svg" ></img>
+                   Groups
+                </div>
+*/
