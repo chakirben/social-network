@@ -1,15 +1,26 @@
-export default function Groups ({grp}) {
+export default function Group({ group }) {
     return (
-        <div className="group">
+           <div className="groupc">
+                <div className="groupbar">
+                    <i></i>Groups<p></p>
+                </div>
             <div className="groupContent">
-                <h3>{grp.Title}</h3>
-                <p>{grp.Description}</p>
+                <h3>{group.Title}</h3>
+                <p>{group.Description}</p>
                 <div>
-                    <i></i> <p>{grp.MembersCount} Users</p>
+                    <i></i> <p>{group.MembersCount} Users</p>
                     <i></i> <p>Posts</p>
-                </div>  
+                </div>
             </div>
-            <button>hiii</button>
+            <button>Join</button>
         </div>
-    )
+    );
 }
+
+// export default function groupbar() {
+//     return (
+//         <div className="groupbar">
+//             <i></i>Groups<p></p>
+//         </div>
+//     )
+// }
