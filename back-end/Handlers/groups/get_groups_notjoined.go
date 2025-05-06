@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"socialN/Handlers/auth"
 	dataB "socialN/dataBase"
 )
 
@@ -21,11 +22,11 @@ func GetGroupsUserNotJoined(w http.ResponseWriter, r *http.Request) {
 	// 	http.Error(w, "Invalid Method", http.StatusMethodNotAllowed)
 	// 	return
 	// }
-	// userID, err := auth.ValidateSession(r, dataB.SocialDB)
-	// if err != nil {
-	// 	http.Error(w, "Invalid session :(", http.StatusUnauthorized)
-	// 	return
-	// }
+	userID, err := auth.ValidateSession(r, dataB.SocialDB)
+	if err != nil {
+		http.Error(w, "Invalid session :(", http.StatusUnauthorized)
+		return
+	}
 
 	query := `
 	SELECT 
@@ -43,7 +44,7 @@ func GetGroupsUserNotJoined(w http.ResponseWriter, r *http.Request) {
 	GROUP BY g.id, g.title, g.description
 	`
 
-	rows, err := dataB.SocialDB.Query(query, 1)
+	rows, err := dataB.SocialDB.Query(query, userID)
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "error to get my groups :(", http.StatusInternalServerError)
