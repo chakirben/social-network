@@ -46,7 +46,7 @@ func Creat_Groups(w http.ResponseWriter, r *http.Request) {
 	  INSERT INTO groups (title , description , adminId) VALUES (?,?,?);
 	`
 
-	ress, err := dataB.SocialDB.Exec(query, group.Title, group.Description, 1)
+	ress, err := dataB.SocialDB.Exec(query, group.Title, group.Description, 2)
 	if err != nil {
 		log.Println("Error to insert groups in db :(", err)
 		http.Error(w, "Failed to create group. Please try again later. :(", http.StatusInternalServerError)

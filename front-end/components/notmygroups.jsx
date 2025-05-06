@@ -11,17 +11,9 @@ export default function NoMyGroup({ group }) {
                     <p> 2 Posts</p>
                 </div>
             </div>
-            {group.Status ? (
-                <div className="buttonjoin">
-                    <button id="buttonjointogroup">Join</button>
-                </div>
-            ) : (
-                <div className="buttonjoin">
-                    <button id="buttontoseegroup">View</button>
-                </div>
-            )}
-
-
+            <div className="buttonjoin">
+                <button id="buttontoseegroup">Join</button>
+            </div>
         </div>
     );
 }

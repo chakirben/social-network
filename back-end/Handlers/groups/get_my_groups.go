@@ -13,7 +13,6 @@ type MyGroups struct {
 	Title       string
 	Description string
 	MembersCount     int
-	Status bool
 }
 
 // Get all groups that the user has joined...
@@ -57,7 +56,6 @@ func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "error to get groups", http.StatusInternalServerError)
 			return
 		}
-		g.Status = true
 		groups = append(groups, g)
 	}
 
