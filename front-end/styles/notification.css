@@ -1,0 +1,41 @@
+.notification {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 40px;
+    width: 100%;
+
+}
+
+.notifHeader {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.notifHeader time {
+    color: #686868;
+    font-size: 12px;
+}
+
+.notifMsg {
+    font-size: 14px;
+}
+
+.notifImage {
+    max-width: 24px;
+    max-height: 24px;
+    border-radius: 10px;
+    object-fit: cover;
+
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.buttons>button:first-child {
+    background-color: #ffffff12;
+    color: white;
+}
