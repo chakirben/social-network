@@ -3,16 +3,17 @@
 }
 .groups {
     width: fit-content;
-    width: 500px;
+    width: 100%;
 }
+
 .groupbar {
     background-color: black;
-    width: 100%;
+    width: 500px;
     height: 68px;
     display: flex;
     justify-content: left;
     padding-left: 10px;
-    border-bottom: 2px solid rgb(73, 73, 73);
+    border-bottom: 1px solid rgb(73, 73, 73);
 }
 
 .groupbar img {
@@ -28,18 +29,41 @@
 }
 
 .groupc {
-    width: 80%;
-    background-color: red;
+    width: 100%;
     display: flex;
-;
+    justify-content: space-between;
+    padding: 16px 40px;
+    font-family: Arial, Helvetica, sans-serif;
+    border-bottom: 1px solid rgb(73, 73, 73);
 }
 .groupc .groupContent {
     width: 80%;
-    padding-left: 20px;
 }
 
 .groupc .groupContent h3 {
     display: flex;
     background-color: black;
 
+}
+
+.groupc .groupContent  .discriptiong {
+    max-width: 100%;
+    line-break: anywhere;
+}
+
+.groupc .groupContent .usersandpost {
+    display: flex;
+}
+
+.groupc .groupContent .usersandpost img {
+    padding-left: 10px;
+}
+.groupc .groupContent .usersandpost p {
+    padding-left: 10px;
+}
+
+.groupc .buttonjoin {
+
+    align-items: center;
+    display: flex;
 }

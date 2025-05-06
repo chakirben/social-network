@@ -13,6 +13,7 @@ type NotMyGroups struct {
 	Title        string
 	Description  string
 	MembersCount int
+	Status bool
 }
 
 // Get all groups that the user has not joined yet...
@@ -59,6 +60,7 @@ func GetGroupsUserNotJoined(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "error to get groups", http.StatusInternalServerError)
 			return
 		}
+		g.Status = false
 		groups = append(groups, g)
 	}
 
