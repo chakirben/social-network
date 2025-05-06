@@ -1,19 +1,21 @@
-package main
+package routers
 
 import (
 	"fmt"
 	"net/http"
 
-	auth "socialN/Handlers/auth"
+	"socialN/Handlers/auth"
+	"socialN/Handlers/followers"
+
 	Comment "socialN/Handlers/comments"
 	event "socialN/Handlers/events"
-	followers "socialN/Handlers/followers"
 	Group "socialN/Handlers/groups"
 	Post "socialN/Handlers/posts"
+
 	db "socialN/dataBase"
 )
 
-func setupHandlers() {
+func SetupHandlers() {
 	// Serve Images
 	http.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
 
@@ -31,9 +33,9 @@ func setupHandlers() {
 	// posts
 	http.HandleFunc("/api/GetCreatedPosts", AccessMiddleware(SessionMiddleware(Post.GetCreatedPostsHandler)))
 	http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.GetPostHandler)))
-	//http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.CreatePostHandler)))
+	// http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.CreatePostHandler)))
 	// http.HandleFunc("/api/CreatePost", Post.SetPostHandler)
-    http.HandleFunc("/api/GetPosts", AccessMiddleware( Post.GetPostsHandler))
+	http.HandleFunc("/api/GetPosts", AccessMiddleware(Post.GetPostsHandler))
 	// http.HandleFunc("/api/GetLikedPosts", Post.GetLikedPostsHandler)
 
 	// Events
@@ -56,7 +58,7 @@ func setupHandlers() {
 
 	// http.HandleFunc("/api/Like", handlers.ReactionHandler)
 	http.HandleFunc("/api/Profile", auth.ProfileHandler)
-	//http.HandleFunc("/api/CheckAuth", AccessMiddleware(auth.CheckAuth))
+	// http.HandleFunc("/api/CheckAuth", AccessMiddleware(auth.CheckAuth))
 
 	// this just for testing you can delete it
 	// the function has the id of loggedin user as a parameter, you can get it from session
@@ -65,13 +67,6 @@ func setupHandlers() {
 
 	fmt.Print("Auther users without followers one ")
 	fmt.Println(followers.GetUnfollowedUsers(2, followers.GetFollowedUsers(2)))
-}
-
-func main() {
-	db.DbInit()
-	setupHandlers()
-	fmt.Println("https://localhost:8080")
-	http.ListenAndServe(":8080", nil)
 }
 
 func SessionMiddleware(fun http.HandlerFunc) http.HandlerFunc {
