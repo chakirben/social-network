@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import MyGroup from "@/components/mygroups";
-import NoMyGroup from "@/components/notmygroups";
+import MyGroup from "@/components/groups/mygroups";
+import NoMyGroup from "@/components/groups/notmygroups";
 
 export default function MyGroupsPage() {
     const [myGroups, setMyGroups] = useState([]);

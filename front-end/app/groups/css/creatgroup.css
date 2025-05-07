@@ -1,0 +1,26 @@
+/*about creat groups*/
+.creatgroups {
+    position: fixed;
+    top: 20%;
+    left: 60%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(73, 65, 65);
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.creatgroups  .inputToCreatGourp {
+    
+}
+
+.titelinp {
+    
+}
+
+.discinp{
+
+}
+
+.creatbtn{
+
+}
