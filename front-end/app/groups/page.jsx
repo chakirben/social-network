@@ -9,16 +9,22 @@ import "./css/creatgroup.css"
 
 export default function JustMyGroupsPage() {
   const [showCreateGroup, setShowCreateGroup] = useState(false)
+  const [isGroupCreated, setIsGroupCreated] = useState(false);
 
   const handleBTNCreateGroup = () => {
     setShowCreateGroup(true)
   }
+  const creatgroupGroup = (groupData) => {
+    console.log("Group created:", groupData)
+    setIsGroupCreated(true);
+    setShowCreateGroup(false);
+  };
   return (
     <div className="home">
       <SideBar />
       <div className="divallGroups">
         <Groupbar onCreateGroup={handleBTNCreateGroup} />
-        {showCreateGroup && <DataToCreatGroup />}
+        {showCreateGroup && <DataToCreatGroup onCreate={creatgroupGroup}  />}
           <div className="groupsmn">
           <MyGroupsPage />
         </div>

@@ -1,26 +1,52 @@
 /*about creat groups*/
 .creatgroups {
     position: fixed;
-    top: 20%;
+    top: 12%;
     left: 60%;
     transform: translate(-50%, -50%);
     background-color: rgb(73, 65, 65);
     padding: 20px;
     border-radius: 12px;
+    width: 260px;
+    height: 130px;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: auto;
 }
 
 .creatgroups  .inputToCreatGourp {
-    
+    margin: auto;
+    padding-left: 20px;
 }
 
 .titelinp {
-    
+    background-color: rgb(37, 37, 37);
+    color: white;
+    margin-bottom: 5px;
 }
 
 .discinp{
+    background-color: rgb(37, 37, 37);
+    color: white;
+    margin-bottom: 5px;
+}
 
+.divcreatbtn {
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    display: flex;
 }
 
 .creatbtn{
+    background-color: green;
+    justify-content: center;
+}
 
+.skipbtn {
+    background-color: rgb(87, 86, 86);
+    margin-left: 20px;
+}
+
+.skipbtn img {
+    width: 10px;
 }

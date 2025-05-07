@@ -1,10 +1,9 @@
 "use client"
 import Creatgroup from "@/components/groups/creatGroup"
-export default function DataToCreatGroup(){
-    console.log("hiiiiiiiii")
+export default function DataToCreatGroup({onCreate}){
     return (
         <div className="creatgroups">
-            <Creatgroup />
+            <Creatgroup onCreate={onCreate}/>
         </div>
     )
 }
