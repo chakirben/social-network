@@ -9,6 +9,7 @@ import (
 	Post "socialN/Handlers/posts"
 	db "socialN/dataBase"
 	followers "socialN/Handlers/followers"
+	profile "socialN/Handlers/profile"
 )
 
 func setupHandlers() {
@@ -20,7 +21,7 @@ func setupHandlers() {
 	http.HandleFunc("/api/register", AccessMiddleware(auth.RegisterUser))
 	http.HandleFunc("/api/login", AccessMiddleware(auth.LogUser))
 	http.HandleFunc("/api/logout", AccessMiddleware(auth.LogoutHandler))
-	http.HandleFunc("/api/profile", AccessMiddleware(auth.ProfileHandler))
+	//http.HandleFunc("/api/profile", AccessMiddleware(auth.ProfileHandler))
 
 	// comments
 	http.HandleFunc("/api/GetComments", AccessMiddleware(SessionMiddleware(Comment.GetCommentsHandler)))
@@ -40,7 +41,7 @@ func setupHandlers() {
 	// http.HandleFunc("/api/GetOnlineUsers", chat.GetOnlineUsersHandler)
 
 	// http.HandleFunc("/api/Like", handlers.ReactionHandler)
-	http.HandleFunc("/api/Profile", auth.ProfileHandler)
+	//http.HandleFunc("/api/Profile", auth.ProfileHandler)
 	http.HandleFunc("/api/CheckAuth", auth.CheckAuth)
 
 
@@ -48,6 +49,9 @@ func setupHandlers() {
 	//follows
 	http.HandleFunc("/api/follow", followers.HandleFollow)
 	http.HandleFunc("/api/acceptFollowRequest", followers.AcceptFollowRequest)
+
+	//profile
+	http.HandleFunc("/api/profile", profile.GetData)
 }
 
 func main() {

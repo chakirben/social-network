@@ -1,12 +1,14 @@
+'use client'
 import { useState } from 'react';
-import '../public/styles/global.css';
-import '../public/styles/register.css';
-import { useRouter } from 'next/router';
+import '../../styles/global.css';
+import "./register.css"
+//import '../public/styles/register.css';
+//import { useRouter } from 'next/router';
 import AvatarUpload from '@/public/components/avatar';
 import { validateForm } from '@/public/utils/formValidation';
 
 export default function Register() {
-  const router = useRouter();
+  //const router = useRouter();
   const [avatar, setAvatar] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
   const [firstName, setFirstName] = useState('');
