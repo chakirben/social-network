@@ -44,7 +44,7 @@ func SetupHandlers() {
 	http.HandleFunc("/api/GetEvents", event.GetEventsHandler)
 
 	// groups Creat_Groups
-	http.HandleFunc("/api/CreatGroup", Group.Creat_Groups)
+	http.HandleFunc("/api/CreatGroup", AccessMiddleware(SessionMiddleware(Group.Creat_Groups)))
 	http.HandleFunc("/api/JoinGroup", AccessMiddleware(SessionMiddleware(Group.JoinGroup)))
 	http.HandleFunc("/api/MyGroups", AccessMiddleware(Group.GetMyGroups))
 	http.HandleFunc("/api/NotMyGroups", AccessMiddleware(Group.GetGroupsUserNotJoined))

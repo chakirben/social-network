@@ -3,7 +3,8 @@ import { useState } from "react"
 import Groupbar from "@/components/groups/groupbar"
 import MyGroupsPage from "./api_and_funcs/get_groups"
 import SideBar from "@/components/sidebar";
-import DataToCreatGroup from "./api_and_funcs/creat_group"
+import DataToCreatGroup from "@/components/groups/creatGroup"
+import FetchCreatGroup from "./api_and_funcs/fetch_creat_gp"
 import "./css/groups1.css"
 import "./css/creatgroup.css"
 
@@ -15,7 +16,7 @@ export default function JustMyGroupsPage() {
     setShowCreateGroup(true)
   }
   const creatgroupGroup = (groupData) => {
-    console.log("Group created:", groupData)
+    FetchCreatGroup(groupData.title , groupData.description)
     setIsGroupCreated(true);
     setShowCreateGroup(false);
   };
@@ -24,7 +25,7 @@ export default function JustMyGroupsPage() {
       <SideBar />
       <div className="divallGroups">
         <Groupbar onCreateGroup={handleBTNCreateGroup} />
-        {showCreateGroup && <DataToCreatGroup onCreate={creatgroupGroup}  />}
+        {showCreateGroup && <DataToCreatGroup onCreate={creatgroupGroup}  onSkip={() => setShowCreateGroup(false)} />}
           <div className="groupsmn">
           <MyGroupsPage />
         </div>
