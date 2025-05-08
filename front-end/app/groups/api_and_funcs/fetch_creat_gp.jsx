@@ -21,6 +21,5 @@ export default async function FetchCreatGroup(title, description) {
         console.log("Group created successfully:", repData);
     } catch (error) {
         console.error("Error creating the group:", error);
-        return null;
     }
 }

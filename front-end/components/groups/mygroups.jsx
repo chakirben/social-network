@@ -1,4 +1,4 @@
-export default function MyGroup({ group }) {
+export default function MyGroup({ group , onView }) {
     return (
         <div className="groupc">
             <div className="groupContent">
@@ -12,7 +12,7 @@ export default function MyGroup({ group }) {
                 </div>
             </div>
             <div className="buttonjoin">
-                <button id="buttontoseegroup">View</button>
+                <button id="buttontoseegroup" onClick={() => onView(group.Id)}>View</button>
             </div>
         </div>
     );

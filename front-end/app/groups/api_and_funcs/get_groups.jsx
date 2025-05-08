@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import MyGroup from "@/components/groups/mygroups";
 import NoMyGroup from "@/components/groups/notmygroups";
 
-export default function MyGroupsPage() {
+export default function MyGroupsPage({ onJoin, onView }) {
     const [myGroups, setMyGroups] = useState([]);
     const [notMyGroups, setNotMyGroups] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -39,16 +39,12 @@ export default function MyGroupsPage() {
 
     return (
         <div className="groupsmn">
-            <div className="groups">
-                {myGroups.map((group) => (
-                    <MyGroup key={group.Id} group={group} />
-                ))}
-            </div>
-            <div className="groups">
-                {notMyGroups.map((group) => (
-                    <NoMyGroup key={group.Id} group={group} />
-                ))}
-            </div>
+            {myGroups.map((group) => (
+                <MyGroup key={group.Id} group={group} onView={onView} />
+            ))}
+            {notMyGroups.map((group) => (
+                <NoMyGroup key={group.Id} group={group} onJoin={onJoin} />
+            ))}
         </div>
     );
 }

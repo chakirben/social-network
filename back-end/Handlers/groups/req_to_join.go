@@ -39,7 +39,7 @@ func Req_To_Join_Groups(w http.ResponseWriter, r *http.Request) {
 
 	var adminId int
 	query := `SELECT adminId FROM Groups WHERE id = ?`
-	err = dataB.SocialDB.QueryRow(query, req.GroupID).Scan(adminId)
+	err = dataB.SocialDB.QueryRow(query, req.GroupID).Scan(&adminId)
 	if err != nil {
 		fmt.Println(err)
 		log.Println("Error to select admin in db :(", err)
@@ -48,13 +48,15 @@ func Req_To_Join_Groups(w http.ResponseWriter, r *http.Request) {
 	}
 	SendToAdmin := struct {
 		Admin  int
+		GroupID int
 		Userid int
 	}{
 		Admin:  adminId,
+		GroupID:  req.GroupID,
 		Userid: userID,
 	}
-
 	// this is a just a test until we  creat ws ...
+	w.WriteHeader(http.StatusAccepted)
 	w.Header().Set("Content-Type", "applicaton/json")
 	if err := json.NewEncoder(w).Encode(SendToAdmin); err != nil {
 		fmt.Println("JSON encode error", err)
