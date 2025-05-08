@@ -24,6 +24,7 @@ func CheckAuth(w http.ResponseWriter, r *http.Request) {
 
 func ValidateSession(r *http.Request, db *sql.DB) (int, error) {
 	cookie, err := r.Cookie("sessionId")
+	fmt.Println(cookie.Value)
 	if err != nil {
 		if err == http.ErrNoCookie {
 			return 0, fmt.Errorf("no session cookie")
