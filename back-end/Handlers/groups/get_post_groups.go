@@ -55,7 +55,9 @@ func GetPostGroups(w http.ResponseWriter, r *http.Request) {
 		  P.title,
 		  P.content,
 		  P.image,
-		  P.createdAt
+		  U.firstName,
+          U.lastName,
+          P.createdAt
 		FROM Posts P
 		JOIN Users U ON P.creatorId = U.id
 		WHERE groupId = ?
@@ -63,7 +65,7 @@ func GetPostGroups(w http.ResponseWriter, r *http.Request) {
 
 	rows, err := dataB.SocialDB.Query(query, Idgroup.Groupid)
 	if err != nil {
-		fmt.Println("--->",err)
+		fmt.Println("--->", err)
 		http.Error(w, "error to get my groups :(", http.StatusInternalServerError)
 		return
 	}
@@ -73,7 +75,7 @@ func GetPostGroups(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var P Posts
 		if err := rows.Scan(&P.Id, &P.Title, &P.Content, &P.Image,
-			 &P.CreatedAt); err != nil {
+		    &P.FirstName,&P.LastName, &P.CreatedAt); err != nil {
 			fmt.Println("error to get posts groups", err)
 			http.Error(w, "error to get posts groups", http.StatusInternalServerError)
 			return
