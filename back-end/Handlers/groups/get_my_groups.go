@@ -5,28 +5,28 @@ import (
 	"fmt"
 	"net/http"
 
+	"socialN/Handlers/auth"
 	dataB "socialN/dataBase"
 )
 
 type MyGroups struct {
-	Id          int
-	Title       string
-	Description string
-	MembersCount     int
+	Id           int
+	Title        string
+	Description  string
+	MembersCount int
 }
 
 // Get all groups that the user has joined...
 func GetMyGroups(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+	if r.Method != http.MethodGet {
 		http.Error(w, "Invalid Method", http.StatusMethodNotAllowed)
 		return
 	}
-	// userID, err := auth.ValidateSession(r, dataB.SocialDB)
-	// if err != nil {
-	// 	http.Error(w, "Invalid session :(", http.StatusUnauthorized)
-	// 	return
-	// }
-	fmt.Println("HII YOSF")
+	userID, err := auth.ValidateSession(r, dataB.SocialDB)
+	if err != nil {
+		http.Error(w, "Invalid session :(", http.StatusUnauthorized)
+		return
+	}
 	query := `
 	SELECT 
 		g.id, 
@@ -39,9 +39,8 @@ func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 	WHERE gm1.memberId = ?
 	GROUP BY g.id, g.title, g.description
 	`
-	
 
-	rows, err := dataB.SocialDB.Query(query, 1)
+	rows, err := dataB.SocialDB.Query(query, userID)
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "error to get my groups :(", http.StatusInternalServerError)
@@ -52,7 +51,7 @@ func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 	var groups []MyGroups
 	for rows.Next() {
 		var g MyGroups
-		if err := rows.Scan(&g.Id, &g.Title, &g.Description , &g.MembersCount); err != nil {
+		if err := rows.Scan(&g.Id, &g.Title, &g.Description, &g.MembersCount); err != nil {
 			fmt.Println("error to get groups", err)
 			http.Error(w, "error to get groups", http.StatusInternalServerError)
 			return
