@@ -10,15 +10,16 @@ import (
 )
 
 type Comment struct {
-	ID           int    `json:"id"`
-	Content      string `json:"content"`
-	Image        string `json:"image"`
-	FirstName    string `json:"firstName"`
-	LastName     string `json:"lastName"`
-	CreatedAt    string `json:"createdAt"`
-	LikeCount    int    `json:"likeCount"`
-	DislikeCount int    `json:"dislikeCount"`
-	UserReaction *int   `json:"userReaction"`
+	ID           int     `json:"id"`
+	Content      string  `json:"content"`
+	Image        *string `json:"image"`
+	FirstName    string  `json:"firstName"`
+	LastName     string  `json:"lastName"`
+	Avatar       *string `json:"avatar"`
+	CreatedAt    string  `json:"createdAt"`
+	LikeCount    int     `json:"likeCount"`
+	DislikeCount int     `json:"dislikeCount"`
+	UserReaction *int    `json:"userReaction"`
 }
 
 func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
@@ -47,6 +48,7 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 			c.image,
 			u.firstName, 
 			u.lastName, 
+			u.avatar,
 			c.createdAt,
 			(SELECT COUNT(*) FROM commentReactions WHERE commentId = c.id AND reactionType = 1),
 			(SELECT COUNT(*) FROM commentReactions WHERE commentId = c.id AND reactionType = -1),
@@ -55,7 +57,7 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 		JOIN Users u ON c.userId = u.id
 		WHERE c.postId = ?
 		ORDER BY c.createdAt DESC
-	`, 1 , postID)
+	`, 1, postID)
 	if err != nil {
 		log.Println("Error fetching comments:", err)
 		http.Error(w, "Failed to fetch comments", http.StatusInternalServerError)
@@ -73,6 +75,7 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 			&comment.Image,
 			&comment.FirstName,
 			&comment.LastName,
+			&comment.Avatar,
 			&comment.CreatedAt,
 			&comment.LikeCount,
 			&comment.DislikeCount,
