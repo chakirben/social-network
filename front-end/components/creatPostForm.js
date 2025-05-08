@@ -2,15 +2,21 @@
 
 import React, { useState, useRef } from 'react';
 import Divider from './divider';
-
+import UserData from "@/components/UserData";
 export default function CreatePost() {
   const inputRef = useRef(null);
   const [imageSrc, setImageSrc] = useState(null);
   const [selectedOption, setSelectedOption] = useState('public');
   const [text, setText] = useState('');
+  const [selectedUsers, setSelectedUsers] = useState([]);
   const [collaped, setcollapsed] = useState('');
   const handleImageClick = () => {
     inputRef.current.click();
+  };
+  const toggleUser = (id) => {
+    setSelectedUsers((prev) =>
+      prev.includes(id) ? prev.filter((uid) => uid !== id) : [...prev, id]
+    );
   };
 
   const handleFileChange = (e) => {
@@ -67,7 +73,7 @@ export default function CreatePost() {
     }
   }
   return (
-    <form className="creatPostForm" onSubmit={handleSubmit} onClick={showUsersList}>
+    <form className="creatPostForm" onSubmit={handleSubmit}>
       <div className="searchBar">
         <img src="/user-icon.png" />
         <input
@@ -107,16 +113,57 @@ export default function CreatePost() {
             <>
               <button className='thiary' onClick={showUsersList}>+ Select users</button>
               {collaped ? (
-                <div className='userList'>
-                  <h4>Select users</h4>
+                <div className='FriendList' >
+                  <div className='df sb center'>
+                    <h4>Select users</h4>
+                    <img src='/images/close.svg' className='icn' onClick={showUsersList}></img>
+                  </div>
+                  <div className='userList df cl gp12 start'>
+                    <div className='df gp12'>
+                      <input
+                        type="checkbox"
+                        checked={selectedUsers.includes(1)}
+                        onChange={() => toggleUser(1)}
+                        className="checkBox"
+                      />
+                      <UserData usr={{ firstName: "chakir", lastName: "ben", image: "", followers: "15" }} />
+                    </div>
+                    <div className='df gp12'>
+                      <input
+                        type="checkbox"
+                        checked={selectedUsers.includes(1)}
+                        onChange={() => toggleUser(1)}
+                        className="checkBox"
+                      />
+                      <UserData usr={{ firstName: "chakir", lastName: "ben", image: "", followers: "15" }} />
+                    </div>
+                    <div className='df gp12'>
+                      <input
+                        type="checkbox"
+                        checked={selectedUsers.includes(1)}
+                        onChange={() => toggleUser(1)}
+                        className="checkBox"
+                      />
+                      <UserData usr={{ firstName: "chakir", lastName: "ben", image: "", followers: "15" }} />
+                    </div>
+                    <div className='df gp12'>
+                      <input
+                        type="checkbox"
+                        checked={selectedUsers.includes(1)}
+                        onChange={() => toggleUser(1)}
+                        className="checkBox"
+                      />
+                      <UserData usr={{ firstName: "chakir", lastName: "ben", image: "", followers: "15" }} />
+                    </div>  
+                  </div>
+                  <button>select</button>
                 </div>
               ) : ""}
-              {/* <div className='selectUsers'> button here</div> */}
             </>
           ) : ""}
           <button type='submit'>post</button>
         </div>
-        </div>
+      </div>
     </form>
   );
 }
