@@ -12,6 +12,7 @@ import (
 	Group "socialN/Handlers/groups"
 	Post "socialN/Handlers/posts"
 
+	profile "socialN/Handlers/profile"
 	db "socialN/dataBase"
 )
 
@@ -24,7 +25,7 @@ func SetupHandlers() {
 	http.HandleFunc("/api/register", AccessMiddleware(auth.RegisterUser))
 	http.HandleFunc("/api/login", AccessMiddleware(auth.LogUser))
 	http.HandleFunc("/api/logout", AccessMiddleware(auth.LogoutHandler))
-	http.HandleFunc("/api/profile", AccessMiddleware(auth.ProfileHandler))
+	// http.HandleFunc("/api/profile", AccessMiddleware(auth.ProfileHandler))
 
 	// comments
 	http.HandleFunc("/api/GetComments", Comment.GetCommentsHandler)
@@ -59,14 +60,20 @@ func SetupHandlers() {
 	// http.HandleFunc("/api/Like", handlers.ReactionHandler)
 	http.HandleFunc("/api/Profile", auth.ProfileHandler)
 	// http.HandleFunc("/api/CheckAuth", AccessMiddleware(auth.CheckAuth))
+	// http.HandleFunc("/api/Profile", auth.ProfileHandler)
+	http.HandleFunc("/api/CheckAuth", auth.CheckAuth)
 
 	// this just for testing you can delete it
 	// the function has the id of loggedin user as a parameter, you can get it from session
 	fmt.Print("Followers of loggedin user")
 	fmt.Println(followers.GetFollowedUsers(2))
 
-	fmt.Print("Auther users without followers one ")
-	fmt.Println(followers.GetUnfollowedUsers(2, followers.GetFollowedUsers(2)))
+	// follows
+	http.HandleFunc("/api/follow", followers.HandleFollow)
+	http.HandleFunc("/api/acceptFollowRequest", followers.AcceptFollowRequest)
+
+	// profile
+	http.HandleFunc("/api/profile", profile.GetData)
 }
 
 func SessionMiddleware(fun http.HandlerFunc) http.HandlerFunc {
