@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-
+import Post from "@/components/post"
 export default function GroupDetails({groupId , back}) {
     const [PostsGroup , setPostsGroup] = useState([])
     const [isLoading, setIsLoading] = useState(true);
@@ -19,6 +19,8 @@ export default function GroupDetails({groupId , back}) {
                     })
                 })
                 const PostsGroupData  = await rep.json()
+                console.log(PostsGroupData);
+                
                 setPostsGroup(PostsGroupData || [])
             } catch {
                 console.error("Error fetching groups:", error);
