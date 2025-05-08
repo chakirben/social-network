@@ -18,10 +18,6 @@ type MyGroups struct {
 
 // Get all groups that the user has joined...
 func GetMyGroups(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Invalid Method", http.StatusMethodNotAllowed)
-		return
-	}
 	userID, err := auth.ValidateSession(r, dataB.SocialDB)
 	if err != nil {
 		http.Error(w, "Invalid session :(", http.StatusUnauthorized)

@@ -18,10 +18,6 @@ type NotMyGroups struct {
 
 // Get all groups that the user has not joined yet...
 func GetGroupsUserNotJoined(w http.ResponseWriter, r *http.Request) {
-	// if r.Method != http.MethodPost {
-	// 	http.Error(w, "Invalid Method", http.StatusMethodNotAllowed)
-	// 	return
-	// }
 	userID, err := auth.ValidateSession(r, dataB.SocialDB)
 	if err != nil {
 		http.Error(w, "Invalid session :(", http.StatusUnauthorized)

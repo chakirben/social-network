@@ -6,27 +6,33 @@ import SideBar from "@/components/sidebar";
 import DataToCreatGroup from "@/components/groups/creatGroup"
 import FetchCreatGroup from "./api_and_funcs/fetch_creat_gp"
 import FetchJoinToGroup from "./api_and_funcs/fetch_req_join_gp"
+import GroupDetails from "./api_and_funcs/get_posts_groups"
 import "./css/groups1.css"
 import "./css/creatgroup.css"
 
 export default function JustMyGroupsPage() {
   const [showCreateGroup, setShowCreateGroup] = useState(false)
-  const [isGroupCreated, setIsGroupCreated] = useState(false);
-  const [viewingGroup, setViewingGroup] = useState(null);
+  const [isGroupCreated, setIsGroupCreated] = useState(false)
+  const [viewingGroup, setViewingGroup] = useState(null)
 
+  // For the button to shoz the div of creat group...
   const handleBTNCreateGroup = () => {
     setShowCreateGroup(true)
   }
+
+  // For the button to creat group...
   const creatgroupGroup = (groupData) => {
     FetchCreatGroup(groupData.title, groupData.description)
     setIsGroupCreated(true);
     setShowCreateGroup(false);
   }
 
+  // For the button to JOIN group...
   const Jointogroup = (groupId) => {
     FetchJoinToGroup(groupId)
   }
 
+  // For the button to VIEW group...
   const viewGroup = (groupId) => {
     setViewingGroup(groupId)
   }
@@ -39,13 +45,10 @@ export default function JustMyGroupsPage() {
         {showCreateGroup && <DataToCreatGroup onCreate={creatgroupGroup} onSkip={() => setShowCreateGroup(false)} />}
 
         {!viewingGroup ? (
-            <MyGroupsPage onJoin={Jointogroup} onView={viewGroup} />
+          <MyGroupsPage onJoin={Jointogroup} onView={viewGroup} />
         ) : (
-          // <GroupDetails group={viewingGroup} onBack={() => setViewingGroup(null)} />
-          <div>
-            hiiiiiiiiiiiiiii
-          </div>
-        )}  
+          <GroupDetails groupId={viewingGroup} back={ () => setViewingGroup(null)} />
+        )}
 
       </div>
     </div>
