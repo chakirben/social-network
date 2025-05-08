@@ -4,12 +4,13 @@ body {
     background-color: black;
     color: white;
     font-family: 'Arial', sans-serif;
-  
+
 }
 
 body::-webkit-scrollbar {
-    display: none; 
+    display: none;
 }
+
 input,
 textarea {
     background: transparent;
@@ -18,17 +19,21 @@ textarea {
     padding: 10px;
     border-radius: 6px;
 }
+
 .flex {
     display: flex;
     gap: 8px;
 }
+
 .col {
     flex-direction: column;
 }
+
 .grw {
     flex-grow: 1;
     min-width: 20px;
 }
+
 body {
     margin: 0;
     padding: 0;
@@ -54,7 +59,6 @@ body {
     display: flex;
     position: sticky;
     top: 0;
-    margin: 24px 29px 32px 24px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -68,6 +72,7 @@ body {
 
     width: fit-content;
 }
+
 .sidebar.collapsed .logo {
     display: none;
 }
@@ -77,16 +82,19 @@ body {
     height: 20px;
     cursor: pointer;
 }
+
 .hideIcon.rotated {
 
     transform: rotate(180deg);
 }
+
 .logoAndHide {
     display: flex;
     gap: 10px;
     justify-content: space-between;
     align-items: center;
 }
+
 .sidebar.collapsed .logoAndHide {
     display: flex;
     justify-content: center;
@@ -151,11 +159,22 @@ button {
 .sb {
     justify-content: space-between;
 }
-
+.avatar {
+    height: 24px;
+}
 .cl {
     flex-direction: column;
 }
 
+.button-disabled {
+    background-color: #d3d3d3;
+    color: rgb(0, 0, 0);
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.err {
+    color: rgb(207, 59, 59);
+}
 .gp6 {
     gap: 6px;
 }

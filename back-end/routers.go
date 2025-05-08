@@ -1,4 +1,4 @@
-package routers
+package main
 
 import (
 	"fmt"
@@ -11,8 +11,8 @@ import (
 	event "socialN/Handlers/events"
 	Group "socialN/Handlers/groups"
 	Post "socialN/Handlers/posts"
-
 	profile "socialN/Handlers/profile"
+	u "socialN/Handlers/users"
 	db "socialN/dataBase"
 )
 
@@ -35,7 +35,7 @@ func SetupHandlers() {
 	http.HandleFunc("/api/GetCreatedPosts", AccessMiddleware(SessionMiddleware(Post.GetCreatedPostsHandler)))
 	http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.GetPostHandler)))
 	// http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.CreatePostHandler)))
-	// http.HandleFunc("/api/CreatePost", Post.SetPostHandler)
+	http.HandleFunc("/api/CreatePost", AccessMiddleware(Post.CreatePostHandler))
 	http.HandleFunc("/api/GetPosts", AccessMiddleware(Post.GetPostsHandler))
 	// http.HandleFunc("/api/GetLikedPosts", Post.GetLikedPostsHandler)
 
@@ -74,6 +74,10 @@ func SetupHandlers() {
 
 	// profile
 	http.HandleFunc("/api/profile", profile.GetData)
+
+	//
+	http.HandleFunc("/api/getUserData"  , AccessMiddleware(u.GetCurrentUserData))
+	http.HandleFunc("/api/getFollowersList", AccessMiddleware(u.GetFollowersListHandler))
 }
 
 func SessionMiddleware(fun http.HandlerFunc) http.HandlerFunc {
@@ -94,7 +98,7 @@ func AccessMiddleware(fun http.HandlerFunc) http.HandlerFunc {
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Cookie")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		if r.Method == "OPTIONS" {
-			w.WriteHeader(http.StatusOK)
+			// w.WriteHeader(http.StatusOK)
 			return
 		}
 		fun(w, r)

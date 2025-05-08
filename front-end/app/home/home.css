@@ -101,12 +101,14 @@ h5 {
 .creatPostForm {
     display: flex;
     flex-direction: column;
-    padding: 0px 40px;
+    padding: 0px 40px 16px 40px;
     width: 100%;
     background: linear-gradient(89.97deg, rgba(255, 255, 255, 0.03) 0.02%, rgba(255, 255, 255, 0) 99.97%);
     border-bottom: rgba(255, 255, 255, 0.137) solid 1px;
 }
-
+.loading {
+    padding: 40px;
+}
 .icn {
 
     padding: 8px;

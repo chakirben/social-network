@@ -33,7 +33,6 @@ func SetCommentHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-
 	err := r.ParseMultipartForm(10 << 20)
 	if err != nil {
 		http.Error(w, "Error parsing form", http.StatusBadRequest)

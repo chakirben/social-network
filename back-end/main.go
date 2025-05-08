@@ -7,14 +7,13 @@ import (
 	"os"
 	"os/signal"
 
-	"socialN/cmd/routers"
 
 	db "socialN/dataBase"
 )
 
 func main() {
 	db.DbInit()
-	routers.SetupHandlers()
+	SetupHandlers()
 
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, os.Interrupt)
