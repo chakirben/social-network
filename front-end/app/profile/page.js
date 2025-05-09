@@ -1,6 +1,8 @@
 'use client'
 import SideBar from "@/components/sidebar";
 import { useEffect, useState } from "react";
+import "../../styles/global.css"
+import "../profile/profile.css"
 
 
 export default function Profile() {
@@ -8,7 +10,7 @@ export default function Profile() {
     useEffect(() => {
         async function fetchProfile() {
             try {
-                const res = await fetch('http://localhost:3000/api/profile', { credentials: "include" })
+                const res = await fetch('http://localhost:8080/api/getUserData', { credentials: "include" })
                 if (!res.ok) {
                     throw new Error(`HTTP error! Status: ${res.status}`);
                 }
@@ -26,34 +28,39 @@ export default function Profile() {
     return (
         <div className="profileContainer">
             <SideBar />
+            <div className="userProfile">
+                <img className="coverture" src="http://localhost:8080/uploads/coverture.png"></img>
+                <div className="userData">
+                    <div className="imgAndFollow sb">
+                        {profile && <img className="userAvatar" src={`http://localhost:8080/${profile.avatar}`} />}
+                        <div className="follow">
+                            <p><strong className="number">11K</strong> Followers</p>
+                            <p><strong className="number">15K</strong> Following</p>
+                        </div>
+                    </div>
+                    <div className="nameAndAbout">
+                        {profile && <h4>{profile.firstName} {profile.lastName}</h4>}
+                        {profile && <p>Hey everyone! I’ve been thinking about starting</p>}
+                    </div>
 
-            {profile ? (
-                <pre>{JSON.stringify(profile, null, 2)}</pre>
-            ) : (
-                <p>Loading...</p>
-            )}
+                </div>
+
+            <hr></hr>
+            </div>
+
+
         </div>
     )
 }
 
-export default async function Profile() {
-
-    const response = await fetch(`http://localhost:8080/api/profile`, {
-        method: 'POST',
-        credentials: 'include',  
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        //here we should put the nickname of the owner of profile
-        body: JSON.stringify({nickname: "iafriad"}),
-    });
-  
-    if (!response.ok) {
-        const resp = await response.text();
-        console.log("Error get Data :", resp);
-    } else {
-        const data = await response.json();
-        console.log("Success:");
-        console.log(data);
-    }
-}
+{/* {profile ? (
+    <div className="profileCard">
+        <p><strong>Nickname:</strong> {profile.nickname}</p>
+        <p><strong>First Name:</strong> {profile.firstName}</p>
+        <p><strong>Last Name:</strong> {profile.lastName}</p>
+        <p><strong>Email:</strong> {profile.email}</p>
+        <p><strong>Age:</strong> {profile.age}</p>
+    </div>
+) : (
+    <p>Loading...</p>
+)} */}
