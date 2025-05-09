@@ -50,7 +50,7 @@ func SetCommentHandler(w http.ResponseWriter, r *http.Request) {
 	var imagePath string
 	if image != nil {
 
-		imagePath, err = saveAvatar(image)
+		imagePath, err = SaveAvatar(image)
 		if err != nil {
 			http.Error(w, "Failed to save image", http.StatusInternalServerError)
 			return
@@ -62,7 +62,7 @@ func SetCommentHandler(w http.ResponseWriter, r *http.Request) {
 	// 	http.Error(w, "Unauthorized", http.StatusUnauthorized)
 	// 	return
 	// }
-	fmt.Println(postID , content ,  imagePath)
+	fmt.Println(postID, content, imagePath)
 	result, err := dataB.SocialDB.Exec(`
 		INSERT INTO Comments (postId, userId, content, image)
 		VALUES (?, ?, ?, ?)`,
@@ -99,7 +99,7 @@ func SetCommentHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(commentResponse)
 }
 
-func saveAvatar(file io.Reader) (string, error) {
+func SaveAvatar(file io.Reader) (string, error) {
 	// Save the uploaded image file to the server
 	timestamp := time.Now().UnixNano()
 	filename := fmt.Sprintf("%d_avatar.jpg", timestamp)

@@ -64,9 +64,11 @@ export default function CreatePost() {
     }
     const file = inputRef.current.files[0];
     const formData = new FormData();
-    formData.append('text', text);
-    formData.append('audience', selectedOption);
-    formData.append('selectedUsers' , selectedUsers)
+    formData.append('content', text);
+    formData.append('privacy', selectedOption);
+    selectedUsers.forEach(id => {
+      formData.append('selectedUsers', id);
+    });
     if (file) {
       formData.append('image', file);
     }
@@ -132,8 +134,8 @@ export default function CreatePost() {
           />
           <select className="Myselect" value={selectedOption} onChange={handleChange}>
             <option value="public">Public</option>
-            <option value="followers">Followers</option>
-            <option value="only">Only</option>
+            <option value="almostPrivate">Followers</option>
+            <option value="private">Only</option>
           </select>
           {selectedOption === "only" && (
             <>

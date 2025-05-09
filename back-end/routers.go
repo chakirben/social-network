@@ -76,7 +76,7 @@ func SetupHandlers() {
 	http.HandleFunc("/api/profile", profile.GetData)
 
 	//
-	http.HandleFunc("/api/getUserData"  , AccessMiddleware(u.GetCurrentUserData))
+	http.HandleFunc("/api/getUserData", AccessMiddleware(u.GetCurrentUserData))
 	http.HandleFunc("/api/getFollowersList", AccessMiddleware(u.GetFollowersListHandler))
 }
 
