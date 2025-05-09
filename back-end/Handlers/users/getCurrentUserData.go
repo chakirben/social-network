@@ -12,14 +12,14 @@ import (
 )
 
 type user struct {
-	ID          int    `json:"id"`
-	Nickname    string `json:"nickname"`
-	Email       string `json:"email"`
-	FirstName   string `json:"firstName"`
-	LastName    string `json:"lastName"`
-	DateOfBirth string `json:"dateOfBirth"`
-	Avatar      string `json:"avatar"`
-	About       string `json:"about"`
+	ID          int            `json:"id"`
+	Nickname    *string        `json:"nickname"`
+	Email       string         `json:"email"`
+	FirstName   string         `json:"firstName"`
+	LastName    string         `json:"lastName"`
+	DateOfBirth string         `json:"dateOfBirth"`
+	Avatar      *string        `json:"avatar"`
+	About       *string        `json:"about"`
 	AccountType sql.NullString `json:"accountType"`
 }
 

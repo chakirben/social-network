@@ -1,0 +1,5 @@
+.profileContainer {
+    display: flex;
+    flex-direction: row;
+}
+

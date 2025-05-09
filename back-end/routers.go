@@ -58,7 +58,7 @@ func SetupHandlers() {
 	// http.HandleFunc("/api/GetOnlineUsers", chat.GetOnlineUsersHandler)
 
 	// http.HandleFunc("/api/Like", handlers.ReactionHandler)
-	http.HandleFunc("/api/Profile", auth.ProfileHandler)
+	http.HandleFunc("/api/Profile", AccessMiddleware(auth.ProfileHandler))
 	// http.HandleFunc("/api/CheckAuth", AccessMiddleware(auth.CheckAuth))
 	// http.HandleFunc("/api/Profile", auth.ProfileHandler)
 	http.HandleFunc("/api/CheckAuth", auth.CheckAuth)
@@ -98,7 +98,7 @@ func AccessMiddleware(fun http.HandlerFunc) http.HandlerFunc {
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Cookie")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		if r.Method == "OPTIONS" {
-			// w.WriteHeader(http.StatusOK)
+			w.WriteHeader(http.StatusOK)
 			return
 		}
 		fun(w, r)
