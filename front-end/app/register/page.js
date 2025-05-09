@@ -8,7 +8,7 @@ import AvatarUpload from '@/public/components/avatar';
 import { validateForm } from '@/public/utils/formValidation';
 
 export default function Register() {
-  //const router = useRouter();
+  const router = useRouter();
   const [avatar, setAvatar] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
   const [firstName, setFirstName] = useState('');

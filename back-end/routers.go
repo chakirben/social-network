@@ -28,7 +28,7 @@ func SetupHandlers() {
 	// http.HandleFunc("/api/profile", AccessMiddleware(auth.ProfileHandler))
 
 	// comments
-	http.HandleFunc("/api/GetComments", Comment.GetCommentsHandler)
+	http.HandleFunc("/api/GetComments",AccessMiddleware( Comment.GetCommentsHandler))
 	http.HandleFunc("/api/SetComment", AccessMiddleware(SessionMiddleware(Comment.SetCommentHandler)))
 
 	// posts

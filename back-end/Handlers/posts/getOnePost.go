@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"time"
 
+	"socialN/Handlers/auth"
 	dataB "socialN/dataBase"
 )
 
@@ -25,13 +26,13 @@ func GetPostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// userID, err := auth.ValidateSession(r, dataB.SocialDB)
-	// if err != nil {
-	// 	http.Error(w, "Invalid session", http.StatusUnauthorized)
-	// 	return
-	// }
+	userID, err := auth.ValidateSession(r, dataB.SocialDB)
+	if err != nil {
+		http.Error(w, "Invalid session", http.StatusUnauthorized)
+		return
+	}
 	var id int
-	var title, content, category, firstName, lastName string
+	var content, firstName, lastName string
 	var image sql.NullString
 	var likeCount, dislikeCount, userReaction sql.NullInt32
 	var createdAt time.Time
@@ -39,7 +40,6 @@ func GetPostHandler(w http.ResponseWriter, r *http.Request) {
 	row := dataB.SocialDB.QueryRow(`
                SELECT
 					p.id,
-					p.title,
 					p.image,
 					p.content, 
 					u.firstName,
@@ -51,9 +51,9 @@ func GetPostHandler(w http.ResponseWriter, r *http.Request) {
 				FROM Posts p
 				JOIN Users u ON p.creatorId = u.id
 				WHERE p.id = ?
-				GROUP BY p.id`, 1, postID)
+				GROUP BY p.id`, userID, postID)
 
-	err = row.Scan(&id , &title,&image, &content, &firstName, &lastName, &likeCount, &dislikeCount, &userReaction, &createdAt)
+	err = row.Scan(&id, &image, &content, &firstName, &lastName, &likeCount, &dislikeCount, &userReaction, &createdAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Post not found", http.StatusNotFound)
@@ -67,10 +67,8 @@ func GetPostHandler(w http.ResponseWriter, r *http.Request) {
 
 	post := map[string]interface{}{
 		"id":            postID,
-		"title":         title,
 		"content":       content,
-		"image":         image,
-		"category":      category,
+		"image":         image.String,
 		"creator":       fmt.Sprintf("%s %s", firstName, lastName),
 		"like_count":    likeCount.Int32,
 		"dislike_count": dislikeCount.Int32,

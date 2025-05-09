@@ -1,4 +1,6 @@
 export default function Comment({ comment }) {
+    console.log(comment);
+    
     const { id, content, image, firstName, lastName, avatar, createdAt } = comment;
     const fullName = `${firstName} ${lastName}`;
 
@@ -9,7 +11,7 @@ export default function Comment({ comment }) {
                     <img
                         className="commentAvatar"
                         src={`http://localhost:8080${avatar}`}
-                        alt={`${fullName}'s avatar`}
+                       
                     />
                 )}
                 <div className="commentHeader">
