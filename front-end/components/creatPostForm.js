@@ -117,7 +117,7 @@ export default function CreatePost() {
 
       <Divider />
 
-      <div className='spB'>
+      <div className='spB pd8'>
         <div className='group'>
           <img
             src="./images/image.svg"
@@ -137,7 +137,7 @@ export default function CreatePost() {
             <option value="almostPrivate">Followers</option>
             <option value="private">Only</option>
           </select>
-          {selectedOption === "only" && (
+          {selectedOption === "private" && (
             <>
               <button className='thiary' onClick={(e) => showUsersList(e)}> {selectedUsers && selectedUsers.length ? `${selectedUsers.length} selected users ✔️` : "+ Select users"}</button>
               {collapsed && (
@@ -165,6 +165,7 @@ export default function CreatePost() {
               )}
             </>
           )}
+        </div>
           <button
             type='submit'
             onClick={handleSubmit}
@@ -173,7 +174,6 @@ export default function CreatePost() {
           >
             Post
           </button>
-        </div>
 
       </div>
       <div className='err'>{err}</div>

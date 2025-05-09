@@ -14,6 +14,7 @@ import (
 	profile "socialN/Handlers/profile"
 	u "socialN/Handlers/users"
 	db "socialN/dataBase"
+	h "socialN/Handlers"
 )
 
 func SetupHandlers() {
@@ -29,7 +30,7 @@ func SetupHandlers() {
 
 	// comments
 	http.HandleFunc("/api/GetComments",AccessMiddleware( Comment.GetCommentsHandler))
-	http.HandleFunc("/api/SetComment", AccessMiddleware(SessionMiddleware(Comment.SetCommentHandler)))
+	http.HandleFunc("/api/SetComment", AccessMiddleware(Comment.SetCommentHandler))
 
 	// posts
 	http.HandleFunc("/api/GetCreatedPosts", AccessMiddleware(SessionMiddleware(Post.GetCreatedPostsHandler)))
@@ -75,6 +76,9 @@ func SetupHandlers() {
 	// profile
 	http.HandleFunc("/api/profile", profile.GetData)
 
+
+	//reactions
+	http.HandleFunc("/api/reaction", AccessMiddleware(h.ReactionHandler))
 	//
 	http.HandleFunc("/api/getUserData", AccessMiddleware(u.GetCurrentUserData))
 	http.HandleFunc("/api/getFollowersList", AccessMiddleware(u.GetFollowersListHandler))

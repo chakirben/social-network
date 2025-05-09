@@ -142,7 +142,7 @@ body {
 }
 
 button {
-
+    height: fit-content;
     background: #007AFF;
     border-radius: 36px;
     padding: 8px 16px;
@@ -155,7 +155,9 @@ button {
 .df {
     display: flex;
 }
-
+.pd8 {
+    padding-top: 12px;
+}
 .sb {
     justify-content: space-between;
 }

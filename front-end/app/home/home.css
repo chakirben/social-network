@@ -6,6 +6,16 @@
     top: 0;
 }
 
+.layout {
+    height: 100vh;
+    display: flex;
+    flex-direction: column; 
+    overflow: hidden; 
+}
+.homeC {
+    align-self: stretch;
+   
+}
 .pic.sm {
     width: 24px;
     height: 24px;
@@ -50,7 +60,11 @@ h5 {
 .ImagePreviewBox {
     width: 600px;
 }
-
+.imagePreview {
+    border-radius: 8px;
+    max-width: 100px;
+    max-height: 100px;
+}
 .preview-img {
     max-width: 100%;
     max-height: 300px;
@@ -67,8 +81,17 @@ h5 {
     font-size: 16px;
     line-height: 15px;
     display: flex;
+    
     color: #FFFFFF;
-
+   
+}
+.postContent {
+    flex-direction: column;
+    flex-grow: 1; 
+    height: 400px;
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
 }
 
 .post {
@@ -98,18 +121,27 @@ h5 {
     border: none;
     outline: none;
 }
-
+.homeP  {
+    max-width: 600px;
+}
+.post {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
 .creatPostForm {
     display: flex;
     flex-direction: column;
-    padding: 0px 40px 16px 40px;
+    padding: 16px 40px 16px 40px;
     width: 100%;
     background: linear-gradient(89.97deg, rgba(255, 255, 255, 0.03) 0.02%, rgba(255, 255, 255, 0) 99.97%);
     border-bottom: rgba(255, 255, 255, 0.137) solid 1px;
 }
+
 .loading {
     padding: 40px;
 }
+
 .icn {
 
     padding: 8px;
@@ -143,6 +175,11 @@ h5 {
     background: none;
 }
 
+.singlePost {
+    max-width: 600px;
+    align-self: stretch;
+}
+
 .Myselect:active {
     color: black;
 }
@@ -154,7 +191,6 @@ h5 {
 
 .spB {
     display: flex;
-    padding: 24px 0px;
     justify-content: space-between;
 
 }
@@ -176,9 +212,11 @@ h5 {
     border-radius: 16px;
     padding: 16px 24px 24px 24px;
 }
+
 .center {
     align-items: center;
 }
+
 .userList {
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -186,13 +224,22 @@ h5 {
     max-height: 300px;
     overflow-y: scroll;
 }
+
 .userList::-webkit-scrollbar {
-    display: none; 
+    display: none;
 }
-.card :hover{
+
+.content::-webkit-scrollbar {
+
+    display: none;
+
+}
+
+.card :hover {
     background: linear-gradient(131.15deg, #ffffff23 0.6%, #ffffff 98.78%);
-    
+
 }
+
 .header {
     padding: 8px 40px;
     position: sticky;
@@ -201,6 +248,72 @@ h5 {
     backdrop-filter: blur(20px);
     border-bottom: rgba(255, 255, 255, 0.137) solid 1px;
 }
+.closeImage {
+    position: absolute;
+    background: #171717de;
+    padding: 4px;
+    border-radius: 6px;
+    right: 4px;
+    top: 4px;
+}
+.imagePrvC {
+    position: relative;
+    width: fit-content;
+}
 .icn1 {
     height: 20px;
+}
+
+.commentInput {
+    position: sticky;
+    bottom: 0px;
+    width: 100%;
+    padding: 16px 40px 0px 40px;
+    position: sticky;
+    top: 0;
+    backdrop-filter: blur(64px);
+    background-color: #171717b9;
+    display: flex;
+    color: white;
+    gap: 16px;
+    border-top: rgba(255, 255, 255, 0.137) solid 1px;
+}
+.reacted {
+    background: rgba(253, 95, 73, 0.08);
+    color: #FD5F49;
+    font-weight: bold;
+}
+
+.reacted svg path {
+    fill: #FD5F49;
+}
+
+.reaction:hover {
+    cursor: pointer;
+    opacity: 90%;
+    border: #FD5F49 1px solid;
+}
+
+.reactions {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 7px;
+}
+.reaction.dislike svg {
+    transform: scaleY(-1);
+  }
+.reaction,
+.comntBtn img {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: max-content;
+    height: 16px;
+    padding: 12px 16px;
+    gap: 6.69px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 20.0816px;
 }

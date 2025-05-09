@@ -40,6 +40,10 @@ func SetCommentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	content := r.FormValue("content")
+	if content=="" {
+		http.Error(w, "Error retrieving content of the comment", http.StatusBadRequest)
+		return
+	}
 	postID := r.FormValue("postId")
 	image, _, err := r.FormFile("image")
 	if err != nil && err != http.ErrMissingFile {

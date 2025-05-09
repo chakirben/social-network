@@ -25,7 +25,7 @@ export default function Home() {
     return (
         <div className="home">
             <SideBar />
-            <div>
+            <div className="homeP">
                 <SearchBar />
                 <CreatePost/>
                 <div className="posts">
