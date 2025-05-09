@@ -23,7 +23,7 @@ type Comment struct {
 }
 
 func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
-	postIDStr := r.URL.Query().Get("postId")
+	postIDStr := r.URL.Query().Get("id")
 	if postIDStr == "" {
 		http.Error(w, "Missing post_id query parameter", http.StatusBadRequest)
 		return
