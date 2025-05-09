@@ -16,6 +16,9 @@
     align-self: stretch;
    
 }
+.homeP {
+   max-width: 600px;
+}
 .pic.sm {
     width: 24px;
     height: 24px;
@@ -121,8 +124,13 @@ h5 {
     border: none;
     outline: none;
 }
-.homeP  {
-    max-width: 600px;
+
+.sc {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overflow-y: auto;
+    overflow-y: scroll;
+    height: 100vh;
 }
 .post {
     display: flex;
@@ -228,7 +236,10 @@ h5 {
 .userList::-webkit-scrollbar {
     display: none;
 }
-
+.sc :-webkit-scrollbar  {
+    display: none;
+    
+}
 .content::-webkit-scrollbar {
 
     display: none;
@@ -279,19 +290,19 @@ h5 {
     border-top: rgba(255, 255, 255, 0.137) solid 1px;
 }
 .reacted {
-    background: rgba(253, 95, 73, 0.08);
-    color: #FD5F49;
+    background: #77B5F8;
+    color: #007AFF;
     font-weight: bold;
 }
 
 .reacted svg path {
-    fill: #FD5F49;
+    fill: #007AFF;
 }
 
 .reaction:hover {
     cursor: pointer;
     opacity: 90%;
-    border: #FD5F49 1px solid;
+    border: #007AFF 1px solid;
 }
 
 .reactions {
