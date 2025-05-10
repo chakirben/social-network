@@ -3,10 +3,13 @@ import SideBar from "@/components/sidebar";
 import { useEffect, useState } from "react";
 import "../../styles/global.css"
 import "../profile/profile.css"
+import Post from "@/components/post";
+import "../home/home.css"
 
 
 export default function Profile() {
     const [profile, setProfile] = useState(null)
+    const [profileData, setData] = useState([])
     const [showOptions, setShowOptions] = useState(false)
 
 
@@ -44,7 +47,7 @@ export default function Profile() {
                     throw new Error(`HTTP error! Status: ${res.status}`);
                 }
                 let data = await res.json()
-                console.log(data);
+                // console.log(data);
 
                 setProfile(data)
             } catch (err) {
@@ -54,41 +57,69 @@ export default function Profile() {
         fetchProfile()
     }, [])
 
+    useEffect(() => {
+        async function fetchPosts() {
+            try {
+                let res = await fetch('http://localhost:8080/api/GetCreatedPosts', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                if (!res.ok) {
+                    throw new Error(`http error here : ${res.status}`)
+                }
+                let posts = await res.json()
+                setData(posts)
+                console.log(posts);
+
+            } catch (error) {
+                console.error("errr", error)
+            }
+        }
+        fetchPosts()
+    }, [])
+
+
 
     return (
         <div className="profileContainer">
             <SideBar />
-            <div className="userProfile">
-                <img className="coverture" src="http://localhost:8080/uploads/coverture.png"></img>
-                <div className="userData">
-                    <div className="imgAndFollow sb">
-                        {profile && <img className="userAvatar" src={`http://localhost:8080/${profile.avatar}`} />}
-                        <div className="follow">
-                            <p><strong className="number">11K</strong> Followers</p>
-                            <p><strong className="number">15K</strong> Following</p>
-                            <span onClick={handle} className="privacyOptions">
-                                privacy {profile?.accountType === "public"
-                                    ? <img className="icon" src="http://localhost:8080/uploads/unlock.svg" />
-                                    : <img className="icon" src="http://localhost:8080/uploads/lock.svg" />}
-                                <div className={`options ${showOptions ? "" : "hidden"}`}>
-                                    <span className="button" onClick={() => handleSelection("private")}> <img className="icon" src="http://localhost:8080/uploads/lock.svg" /> Private</span>
-                                    <span className="button" onClick={() => handleSelection("public")}> <img className="icon" src="http://localhost:8080/uploads/unlock.svg" /> Public</span>
-                                </div>
-                            </span>
+            <div className="df cl">
 
+                <div className="userProfile">
+                    <img className="coverture" src="http://localhost:8080/uploads/coverture.png"></img>
+                    <div className="userdata">
+                        <div className="imgAndFollow sb">
+                            {profile && <img className="userAvatar" src={`http://localhost:8080/${profile.avatar}`} />}
+                            <div className="follow">
+                                <p><strong className="number">11K</strong> Followers</p>
+                                <p><strong className="number">15K</strong> Following</p>
+                                <span onClick={handle} className="privacyOptions">
+                                    privacy {profile?.accountType === "public"
+                                        ? <img className="icon" src="http://localhost:8080/uploads/unlock.svg" />
+                                        : <img className="icon" src="http://localhost:8080/uploads/lock.svg" />}
+                                    <div className={`options ${showOptions ? "" : "hidden"}`}>
+                                        <span className="button" onClick={() => handleSelection("private")}> <img className="icon" src="http://localhost:8080/uploads/lock.svg" /> Private</span>
+                                        <span className="button" onClick={() => handleSelection("public")}> <img className="icon" src="http://localhost:8080/uploads/unlock.svg" /> Public</span>
+                                    </div>
+                                </span>
+
+                            </div>
+                        </div>
+                        <div className="nameAndAbout">
+                            {profile && <h4>{profile.firstName} {profile.lastName}</h4>}
+                            {profile && <p>Hey everyone! I’ve been thinking about starting</p>}
                         </div>
                     </div>
-                    <div className="nameAndAbout">
-                        {profile && <h4>{profile.firstName} {profile.lastName}</h4>}
-                        {profile && <p>Hey everyone! I’ve been thinking about starting</p>}
-                    </div>
-
+                    <hr></hr>
                 </div>
 
-                <hr></hr>
+                {profileData && profileData.map((p, i) => (
+                    <Post key={i} pst={p}/>
+                ))}
             </div>
-
-
         </div>
     )
 }
