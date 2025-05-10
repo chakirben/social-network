@@ -9,15 +9,11 @@ export default function GroupDetails({groupId , back}) {
         useEffect(() =>{
         const fetchposts = async () => {
             try {
-                const rep = await fetch("http://localhost:8080/api/PostsGroups", {
+                const rep = await fetch(`http://localhost:8080/api/PostsGroups?id=${groupId}`, {
                     credentials: "include" ,
-                    method: "POST",
                     headers : {
                         "Content-Type" : "application/json"
                     },
-                    body : JSON.stringify({
-                        groupId : groupId
-                    })
                 })
                 const PostsGroupData  = await rep.json()
                 console.log(PostsGroupData)

@@ -6,7 +6,7 @@ import SideBar from "@/components/sidebar";
 import DataToCreatGroup from "@/components/groups/creatGroup"
 import FetchCreatGroup from "./api_and_funcs/fetch_creat_gp"
 import FetchJoinToGroup from "./api_and_funcs/fetch_req_join_gp"
-import GroupDetails from "./api_and_funcs/get_posts_groups"
+import GroupDetails from "./[id]/page"
 import "./css/groups1.css"
 import "./css/creatgroup.css"
 import "./../home/home.css"
