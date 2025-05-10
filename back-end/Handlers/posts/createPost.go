@@ -16,7 +16,7 @@ type PostResponse struct {
 	Content string `json:"content"`
 	Image   string `json:"image"`
 	Privacy string `json:"privacy"`
-	GroupID *int   `json:"groupId,omitempty"`
+	GroupID int   `json:"groupId,omitempty"`
 	Creator int    `json:"creatorId"`
 }
 
@@ -68,20 +68,21 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Handle groupId if present
 	groupIDStr := r.FormValue("groupId")
-	var groupID *int
+	var groupInt int
 	var result any
-	if privacy =="inGroup " && groupIDStr != "" {
-		groupInt, err := strconv.Atoi(groupIDStr)
+	fmt.Println(groupIDStr , privacy )
+	if privacy =="inGroup" && groupIDStr != "" {
+
+		groupInt, err = strconv.Atoi(groupIDStr)
 		if err != nil {
 			http.Error(w, "Invalid group ID", http.StatusBadRequest)
 			return
 		}
-		groupID = &groupInt
 
 		result, err = dataB.SocialDB.Exec(`
 			INSERT INTO Posts (content, image, privacy, groupId, creatorId)
 			VALUES (?, ?, ?, ?, ?)`,
-			content, imagePath, privacy, groupID, userID,
+			content, imagePath, privacy, groupInt, userID,
 		)
 	} else {
 		result, err = dataB.SocialDB.Exec(`
@@ -122,7 +123,7 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		Image:   imagePath,
 		Privacy: privacy,
 		Creator: userID,
-		GroupID: groupID,
+		GroupID: groupInt,
 	}
 
 	w.Header().Set("Content-Type", "application/json")

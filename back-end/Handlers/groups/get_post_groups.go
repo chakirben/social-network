@@ -17,7 +17,6 @@ type IdOFgroup struct {
 
 type Posts struct {
 	Id           int `json:"id"`
-	Title        string `json:"title"`
 	Image        sql.NullString `json:"image"`
 	Content      string `json:"content"`
 	FirstName    string `json:"creator"`
@@ -52,7 +51,6 @@ func GetPostGroups(w http.ResponseWriter, r *http.Request) {
 	}
 	query := `SELECT 
 	      P.id,
-		  P.title,
 		  P.content,
 		  P.image,
 		  U.firstName,
@@ -74,7 +72,7 @@ func GetPostGroups(w http.ResponseWriter, r *http.Request) {
 	var allposts []Posts
 	for rows.Next() {
 		var P Posts
-		if err := rows.Scan(&P.Id, &P.Title, &P.Content, &P.Image,
+		if err := rows.Scan(&P.Id, &P.Content, &P.Image,
 		    &P.FirstName,&P.LastName, &P.CreatedAt); err != nil {
 			fmt.Println("error to get posts groups", err)
 			http.Error(w, "error to get posts groups", http.StatusInternalServerError)

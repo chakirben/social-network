@@ -39,10 +39,6 @@ export default function GroupDetails({groupId , back}) {
         return <div>Loading posts of the group...</div>;
     }
 
-    if (PostsGroup.length === 0) {
-        return <div>There is no posts of this group Creat a one...</div>;
-    }
-
     return (
         <div>
             <CreatPostInGroup gpid={groupId}/>

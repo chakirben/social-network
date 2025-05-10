@@ -29,9 +29,9 @@ export default function CreatPostInGroup( { gpid } ) {
     e.preventDefault();
     const file = inputRef.current.files[0];
     const formData = new FormData();
-    formData.append('text', text);
-    formData.append('audience', selectedOption);
-    formData.append('groupid', gpid)
+    formData.append('content', text);
+    formData.append('privacy', "inGroup");
+    formData.append('groupId', gpid)
     if (file) {
       formData.append('image', file);
     }
@@ -88,7 +88,6 @@ export default function CreatPostInGroup( { gpid } ) {
             onChange={handleFileChange}
             style={{ display: 'none' }}
           />
-         <div>post group</div> 
         </div>
         <button type='submit'>post</button>
       </div>
