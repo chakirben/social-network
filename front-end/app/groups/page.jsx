@@ -9,6 +9,7 @@ import FetchJoinToGroup from "./api_and_funcs/fetch_req_join_gp"
 import GroupDetails from "./api_and_funcs/get_posts_groups"
 import "./css/groups1.css"
 import "./css/creatgroup.css"
+import "./../home/home.css"
 
 export default function JustMyGroupsPage() {
   const [showCreateGroup, setShowCreateGroup] = useState(false)

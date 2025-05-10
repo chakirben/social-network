@@ -16,16 +16,16 @@ type IdOFgroup struct {
 }
 
 type Posts struct {
-	Id           int
-	Title        string
-	Image        sql.NullString
-	Content      string
-	FirstName    string
-	LastName     string
-	LikeCount    sql.NullInt32
-	DislikeCount sql.NullInt32
-	UserReaction sql.NullInt32
-	CreatedAt    time.Time
+	Id           int `json:"id"`
+	Title        string `json:"title"`
+	Image        sql.NullString `json:"image"`
+	Content      string `json:"content"`
+	FirstName    string `json:"creator"`
+	LastName     string `json:"groupid"`
+	LikeCount    sql.NullInt32 `json:"likeCount"`
+	DislikeCount sql.NullInt32 `json:"dislikeCount"`
+	UserReaction sql.NullInt32 `json:"userReaction"`
+	CreatedAt    time.Time `json:"createdAt"`
 }
 
 func GetPostGroups(w http.ResponseWriter, r *http.Request) {

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Post from "@/components/post"
+import CreatPostInGroup from "@/components/groups/creat_postgroup"
 export default function GroupDetails({groupId , back}) {
     const [PostsGroup , setPostsGroup] = useState([])
     const [isLoading, setIsLoading] = useState(true);
@@ -19,7 +20,8 @@ export default function GroupDetails({groupId , back}) {
                     })
                 })
                 const PostsGroupData  = await rep.json()
-                console.log(PostsGroupData);
+                console.log(PostsGroupData)
+
                 
                 setPostsGroup(PostsGroupData || [])
             } catch {
@@ -38,13 +40,15 @@ export default function GroupDetails({groupId , back}) {
     }
 
     if (PostsGroup.length === 0) {
-        return <div>There is no posts of this group...</div>;
+        return <div>There is no posts of this group Creat a one...</div>;
     }
 
     return (
         <div>
-            hiiiiiiiiiiii
-            <button onClick={back}>helooo</button>
+            <CreatPostInGroup gpid={groupId}/>
+            {PostsGroup.map((pst)=> (
+                <Post key={pst.id} pst={pst} />
+            ))}
         </div>
     )
 }   
