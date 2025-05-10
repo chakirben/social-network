@@ -12,7 +12,7 @@ import (
 //and auther function handle if the followed accept follow request of follower
 
 type FollowInfo struct {
-	Follower string `json:"follower"`
+	Follower_session string `json:"follower_session"`
 	Followed string `json:"followed"`
 }
 
@@ -43,7 +43,7 @@ func HandleFollow(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	row2, errq2 := dataB.SocialDB.Query(`SELECT id FROM Users WHERE nickname=?`, followInfo.Follower)
+	row2, errq2 := dataB.SocialDB.Query(`SELECT userId FROM Sessions WHERE id=?`, followInfo.Follower_session)
 	if errq2 != nil {
 		fmt.Println("Error get ID:", errq2)
 		return
@@ -91,7 +91,7 @@ func HandleFollow(w http.ResponseWriter, r *http.Request) {
 		response = map[string]interface{}{
 			"status":      "waiting for followed accept",
 			"followed": followInfo.Followed,
-			"follower": followInfo.Follower,
+			"follower": followInfo.Follower_session,
 		}
 	}
 
@@ -137,7 +137,7 @@ func AcceptFollowRequest(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	row2, errq2 := dataB.SocialDB.Query(`SELECT id FROM Users WHERE nickname=?`, followInfo.Follower)
+	row2, errq2 := dataB.SocialDB.Query(`SELECT userId FROM Users WHERE id=?`, followInfo.Follower_session)
 	if errq2 != nil {
 		fmt.Println("Error get ID:", errq2)
 		return

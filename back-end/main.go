@@ -10,6 +10,7 @@ import (
 	db "socialN/dataBase"
 	followers "socialN/Handlers/followers"
 	profile "socialN/Handlers/profile"
+	users "socialN/Handlers/users"
 )
 
 func setupHandlers() {
@@ -47,11 +48,14 @@ func setupHandlers() {
 
 
 	//follows
-	http.HandleFunc("/api/follow", followers.HandleFollow)
+	http.HandleFunc("/api/follow", AccessMiddleware(followers.HandleFollow))
 	http.HandleFunc("/api/acceptFollowRequest", followers.AcceptFollowRequest)
 
 	//profile
-	http.HandleFunc("/api/profile", profile.GetData)
+	http.HandleFunc("/api/profile", AccessMiddleware(profile.GetData))
+
+	//users
+	http.HandleFunc("/api/users", AccessMiddleware(users.GetUsers))
 }
 
 func main() {
@@ -77,6 +81,7 @@ func SessionMiddleware(fun http.HandlerFunc) http.HandlerFunc {
 		fun(w, r)
 	}
 }
+
 
 func AccessMiddleware(fun http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

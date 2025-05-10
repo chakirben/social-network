@@ -32,11 +32,16 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if name.Nickname == "" || name.Nickname == "anonymous" {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
 	//get account type of the user
 	var accountType string
 	err = dataB.SocialDB.QueryRow("SELECT accountType FROM Users WHERE nickname=?", name.Nickname).Scan(&accountType)
 	if err != nil {
-		fmt.Println("Error :", err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -44,9 +49,22 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 	var user_id int
 	err = dataB.SocialDB.QueryRow("SELECT id FROM Users WHERE nickname=?", name.Nickname).Scan(&user_id)
 	if err != nil {
-		fmt.Println("Error :", err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+
+	//get personal data of profile owner
+	var personal_data []interface{}
+	var data FollowData
+	err = dataB.SocialDB.QueryRow("SELECT nickname, firstName, lastName, avatar, about FROM Users WHERE id=?", user_id).Scan(&data.Nickname, &data.Firstname, &data.Lastname, &data.Avatar, &data.About)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	personal_data = append(personal_data, data)
+
+
 
 	//count how much followers and followeds
 	var followers_count int
@@ -67,7 +85,7 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 		//get followers
 		rows, errf := dataB.SocialDB.Query(`SELECT followerId FROM Followers WHERE followedId=?`, user_id)
 		if errf != nil {
-			fmt.Println("Error :", errf)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		defer rows.Close()
@@ -81,7 +99,7 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 
 			err = dataB.SocialDB.QueryRow("SELECT nickname, firstName, lastName, avatar, about FROM Users WHERE id=?", follower_id).Scan(&followerData.Nickname, &followerData.Firstname, &followerData.Lastname, &followerData.Avatar, &followerData.About)
 			if err != nil {
-				fmt.Println("Error :", err)
+				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
 
@@ -91,7 +109,7 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 		//get followeds
 		rowsd, errd := dataB.SocialDB.Query(`SELECT followedId FROM Followers WHERE followerId=?`, user_id)
 		if errd != nil {
-			fmt.Println("Error :", errd)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		defer rowsd.Close()
@@ -105,7 +123,7 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 
 			err = dataB.SocialDB.QueryRow("SELECT nickname, firstName, lastName, avatar, about FROM Users WHERE id=?", followed_id).Scan(&followedData.Nickname, &followedData.Firstname, &followedData.Lastname, &followedData.Avatar, &followedData.About)
 			if err != nil {
-				fmt.Println("Error :", err)
+				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
 
@@ -132,8 +150,7 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 		`
 		rows, err := dataB.SocialDB.Query(query, user_id, user_id)
 		if err != nil {
-			log.Println("Error fetching created posts:", err)
-			http.Error(w, "Error fetching created posts", http.StatusInternalServerError)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		defer rows.Close()
@@ -170,6 +187,7 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 
 	//send response
 	response := map[string]interface{}{
+		"personal_data": personal_data,
 		"followers_count": followers_count,
 		"followed_count":  followed_count,
 		"followers_data":  followers,

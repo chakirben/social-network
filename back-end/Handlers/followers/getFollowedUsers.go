@@ -30,13 +30,21 @@ func GetFollowedUsers(loggedUserID int) []int {
 
 
 
+type userData struct {
+	ID int
+	Nickname  string
+	Firstname string
+	Lastname  string
+	Avatar    interface{}
+	About     interface{}
+}
 
-func GetUnfollowedUsers(loggedUserID int, followedUsers []int) []string {
-	var unfollowedUsersNames []string
+func GetUnfollowedUsers(loggedUserID int, followedUsers []int) []interface{} {
+	var unfollowedUsersNames []interface{}
 
 	if len(followedUsers) == 0 {
 		// If no one is followed, return all users
-		rows, err := dataB.SocialDB.Query(`SELECT nickname FROM Users WHERE id!=?`, loggedUserID)
+		rows, err := dataB.SocialDB.Query(`SELECT id, nickname, firstName, lastName, avatar, about FROM Users WHERE id!=?`, loggedUserID)
 		if err != nil {
 			fmt.Println("Error:", err)
 			return unfollowedUsersNames
@@ -44,11 +52,11 @@ func GetUnfollowedUsers(loggedUserID int, followedUsers []int) []string {
 		defer rows.Close()
 
 		for rows.Next() {
-			var nickname string
-			if err := rows.Scan(&nickname); err != nil {
+			var data userData
+			if err := rows.Scan(&data.ID ,&data.Nickname, &data.Firstname, &data.Lastname, &data.Avatar, &data.About); err != nil {
 				fmt.Println("Error:", err)
 			}
-			unfollowedUsersNames = append(unfollowedUsersNames, nickname)
+			unfollowedUsersNames = append(unfollowedUsersNames, data)
 		}
 		return unfollowedUsersNames
 	}
@@ -64,7 +72,7 @@ func GetUnfollowedUsers(loggedUserID int, followedUsers []int) []string {
 	args[len(args)-1] = loggedUserID
 
 	query := fmt.Sprintf(
-		`SELECT nickname FROM Users WHERE id NOT IN (%s)`,
+		`SELECT id, nickname, firstName, lastName, avatar, about FROM Users WHERE id NOT IN (%s)`,
 		strings.Join(placeholders, ","),
 	)
 
@@ -76,11 +84,12 @@ func GetUnfollowedUsers(loggedUserID int, followedUsers []int) []string {
 	defer rows.Close()
 
 	for rows.Next() {
-		var nickname string
-		if err := rows.Scan(&nickname); err != nil {
+		var data userData
+		if err := rows.Scan(&data.ID ,&data.Nickname, &data.Firstname, &data.Lastname, &data.Avatar, &data.About); err != nil {
 			fmt.Println("Error:", err)
+			continue
 		}
-		unfollowedUsersNames = append(unfollowedUsersNames, nickname)
+		unfollowedUsersNames = append(unfollowedUsersNames, data)
 	}
 
 	return unfollowedUsersNames
