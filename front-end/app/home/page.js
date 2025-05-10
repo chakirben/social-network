@@ -12,7 +12,7 @@ export default function Home() {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/GetPosts", { credentials: "include" }); 
+                const response = await fetch("http://localhost:8080/api/GetPosts", { credentials: "include" });
                 const data = await response.json();
                 setPosts(data);
             } catch (error) {
@@ -25,17 +25,19 @@ export default function Home() {
     return (
         <div className="home">
             <SideBar />
-            <div>
+            <div className="homeP">
                 <SearchBar />
-                <CreatePost/>
-                <div className="posts">
-                    {posts.length === 0 ? (
-                        <div>Loading posts...</div>
-                    ) : (
-                        posts.map((post) => (
-                            <Post key={post.id || post._id} pst={post} />
-                        ))
-                    )}
+                <div className="sc">
+                    <CreatePost />
+                    <div className="posts">
+                        {posts.length === 0 ? (
+                            <div className="loading">Loading posts...</div>
+                        ) : (
+                            posts.map((post) => (
+                                <Post key={post.id || post._id} pst={post} />
+                            ))
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

@@ -7,11 +7,13 @@ import (
 	"socialN/Handlers/auth"
 	"socialN/Handlers/followers"
 
+	h "socialN/Handlers"
 	Comment "socialN/Handlers/comments"
 	event "socialN/Handlers/events"
 	Group "socialN/Handlers/groups"
 	Post "socialN/Handlers/posts"
-
+	profile "socialN/Handlers/profile"
+	u "socialN/Handlers/users"
 	db "socialN/dataBase"
 )
 
@@ -24,18 +26,18 @@ func SetupHandlers() {
 	http.HandleFunc("/api/register", AccessMiddleware(auth.RegisterUser))
 	http.HandleFunc("/api/login", AccessMiddleware(auth.LogUser))
 	http.HandleFunc("/api/logout", AccessMiddleware(auth.LogoutHandler))
-	http.HandleFunc("/api/profile", AccessMiddleware(auth.ProfileHandler))
+	// http.HandleFunc("/api/profile", AccessMiddleware(auth.ProfileHandler))
 
 	// comments
-	http.HandleFunc("/api/GetComments", Comment.GetCommentsHandler)
-	http.HandleFunc("/api/SetComment", AccessMiddleware(SessionMiddleware(Comment.SetCommentHandler)))
+	http.HandleFunc("/api/GetComments", AccessMiddleware(Comment.GetCommentsHandler))
+	http.HandleFunc("/api/SetComment", AccessMiddleware(Comment.SetCommentHandler))
 
 	// posts
 	http.HandleFunc("/api/GetCreatedPosts", AccessMiddleware(SessionMiddleware(Post.GetCreatedPostsHandler)))
 	http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.GetPostHandler)))
-	// http.HandleFunc("/api/GetOnePost", AccessMiddleware((Post.CreatePostHandler)))
-	// http.HandleFunc("/api/CreatePost", Post.SetPostHandler)
-	http.HandleFunc("/api/GetPosts", AccessMiddleware(SessionMiddleware(Post.GetPostsHandler)))
+	// http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.CreatePostHandler)))
+	http.HandleFunc("/api/CreatePost", AccessMiddleware(Post.CreatePostHandler))
+	http.HandleFunc("/api/GetPosts", AccessMiddleware(Post.GetPostsHandler))
 	// http.HandleFunc("/api/GetLikedPosts", Post.GetLikedPostsHandler)
 
 	// Events
@@ -60,14 +62,26 @@ func SetupHandlers() {
 	// http.HandleFunc("/api/Like", handlers.ReactionHandler)
 	http.HandleFunc("/api/Profile", auth.ProfileHandler)
 	// http.HandleFunc("/api/CheckAuth", AccessMiddleware(auth.CheckAuth))
+	// http.HandleFunc("/api/Profile", auth.ProfileHandler)
+	http.HandleFunc("/api/CheckAuth", auth.CheckAuth)
 
 	// this just for testing you can delete it
 	// the function has the id of loggedin user as a parameter, you can get it from session
 	fmt.Print("Followers of loggedin user")
 	fmt.Println(followers.GetFollowedUsers(2))
 
-	fmt.Print("Auther users without followers one ")
-	fmt.Println(followers.GetUnfollowedUsers(2, followers.GetFollowedUsers(2)))
+	// follows
+	http.HandleFunc("/api/follow", followers.HandleFollow)
+	http.HandleFunc("/api/acceptFollowRequest", followers.AcceptFollowRequest)
+
+	// profile
+	http.HandleFunc("/api/profile", profile.GetData)
+
+	// reactions
+	http.HandleFunc("/api/reaction", AccessMiddleware(h.ReactionHandler))
+	//
+	http.HandleFunc("/api/getUserData", AccessMiddleware(u.GetCurrentUserData))
+	http.HandleFunc("/api/getFollowersList", AccessMiddleware(u.GetFollowersListHandler))
 }
 
 func SessionMiddleware(fun http.HandlerFunc) http.HandlerFunc {
@@ -88,7 +102,7 @@ func AccessMiddleware(fun http.HandlerFunc) http.HandlerFunc {
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Cookie")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		if r.Method == "OPTIONS" {
-			w.WriteHeader(http.StatusOK)
+			// w.WriteHeader(http.StatusOK)
 			return
 		}
 		fun(w, r)
