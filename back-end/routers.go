@@ -1,4 +1,4 @@
-package routers
+package main
 
 import (
 	"fmt"
@@ -33,9 +33,9 @@ func SetupHandlers() {
 	// posts
 	http.HandleFunc("/api/GetCreatedPosts", AccessMiddleware(SessionMiddleware(Post.GetCreatedPostsHandler)))
 	http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.GetPostHandler)))
-	//http.HandleFunc("/api/GetOnePost", AccessMiddleware((Post.CreatePostHandler)))
+	// http.HandleFunc("/api/GetOnePost", AccessMiddleware((Post.CreatePostHandler)))
 	// http.HandleFunc("/api/CreatePost", Post.SetPostHandler)
-	http.HandleFunc("/api/GetPosts", AccessMiddleware( SessionMiddleware(Post.GetPostsHandler)))
+	http.HandleFunc("/api/GetPosts", AccessMiddleware(SessionMiddleware(Post.GetPostsHandler)))
 	// http.HandleFunc("/api/GetLikedPosts", Post.GetLikedPostsHandler)
 
 	// Events

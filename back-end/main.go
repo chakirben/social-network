@@ -7,14 +7,12 @@ import (
 	"os"
 	"os/signal"
 
-	"socialN/cmd/routers"
-
 	db "socialN/dataBase"
 )
 
 func main() {
 	db.DbInit()
-	routers.SetupHandlers()
+    SetupHandlers()
 
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, os.Interrupt)
@@ -28,7 +26,7 @@ func main() {
 	}()
 
 	<-sig
-	
+
 	err := db.SocialDB.Close()
 	if err != nil {
 		log.Println("\nerror to close database", err)
