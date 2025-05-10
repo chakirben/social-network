@@ -90,7 +90,7 @@ export default function Profile() {
 
                 <div className="userProfile">
                     <img className="coverture" src="http://localhost:8080/uploads/coverture.png"></img>
-                    <div className="userdata">
+                    <div className="userdata gp12">
                         <div className="imgAndFollow sb">
                             {profile && <img className="userAvatar" src={`http://localhost:8080/${profile.avatar}`} />}
                             <div className="follow">
@@ -110,14 +110,19 @@ export default function Profile() {
                         </div>
                         <div className="nameAndAbout">
                             {profile && <h4>{profile.firstName} {profile.lastName}</h4>}
-                            {profile && <p>Hey everyone! I’ve been thinking about starting</p>}
+                                {profile && <p>Hey everyone! I’ve been thinking about starting</p>}
+                            <div className="df gp6">
+                                {profile &&<img src="http://localhost:8080/uploads/dateOfBirth.svg"/>}
+                                {profile && <p>{new Date(profile.dateOfBirth).toLocaleDateString('fr-FR')}</p>}
+                            </div>
+
                         </div>
                     </div>
                     <hr></hr>
                 </div>
 
                 {profileData && profileData.map((p, i) => (
-                    <Post key={i} pst={p}/>
+                    <Post key={i} pst={p} />
                 ))}
             </div>
         </div>

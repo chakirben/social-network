@@ -32,7 +32,7 @@ func SetupHandlers() {
 	http.HandleFunc("/api/SetComment", AccessMiddleware(SessionMiddleware(Comment.SetCommentHandler)))
 
 	// posts
-	http.HandleFunc("/api/GetCreatedPosts", AccessMiddleware(SessionMiddleware(Post.GetCreatedPostsHandler)))
+	http.HandleFunc("/api/GetCreatedPosts", AccessMiddleware(Post.GetCreatedPostsHandler))
 	http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.GetPostHandler)))
 	// http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.CreatePostHandler)))
 	http.HandleFunc("/api/CreatePost", AccessMiddleware(Post.CreatePostHandler))
