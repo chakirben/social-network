@@ -7,6 +7,35 @@ import "../profile/profile.css"
 
 export default function Profile() {
     const [profile, setProfile] = useState(null)
+    const [showOptions, setShowOptions] = useState(false)
+
+
+    const handle = () => {
+        setShowOptions(!showOptions)
+    }
+
+    const handleSelection = async (choise) => {
+        setShowOptions(false)
+        try {
+            let res = await fetch('http://localhost:8080/api/updatePrivacy', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ accountType: choise })
+            })
+            if (!res.ok) {
+                throw new Error(`http error here : ${res.status}`)
+            }
+            setProfile(prev => ({ ...prev, accountType: choise }))
+            console.log("choise", choise);
+        } catch (error) {
+            console.error("Failed to update privacy:", error)
+        }
+    }
+
+
     useEffect(() => {
         async function fetchProfile() {
             try {
@@ -25,6 +54,7 @@ export default function Profile() {
         fetchProfile()
     }, [])
 
+
     return (
         <div className="profileContainer">
             <SideBar />
@@ -36,6 +66,16 @@ export default function Profile() {
                         <div className="follow">
                             <p><strong className="number">11K</strong> Followers</p>
                             <p><strong className="number">15K</strong> Following</p>
+                            <span onClick={handle} className="privacyOptions">
+                                privacy {profile?.accountType === "public"
+                                    ? <img className="icon" src="http://localhost:8080/uploads/unlock.svg" />
+                                    : <img className="icon" src="http://localhost:8080/uploads/lock.svg" />}
+                                <div className={`options ${showOptions ? "" : "hidden"}`}>
+                                    <span className="button" onClick={() => handleSelection("private")}> <img className="icon" src="http://localhost:8080/uploads/lock.svg" /> Private</span>
+                                    <span className="button" onClick={() => handleSelection("public")}> <img className="icon" src="http://localhost:8080/uploads/unlock.svg" /> Public</span>
+                                </div>
+                            </span>
+
                         </div>
                     </div>
                     <div className="nameAndAbout">
@@ -45,22 +85,10 @@ export default function Profile() {
 
                 </div>
 
-            <hr></hr>
+                <hr></hr>
             </div>
 
 
         </div>
     )
 }
-
-{/* {profile ? (
-    <div className="profileCard">
-        <p><strong>Nickname:</strong> {profile.nickname}</p>
-        <p><strong>First Name:</strong> {profile.firstName}</p>
-        <p><strong>Last Name:</strong> {profile.lastName}</p>
-        <p><strong>Email:</strong> {profile.email}</p>
-        <p><strong>Age:</strong> {profile.age}</p>
-    </div>
-) : (
-    <p>Loading...</p>
-)} */}
