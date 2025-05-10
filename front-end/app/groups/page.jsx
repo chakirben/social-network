@@ -6,7 +6,7 @@ import SideBar from "@/components/sidebar";
 import DataToCreatGroup from "@/components/groups/creatGroup"
 import FetchCreatGroup from "./api_and_funcs/fetch_creat_gp"
 import FetchJoinToGroup from "./api_and_funcs/fetch_req_join_gp"
-import GroupDetails from "./[id]/page"
+import DisplyGroup from "./[id]/page"
 import "./css/groups1.css"
 import "./css/creatgroup.css"
 import "./../home/home.css"
@@ -35,6 +35,8 @@ export default function JustMyGroupsPage() {
 
   // For the button to VIEW group...
   const viewGroup = (groupId) => {
+    console.log("hawa", groupId);
+    
     setViewingGroup(groupId)
   }
 
@@ -48,7 +50,7 @@ export default function JustMyGroupsPage() {
         {!viewingGroup ? (
           <MyGroupsPage onJoin={Jointogroup} onView={viewGroup} />
         ) : (
-          <GroupDetails groupId={viewingGroup} back={ () => setViewingGroup(null)} />
+          <DisplyGroup groupId={viewingGroup} back={ () => setViewingGroup(null)} />
         )}
 
       </div>

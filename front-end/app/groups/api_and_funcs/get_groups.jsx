@@ -12,7 +12,7 @@ export default function MyGroupsPage({ onJoin, onView }) {
         const fetchGroups = async () => {
             try {
                 const [myGroupsRes, notMyGroupsRes] = await Promise.all([
-                    fetch("http://localhost:8080/api/MyGroups", { credentials: "include" }),
+                    fetch("http://localhost:8080/api/MyGroups", { credentials: "include"  }),
                     fetch("http://localhost:8080/api/NotMyGroups", { credentials: "include" }),
                 ]);
                 const myGroupsData = await myGroupsRes.json();

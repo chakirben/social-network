@@ -1,4 +1,7 @@
-export default function MyGroup({ group , onView }) {
+import Link from "next/link";
+export default function MyGroup({ group, onView }) {
+    console.log(group.Id);
+
     return (
         <div className="groupc">
             <div className="groupContent">
@@ -12,7 +15,7 @@ export default function MyGroup({ group , onView }) {
                 </div>
             </div>
             <div className="buttonjoin">
-                <button id="buttontoseegroup" onClick={() => onView(group.Id)}>View</button>
+                <Link href={`/groups/${group.Id}`} onClick={() => onView(group.Id)}>View</Link>
             </div>
         </div>
     );
