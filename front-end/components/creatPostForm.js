@@ -8,7 +8,7 @@ export default function CreatePost() {
   const [imageSrc, setImageSrc] = useState(null);
   const [selectedOption, setSelectedOption] = useState('public');
   const [text, setText] = useState('');
-
+  const [collaped, setcollapsed] = useState('');
   const handleImageClick = () => {
     inputRef.current.click();
   };
@@ -26,6 +26,8 @@ export default function CreatePost() {
 
   const handleChange = (e) => {
     setSelectedOption(e.target.value);
+    console.log(e.target.value);
+
   };
 
   const handleSubmit = async (e) => {
@@ -43,7 +45,7 @@ export default function CreatePost() {
         method: 'POST',
         body: formData,
         credentials: 'include',
-      });
+      }); 16
       const result = await res.json();
       console.log('Post submitted:', result);
       setText('');
@@ -54,9 +56,18 @@ export default function CreatePost() {
       console.error('Post failed:', err);
     }
   };
+  const showUsersList = () => {
+    console.log("dkhm");
+    if (collaped) {
 
+      setcollapsed(false)
+    } else {
+      setcollapsed(true)
+
+    }
+  }
   return (
-    <form className="creatPostForm" onSubmit={handleSubmit}>
+    <form className="creatPostForm" onSubmit={handleSubmit} onClick={showUsersList}>
       <div className="searchBar">
         <img src="/user-icon.png" />
         <input
@@ -89,12 +100,23 @@ export default function CreatePost() {
           />
           <select className="Myselect" value={selectedOption} onChange={handleChange}>
             <option value="public">Public</option>
-            <option value="Followers">Followers</option>
-            <option value="Only">Only</option>
+            <option value="followers">Followers</option>
+            <option value="only">Only</option>
           </select>
+          {selectedOption === "only" ? (
+            <>
+              <button className='thiary' onClick={showUsersList}>+ Select users</button>
+              {collaped ? (
+                <div className='userList'>
+                  <h4>Select users</h4>
+                </div>
+              ) : ""}
+              {/* <div className='selectUsers'> button here</div> */}
+            </>
+          ) : ""}
+          <button type='submit'>post</button>
         </div>
-        <button type='submit'>post</button>
-      </div>
+        </div>
     </form>
   );
 }

@@ -11,12 +11,14 @@
     height: 24px;
     border-radius: 40px;
 }
+
 .posts {
     display: flex;
     flex-direction: column;
     width: fit-content;
 
 }
+
 .postContent {
     display: flex;
     flex-direction: column;
@@ -44,16 +46,19 @@ h5 {
     color: rgba(255, 255, 255, 0.411);
     font-weight: lighter;
 }
+
 .ImagePreviewBox {
-   width: 600px;
+    width: 600px;
 }
+
 .preview-img {
     max-width: 100%;
     width: fit-content;
-    border:  rgba(255, 255, 255, 0.137) solid 1px;
+    border: rgba(255, 255, 255, 0.137) solid 1px;
     border-radius: 16px;
     margin-bottom: 16px;
 }
+
 .content {
     font-family: 'Inter', "sans-serif";
     font-style: normal;
@@ -113,19 +118,42 @@ h5 {
     padding: 8px 0;
     gap: 8px;
 }
+
+.thiary {
+    background: none;
+    color: white;
+    border: #ffffff4b 1px dashed;
+}
+
 .Myselect option {
     background: none;
 }
+
 .Myselect:active {
     color: black;
 }
+
 .group {
     display: flex;
     gap: 16px;
 }
+
 .spB {
     display: flex;
     padding: 24px 0px;
     justify-content: space-between;
 
+}
+
+.userList {
+    width: 400px;
+    height: 400px;
+    border: 1px solid white;
+    position: absolute;
+    z-index: 2;
+    background: linear-gradient(131.15deg, #171717 0.6%, #000000 98.78%);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0px 32px 40px rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 24px;
 }
