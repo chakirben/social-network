@@ -5,6 +5,7 @@ import "../../styles/global.css"
 import "../profile/profile.css"
 import Post from "@/components/post";
 import "../home/home.css"
+import Header from "@/components/header";
 
 
 export default function Profile() {
@@ -86,8 +87,8 @@ export default function Profile() {
     return (
         <div className="profileContainer">
             <SideBar />
-            <div className="df cl">
-
+            <div className="classname df cl">
+                <Header />
                 <div className="userProfile">
                     <img className="coverture" src="http://localhost:8080/uploads/coverture.png"></img>
                     <div className="userdata gp12">
@@ -110,9 +111,9 @@ export default function Profile() {
                         </div>
                         <div className="nameAndAbout">
                             {profile && <h4>{profile.firstName} {profile.lastName}</h4>}
-                                {profile && <p>Hey everyone! I’ve been thinking about starting</p>}
+                            {profile && <p>Hey everyone! I’ve been thinking about starting</p>}
                             <div className="df gp6">
-                                {profile &&<img src="http://localhost:8080/uploads/dateOfBirth.svg"/>}
+                                {profile && <img src="http://localhost:8080/uploads/dateOfBirth.svg" />}
                                 {profile && <p>{new Date(profile.dateOfBirth).toLocaleDateString('fr-FR')}</p>}
                             </div>
 

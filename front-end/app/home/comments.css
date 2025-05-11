@@ -1,3 +1,7 @@
+.content{
+    display: flex;
+    flex-direction: column;
+}
 .comment {
     color: #fff;
     display: flex;
