@@ -1,11 +1,13 @@
 'use client';
 
-export default function FollowButton({ session, name }) {
+export default function FollowButton({ session, id }) {
+  
+
   const handleFollow = async (e) => {
     e.preventDefault();
 
     console.log("this is the session :", session);
-    console.log("this is the name of the follower :", name);
+    console.log("this is the id of the follower :", id);
 
     const response = await fetch('http://localhost:8080/api/follow', {
       method: 'POST',
@@ -14,7 +16,7 @@ export default function FollowButton({ session, name }) {
       },
       body: JSON.stringify({
         follower_session: session,
-        followed: name,
+        followed_id: id,
       }),
     });
 

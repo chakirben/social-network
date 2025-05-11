@@ -4,18 +4,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	dataB "socialN/dataBase"
 )
 
-//there is two function: one function if someone follow auther it handle if the profile is public or private
-//and auther function handle if the followed accept follow request of follower
-
+// there is two function: one function if someone follow auther it handle if the profile is public or private
+// and auther function handle if the followed accept follow request of follower
 type FollowInfo struct {
 	Follower_session string `json:"follower_session"`
-	Followed string `json:"followed"`
+	Followed_id      string `json:"followed_id"`
 }
-
 
 func HandleFollow(w http.ResponseWriter, r *http.Request) {
 	var followInfo FollowInfo
@@ -26,21 +25,13 @@ func HandleFollow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	followedid, err := strconv.Atoi(followInfo.Followed_id)
 	var followerid int
-	var followedid int
 	var followedtype string
-	row, errq := dataB.SocialDB.Query(`SELECT id, accountType FROM Users WHERE nickname=?`, followInfo.Followed)
-	if errq != nil {
+	errq := dataB.SocialDB.QueryRow(`SELECT accountType FROM Users WHERE id=?`, followedid).Scan(&followedtype)
+	if errq != nil || err != nil {
 		fmt.Println("Error get ID:", errq)
 		return
-	}
-	defer row.Close()
-	for row.Next() {
-		errs := row.Scan(&followedid, &followedtype)
-		if errs != nil {
-			fmt.Println("Error Scan:", err)
-			return
-		}
 	}
 
 	row2, errq2 := dataB.SocialDB.Query(`SELECT userId FROM Sessions WHERE id=?`, followInfo.Follower_session)
@@ -56,8 +47,6 @@ func HandleFollow(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-
-
 
 	var response map[string]interface{}
 
@@ -82,23 +71,20 @@ func HandleFollow(w http.ResponseWriter, r *http.Request) {
 			followedText = "unfollowed successfuly"
 		}
 
-
 		response = map[string]interface{}{
-			"status": followedText,
+			"status":   followedText,
 			"followed": followed,
 		}
 	} else if followedtype == "private" {
 		response = map[string]interface{}{
-			"status":      "waiting for followed accept",
-			"followed": followInfo.Followed,
+			"status":   "waiting for followed accept",
+			"followed": followInfo.Followed_id,
 			"follower": followInfo.Follower_session,
 		}
 	}
 
-	
 	json.NewEncoder(w).Encode(response)
 }
-
 
 func checkAlreadyFollow(followerID, followedID int) bool {
 	rows, err := dataB.SocialDB.Query(`SELECT 1 FROM Followers WHERE followerId = ? AND followedId = ?`, followerID, followedID)
@@ -108,9 +94,6 @@ func checkAlreadyFollow(followerID, followedID int) bool {
 	defer rows.Close()
 	return rows.Next()
 }
-
-
-
 
 func AcceptFollowRequest(w http.ResponseWriter, r *http.Request) {
 	var followInfo FollowInfo
@@ -122,33 +105,12 @@ func AcceptFollowRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var followerid int
-	var followedid int
-	row, errq := dataB.SocialDB.Query(`SELECT id FROM Users WHERE nickname=?`, followInfo.Followed)
-	if errq != nil {
-		fmt.Println("Error get ID:", errq)
-		return
-	}
-	defer row.Close()
-	for row.Next() {
-		errs := row.Scan(&followedid)
-		if errs != nil {
-			fmt.Println("Error Scan:", err)
-			return
-		}
-	}
+	followedid, err := strconv.Atoi(followInfo.Followed_id)
 
-	row2, errq2 := dataB.SocialDB.Query(`SELECT userId FROM Users WHERE id=?`, followInfo.Follower_session)
-	if errq2 != nil {
+	errq2 := dataB.SocialDB.QueryRow(`SELECT userId FROM Sessions WHERE id=?`, followInfo.Follower_session).Scan(&followerid)
+	if errq2 != nil || err != nil {
 		fmt.Println("Error get ID:", errq2)
 		return
-	}
-	defer row2.Close()
-	for row2.Next() {
-		errs2 := row2.Scan(&followerid)
-		if errs2 != nil {
-			fmt.Println("Error Scan:", errs2)
-			return
-		}
 	}
 
 	_, exec_err := dataB.SocialDB.Exec(`INSERT INTO Followers (followerId, followedId) VALUES (?,?)`, followerid, followedid)
@@ -158,7 +120,7 @@ func AcceptFollowRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := map[string]interface{}{
-		"status":      "followed successfuly",
+		"status": "followed successfuly",
 	}
 	json.NewEncoder(w).Encode(response)
 }

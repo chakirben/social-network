@@ -11,8 +11,8 @@ import (
 	dataB "socialN/dataBase"
 )
 
-type Name struct {
-	Nickname string `json:"nickname"`
+type ProfileOwner struct {
+	ID string `json:"id"`
 }
 
 type FollowData struct {
@@ -24,34 +24,25 @@ type FollowData struct {
 }
 
 func GetData(w http.ResponseWriter, r *http.Request) {
-	var name Name
+	var profile_owner ProfileOwner
 	//decode the request into the struct
-	err := json.NewDecoder(r.Body).Decode(&name)
+	err := json.NewDecoder(r.Body).Decode(&profile_owner)
 	if err != nil {
 		fmt.Println("Invalid Json:", err)
 		return
 	}
 
-	if name.Nickname == "" || name.Nickname == "anonymous" {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
 
 	//get account type of the user
 	var accountType string
-	err = dataB.SocialDB.QueryRow("SELECT accountType FROM Users WHERE nickname=?", name.Nickname).Scan(&accountType)
+	err = dataB.SocialDB.QueryRow("SELECT accountType FROM Users WHERE id=?", profile_owner.ID).Scan(&accountType)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	//get the user id from the username
-	var user_id int
-	err = dataB.SocialDB.QueryRow("SELECT id FROM Users WHERE nickname=?", name.Nickname).Scan(&user_id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	var user_id = profile_owner.ID
 
 
 	//get personal data of profile owner
