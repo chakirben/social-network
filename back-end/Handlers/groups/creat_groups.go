@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"socialN/Handlers/auth"
 	dataB "socialN/dataBase"
 )
 
@@ -20,19 +21,19 @@ func Creat_Groups(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid Method", http.StatusMethodNotAllowed)
 		return
 	}
-	// userID, err := auth.ValidateSession(r, dataB.SocialDB)
-	// if err != nil {
-	// 	http.Error(w, "Invalid session :(", http.StatusUnauthorized)
-	// 	return
-	// }
+	userID, err := auth.ValidateSession(r, dataB.SocialDB)
+	if err != nil {
+		http.Error(w, "Invalid session :(", http.StatusUnauthorized)
+		return
+	}
 
 	var group Grouppp
 
 	fmt.Println(r.Body)
-	err := json.NewDecoder(r.Body).Decode(&group)
+	err = json.NewDecoder(r.Body).Decode(&group)
 	if err != nil {
 		fmt.Println("hiiii yosf")
-		
+
 		http.Error(w, "Invalid JSON :(", http.StatusBadRequest)
 		return
 	}
@@ -46,7 +47,7 @@ func Creat_Groups(w http.ResponseWriter, r *http.Request) {
 	  INSERT INTO groups (title , description , adminId) VALUES (?,?,?);
 	`
 
-	ress, err := dataB.SocialDB.Exec(query, group.Title, group.Description, 1)
+	ress, err := dataB.SocialDB.Exec(query, group.Title, group.Description, userID)
 	if err != nil {
 		log.Println("Error to insert groups in db :(", err)
 		http.Error(w, "Failed to create group. Please try again later. :(", http.StatusInternalServerError)
@@ -62,7 +63,7 @@ func Creat_Groups(w http.ResponseWriter, r *http.Request) {
 	queryy := `
 		INSERT INTO GroupsMembers (memberId, groupId) VALUES (?, ?)
 	`
-	_, err = dataB.SocialDB.Exec(queryy, 1, lastIDgroup)
+	_, err = dataB.SocialDB.Exec(queryy, userID, lastIDgroup)
 	if err != nil {
 		log.Println("Error to insert members in db :(", err)
 		http.Error(w, "Failed to create group. Please try again later. :(", http.StatusInternalServerError)

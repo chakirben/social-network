@@ -1,13 +1,15 @@
-// app/layout.js (or app/mainLayout.js)
-import SideBar from "@/components/sidebar";
-import "../styles/global.css"
+import { UserProvider } from "@/components/userContext";
+import "../styles/global.css";
+
 export default function Main({ children }) {
     return (
         <html lang="en">
             <body>
-                <div className="layout">
-                    <main className="mainContent">{children}</main>
-                </div>
+                <UserProvider>
+                    <div className="layout">
+                        <main className="mainContent">{children}</main>
+                    </div>
+                </UserProvider>
             </body>
         </html>
     );

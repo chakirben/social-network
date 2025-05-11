@@ -1,16 +1,43 @@
 'use client'
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Divider from './divider';
-
+import UserData from "@/components/UserData";
+import { useUser } from './userContext';
 export default function CreatePost() {
   const inputRef = useRef(null);
   const [imageSrc, setImageSrc] = useState(null);
   const [selectedOption, setSelectedOption] = useState('public');
   const [text, setText] = useState('');
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [collapsed, setCollapsed] = useState(false);
+  const [err , setErr]  =  useState("")
+  const { user, setUser } = useUser();
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/getFollowersList", { credentials: "include" });
+        const data = await response.json();
+        setUsers(data);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    };
+    fetchUsers();
+  }, []);
 
   const handleImageClick = () => {
     inputRef.current.click();
+  };
+
+  const toggleUser = (id) => {
+
+    setSelectedUsers((prev) =>
+      prev.includes(id) ? prev.filter((uid) => uid !== id) : [...prev, id]
+    );
+    console.log("selected users: ", selectedUsers);
+
   };
 
   const handleFileChange = (e) => {
@@ -26,14 +53,22 @@ export default function CreatePost() {
 
   const handleChange = (e) => {
     setSelectedOption(e.target.value);
+    console.log(e.target.value);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (selectedOption === "only"  && !selectedUsers.length){
+      setErr("please select at least 1 user")
+      return
+    }
     const file = inputRef.current.files[0];
     const formData = new FormData();
-    formData.append('text', text);
-    formData.append('audience', selectedOption);
+    formData.append('content', text);
+    formData.append('privacy', selectedOption);
+    selectedUsers.forEach(id => {
+      formData.append('selectedUsers', id);
+    });
     if (file) {
       formData.append('image', file);
     }
@@ -44,24 +79,33 @@ export default function CreatePost() {
         body: formData,
         credentials: 'include',
       });
-      const result = await res.json();
-      console.log('Post submitted:', result);
-      setText('');
-      setSelectedOption('public');
-      setImageSrc(null);
-      inputRef.current.value = null;
+      if (res.ok) {
+
+        console.log('Post submitted:', res);
+        setText('');
+        setSelectedUsers(null)
+        setErr(null)
+        setSelectedOption('public');
+        setImageSrc(null);
+        inputRef.current.value = null;
+      }
     } catch (err) {
       console.error('Post failed:', err);
     }
   };
 
+  const showUsersList = (e) => {
+    e.preventDefault();
+    setCollapsed(!collapsed);
+  };
+
   return (
-    <form className="creatPostForm" onSubmit={handleSubmit}>
-      <div className="searchBar">
-        <img src="/user-icon.png" />
+    <form className="creatPostForm">
+      <div className="df center">
+        <img className="avatar" src={user ? `http://localhost:8080/${user.avatar}`: ""} />
         <input
           className="searchInput"
-          placeholder="What’s happening ?"
+          placeholder="What's happening ?"
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
@@ -79,6 +123,7 @@ export default function CreatePost() {
             src="./images/image.svg"
             className="upload-icon"
             onClick={handleImageClick}
+            alt="Upload"
           />
           <input
             type="file"
@@ -89,12 +134,49 @@ export default function CreatePost() {
           />
           <select className="Myselect" value={selectedOption} onChange={handleChange}>
             <option value="public">Public</option>
-            <option value="Followers">Followers</option>
-            <option value="Only">Only</option>
+            <option value="almostPrivate">Followers</option>
+            <option value="private">Only</option>
           </select>
+          {selectedOption === "only" && (
+            <>
+              <button className='thiary' onClick={(e) => showUsersList(e)}> {selectedUsers && selectedUsers.length ? `${selectedUsers.length} selected users ✔️` : "+ Select users"}</button>
+              {collapsed && (
+                <div className='FriendList'>
+                  <div className='df sb center'>
+                    <h4>Select users</h4>
+                    <img src='/images/close.svg' className='icn' alt="Close" onClick={(e) => { e.preventDefault(); setCollapsed(false); }} />
+                  </div>
+                  <div className='userList df cl gp12 start'>
+                    {!users? <div className='df gp12' >no follow</div> : 
+                    users.map((user) => (
+                      <div key={user.id} className='df gp12'>
+                        <input
+                          type="checkbox"
+                          checked={selectedUsers.includes(user.id)}
+                          onChange={() => toggleUser(user.id)}
+                          className="checkBox"
+                        />
+                        <UserData usr={user} />
+                      </div>
+                    )) }
+                  </div>
+                  <button onClick={(e) => { e.preventDefault(); setCollapsed(false); }}>Select</button>
+                </div>
+              )}
+            </>
+          )}
+          <button
+            type='submit'
+            onClick={handleSubmit}
+            disabled={!text.trim()}
+            className={!text.trim() ? 'button-disabled' : 'button-active'}
+          >
+            Post
+          </button>
         </div>
-        <button type='submit'>post</button>
+
       </div>
+      <div className='err'>{err}</div>
     </form>
   );
 }

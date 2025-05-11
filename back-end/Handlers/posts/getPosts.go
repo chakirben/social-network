@@ -34,7 +34,6 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 	baseQuery := `
 		SELECT
 				p.id,
-				p.title,
 				p.image,
 				p.content, 
 				u.firstName,
@@ -47,6 +46,7 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 			JOIN Users u ON p.creatorId = u.id
 			WHERE 
 				(
+					(p.creatorId = ?) OR
 					(p.groupId IS NOT NULL AND EXISTS (
 						SELECT 1 FROM GroupsMembers WHERE groupId = p.groupId AND memberId = ?
 					))
@@ -62,7 +62,7 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 			LIMIT 10 OFFSET ?;
 
 	`
-	rows, err := dataB.SocialDB.Query(baseQuery, 1, 1, 1, 1, offsetInt)
+	rows, err := dataB.SocialDB.Query(baseQuery, 1,1, 1, 1, 1, offsetInt)
 	if err != nil {
 		log.Println("Error fetching posts:", err)
 		fmt.Println(err)
@@ -75,7 +75,6 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var (
 			id           int
-			title        string
 			image        sql.NullString
 			content      string
 			firstName    string
@@ -85,7 +84,7 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 			userReaction sql.NullInt32
 			createdAt    time.Time
 		)
-		err := rows.Scan(&id, &title, &image, &content, &firstName, &lastName, &likeCount, &dislikeCount, &userReaction, &createdAt)
+		err := rows.Scan(&id, &image, &content, &firstName, &lastName, &likeCount, &dislikeCount, &userReaction, &createdAt)
 		if err != nil {
 			fmt.Println(err)
 			log.Println("Error scanning row:", err)
@@ -94,7 +93,6 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 
 		post := map[string]interface{}{
 			"id":            id,
-			"title":         title,
 			"image":         image.String,
 			"content":       content,
 			"creator":       fmt.Sprintf("%s %s", firstName, lastName),

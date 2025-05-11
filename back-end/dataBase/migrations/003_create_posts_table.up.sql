@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS Posts (
     title TEXT NOT NULL,
     content TEXT NOT NULL,
     image TEXT,
-    privacy TEXT CHECK (privacy IN ('public', 'almostPrivate', 'private') OR privacy IS NULL),
+    privacy TEXT CHECK (privacy IN ('public', 'almostPrivate', 'private' , 'inGroup') OR privacy IS NULL),
     groupId INTEGER REFERENCES groups(id) ON DELETE CASCADE,
     creatorId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP

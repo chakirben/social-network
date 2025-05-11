@@ -1,3 +1,114 @@
+<<<<<<< HEAD
 .profileContainer{
     display: flex;
 }
+=======
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+.profileContainer {
+    display: flex;
+    /* background-color: #383838; */
+}
+
+.userProfile {
+    display: flex;
+    flex-direction: column;
+}
+
+.userdata {
+    padding: 24px;
+    margin-top: -32px;
+
+}
+.nameAndAbout{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.nameAndAbout h4,
+.nameAndAbout p {
+    margin: 0px;
+    /* padding: 6px; */
+}
+
+.userAvatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-top: -60px;
+
+}
+
+.imgAndFollow {
+    width: 100%;
+    display: flex;
+
+}
+
+.number {
+    font-size: 18px;
+}
+
+p {
+    font-size: 12px;
+    font-family: inter;
+}
+
+.follow {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+hr {
+    width: 100%;
+    border: none;
+    height: 1px;
+    background-color: #ffffff1f;
+}
+
+.options.hidden {
+    display: none;
+}
+
+.privacyOptions {
+    position: relative;
+    background-color: #222222;
+    padding: 8px;
+    border-radius: 10px;
+    height: fit-content;
+    cursor: pointer;
+}
+
+.options {
+    position: absolute;
+    top: 108%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.button{
+    display: flex;
+    gap: 3px;
+    background-color: #6b6b6b;
+    padding: 8px;
+    border-radius: 8px;
+}
+.button:hover {
+    background-color: #4b4b4b;
+}
+.icon{
+    width: 15px;
+}
+
+/* .settingIcon{
+    width: 18px;
+}
+
+.setPrivecy{
+    background-color: aliceblue;
+    width: 50px;
+    height: 50px;
+    position: absolute;
+} */
+>>>>>>> 22b9beb24dc9864741918e30fbbb94986bdd1d25

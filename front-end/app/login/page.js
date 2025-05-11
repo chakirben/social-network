@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import '../../public/styles/register.css';
+import '../register/register.css';
 
 export default function Login() {
   const router = useRouter();

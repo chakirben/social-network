@@ -4,6 +4,11 @@ body {
     background-color: black;
     color: white;
     font-family: 'Arial', sans-serif;
+
+}
+
+body::-webkit-scrollbar {
+    display: none;
 }
 
 input,
@@ -54,11 +59,12 @@ body {
     display: flex;
     position: sticky;
     top: 0;
+    display: flex;
     flex-direction: column;
     gap: 20px;
     width: 200px;
     border-right: 1px solid rgba(255, 255, 255, 0.123);
-    height: 94vh;
+    height: 100vh;
     padding: 24px;
 }
 
@@ -144,4 +150,41 @@ button {
     font-weight: 800;
     outline: none;
     border: none;
+}
+
+.df {
+    display: flex;
+}
+
+.sb {
+    justify-content: space-between;
+}
+.avatar {
+    height: 24px;
+}
+.cl {
+    flex-direction: column;
+}
+
+.button-disabled {
+    background-color: #d3d3d3;
+    color: rgb(0, 0, 0);
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.err {
+    color: rgb(207, 59, 59);
+}
+.gp6 {
+    gap: 6px;
+}
+
+.gp12 {
+    gap: 12px;
+}
+
+.checkBox {
+    accent-color: white;
+    border: none;
+    outline: none;
 }

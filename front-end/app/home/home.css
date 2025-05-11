@@ -11,12 +11,14 @@
     height: 24px;
     border-radius: 40px;
 }
+
 .posts {
     display: flex;
     flex-direction: column;
     width: fit-content;
 
 }
+
 .postContent {
     display: flex;
     flex-direction: column;
@@ -44,16 +46,20 @@ h5 {
     color: rgba(255, 255, 255, 0.411);
     font-weight: lighter;
 }
+
 .ImagePreviewBox {
-   width: 600px;
+    width: 600px;
 }
+
 .preview-img {
     max-width: 100%;
+    max-height: 300px;
     width: fit-content;
-    border:  rgba(255, 255, 255, 0.137) solid 1px;
+    border: rgba(255, 255, 255, 0.137) solid 1px;
     border-radius: 16px;
     margin-bottom: 16px;
 }
+
 .content {
     font-family: 'Inter', "sans-serif";
     font-style: normal;
@@ -96,10 +102,23 @@ h5 {
 .creatPostForm {
     display: flex;
     flex-direction: column;
-    padding: 0px 40px;
+    padding: 0px 40px 16px 40px;
     width: 100%;
     background: linear-gradient(89.97deg, rgba(255, 255, 255, 0.03) 0.02%, rgba(255, 255, 255, 0) 99.97%);
     border-bottom: rgba(255, 255, 255, 0.137) solid 1px;
+}
+.loading {
+    padding: 40px;
+}
+.icn {
+
+    padding: 8px;
+}
+
+.icn:hover {
+    background-color: rgba(255, 255, 255, 0.11);
+    border-radius: 18px;
+    cursor: pointer;
 }
 
 .Myselect {
@@ -113,19 +132,75 @@ h5 {
     padding: 8px 0;
     gap: 8px;
 }
+
+.thiary {
+    background: none;
+    color: white;
+    border: #ffffff4b 1px dashed;
+}
+
 .Myselect option {
     background: none;
 }
+
 .Myselect:active {
     color: black;
 }
+
 .group {
     display: flex;
     gap: 16px;
 }
+
 .spB {
     display: flex;
     padding: 24px 0px;
     justify-content: space-between;
 
+}
+
+.FriendList {
+    width: 200px;
+    height: fit-content;
+    max-height: 400px;
+    top: 120px;
+    border: 1px solid white;
+    position: absolute;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: linear-gradient(131.15deg, #171717 0.6%, #000000 98.78%);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0px 32px 40px rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 16px 24px 24px 24px;
+}
+.center {
+    align-items: center;
+}
+.userList {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overflow-y: auto;
+    max-height: 300px;
+    overflow-y: scroll;
+}
+.userList::-webkit-scrollbar {
+    display: none; 
+}
+.card :hover{
+    background: linear-gradient(131.15deg, #ffffff23 0.6%, #ffffff 98.78%);
+    
+}
+.header {
+    padding: 8px 40px;
+    position: sticky;
+    top: 0px;
+    gap: 16px;
+    backdrop-filter: blur(20px);
+    border-bottom: rgba(255, 255, 255, 0.137) solid 1px;
+}
+.icn1 {
+    height: 20px;
 }
