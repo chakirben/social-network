@@ -33,7 +33,7 @@ func SetupHandlers() {
 	http.HandleFunc("/api/SetComment", AccessMiddleware(Comment.SetCommentHandler))
 
 	// posts
-	http.HandleFunc("/api/GetCreatedPosts", AccessMiddleware(SessionMiddleware(Post.GetCreatedPostsHandler)))
+	http.HandleFunc("/api/GetCreatedPosts", AccessMiddleware(Post.GetCreatedPostsHandler))
 	http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.GetPostHandler)))
 	// http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.CreatePostHandler)))
 	http.HandleFunc("/api/CreatePost", AccessMiddleware(Post.CreatePostHandler))
@@ -59,7 +59,7 @@ func SetupHandlers() {
 	// http.HandleFunc("/api/GetOnlineUsers", chat.GetOnlineUsersHandler)
 
 	// http.HandleFunc("/api/Like", handlers.ReactionHandler)
-	http.HandleFunc("/api/Profile", auth.ProfileHandler)
+	http.HandleFunc("/api/Profile", AccessMiddleware(auth.ProfileHandler))
 	// http.HandleFunc("/api/CheckAuth", AccessMiddleware(auth.CheckAuth))
 	// http.HandleFunc("/api/Profile", auth.ProfileHandler)
 	http.HandleFunc("/api/CheckAuth", auth.CheckAuth)
@@ -81,6 +81,7 @@ func SetupHandlers() {
 	http.HandleFunc("/api/reaction", AccessMiddleware(h.ReactionHandler))
 	//
 	http.HandleFunc("/api/getUserData", AccessMiddleware(u.GetCurrentUserData))
+	http.HandleFunc("/api/updatePrivacy", AccessMiddleware(u.SetPrivacy))
 	http.HandleFunc("/api/getFollowersList", AccessMiddleware(u.GetFollowersListHandler))
 }
 
@@ -102,7 +103,7 @@ func AccessMiddleware(fun http.HandlerFunc) http.HandlerFunc {
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Cookie")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		if r.Method == "OPTIONS" {
-			// w.WriteHeader(http.StatusOK)
+			w.WriteHeader(http.StatusOK)
 			return
 		}
 		fun(w, r)
