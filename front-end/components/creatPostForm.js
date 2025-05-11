@@ -65,7 +65,7 @@ export default function CreatePost() {
     const file = inputRef.current.files[0];
     const formData = new FormData();
     formData.append('content', text);
-    formData.append('privacy', selectedOption);
+    formData.append('privacy', "inGroup");
     selectedUsers.forEach(id => {
       formData.append('selectedUsers', id);
     });
@@ -80,7 +80,6 @@ export default function CreatePost() {
         credentials: 'include',
       });
       if (res.ok) {
-
         console.log('Post submitted:', res);
         setText('');
         setSelectedUsers(null)

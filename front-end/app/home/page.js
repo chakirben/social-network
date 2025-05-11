@@ -8,7 +8,6 @@ import SearchBar from "@/components/searchBar";
 import CreatePost from "@/components/creatPostForm";
 export default function Home() {
     const [posts, setPosts] = useState([]);
-
     useEffect(() => {
         const fetchPosts = async () => {
             try {
