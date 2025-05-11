@@ -36,7 +36,7 @@ export default function JustMyGroupsPage() {
   // For the button to VIEW group...
   const viewGroup = (groupId) => {
     console.log("hawa", groupId);
-    
+
     setViewingGroup(groupId)
   }
 
@@ -47,11 +47,11 @@ export default function JustMyGroupsPage() {
         <Groupbar onCreateGroup={handleBTNCreateGroup} />
         {showCreateGroup && <DataToCreatGroup onCreate={creatgroupGroup} onSkip={() => setShowCreateGroup(false)} />}
 
-        {!viewingGroup ? (
-          <MyGroupsPage onJoin={Jointogroup} onView={viewGroup} />
-        ) : (
-          <DisplyGroup groupId={viewingGroup} back={ () => setViewingGroup(null)} />
+        <MyGroupsPage onJoin={Jointogroup} onView={viewGroup} />
+        {viewingGroup && (
+          <DisplyGroup groupId={viewingGroup} back={() => setViewingGroup(null)} />
         )}
+
 
       </div>
     </div>

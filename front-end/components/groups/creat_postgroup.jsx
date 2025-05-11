@@ -52,10 +52,7 @@ export default function CreatPostInGroup( { gpid } ) {
       console.error('Post failed:', err);
     }
   };
-
-  console.log( "hiiiiiiiiii" ,{gpid});
   
-
   return (
     <form className="creatPostForm" onSubmit={handleSubmit}>
       <div className="searchBar">
