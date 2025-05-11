@@ -50,7 +50,7 @@ func GetCreatedPostsHandler(w http.ResponseWriter, r *http.Request) {
 		var content, firstName, lastName string
 		var image *string
 		var avatar *string
-		var likeCount, dislikeCount, userReaction *string
+		var likeCount, dislikeCount, userReaction int
 		var createdAt time.Time
 
 		err := rows.Scan(&postID, &content, &image, &avatar, &firstName, &lastName, &likeCount, &dislikeCount, &userReaction, &createdAt)
@@ -60,15 +60,15 @@ func GetCreatedPostsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		post := map[string]interface{}{
-			"id":           postID,
-			"content":      content,
-			"image":        image,
-			"creator":      fmt.Sprintf("%s %s", firstName, lastName),
-			"avatar":       avatar,
-			"likeCount":    likeCount,
-			"dislikeCount": dislikeCount,
-			"userReaction": userReaction,
-			"createdAt":    createdAt,
+			"id":            postID,
+			"content":       content,
+			"image":         image,
+			"creator":       fmt.Sprintf("%s %s", firstName, lastName),
+			"avatar":        avatar,
+			"like_count":    likeCount,
+			"dislike_count": dislikeCount,
+			"user_reaction":  userReaction,
+			"createdAt":     createdAt,
 		}
 
 		posts = append(posts, post)

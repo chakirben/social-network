@@ -18,6 +18,9 @@
 }
 .homeP {
    max-width: 600px;
+   display: flex;
+   flex-direction: column;
+   gap: 24px;
 }
 .pic.sm {
     width: 24px;
@@ -327,4 +330,63 @@ h5 {
     gap: 6.69px;
     background: rgba(255, 255, 255, 0.08);
     border-radius: 20.0816px;
+}
+.userCard {
+    display: flex;
+    align-items: center;
+    width: 600px;
+    padding: 15px;
+    border-bottom: 1px solid #222;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+.userCard:hover {
+    background-color: #121212;
+}
+.usersList {
+    display: flex;
+    flex-direction: column;
+}
+.userAvatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.userAvatar.fallback {
+    background-color: #333;
+}
+
+.userInfo {
+    flex: 1;
+}
+
+.userName {
+    color: #fff;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.followerCount {
+    color: #888;
+    font-size: 14px;
+    margin-top: 2px;
+}
+
+.followedBtn {
+    background-color: #fff;
+    color: #000;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.followedBtn:hover {
+    background-color: #e2e2e2;
 }

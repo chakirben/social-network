@@ -1,6 +1,7 @@
 import { useRouter } from 'next/navigation';
 // import Reaction from './reaction';
 import ReactionGroup from './reactionGroup';
+import { timePassed } from '@/public/utils/timePassed';
 
 export default function Post({ pst }) {
     const router = useRouter();
@@ -10,7 +11,7 @@ export default function Post({ pst }) {
                 <div className="userData">
                     {pst?.avatar ? <img className="pic sm" src={`http://localhost:8080/${pst?.avatar}`} ></img> : ""}
                     <h4>{pst?.creator}</h4>
-                    <h5>{pst?.created_at}</h5>
+                    <h5>{"• " +timePassed(pst?.created_at)}</h5>
                 </div>
                 <div className="content">{pst?.content}</div>
                 {pst.image && <img className="pic nrml" src={`http://localhost:8080/${pst?.image}`}></img>}

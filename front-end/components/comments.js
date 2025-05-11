@@ -1,3 +1,4 @@
+import { timePassed } from "@/public/utils/timePassed";
 import ReactionGroup from "./reactionGroup";
 
 export default function Comment({ comment }) {
@@ -21,7 +22,7 @@ export default function Comment({ comment }) {
                         <div className="authorAndTime">
                             <p className="commentAuthor">{fullName}</p>
                             <time className="commentTime" dateTime={createdAt}>
-                                {"• " + new Date(createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                {"• " + timePassed(createdAt)}
                             </time>
                         </div>
                         <p className="commentContent">{content}</p>

@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"socialN/Handlers/auth"
 	dataB "socialN/dataBase"
 )
 
@@ -40,7 +41,7 @@ func SetCommentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	content := r.FormValue("content")
-	if content=="" {
+	if content == "" {
 		http.Error(w, "Error retrieving content of the comment", http.StatusBadRequest)
 		return
 	}
@@ -53,7 +54,6 @@ func SetCommentHandler(w http.ResponseWriter, r *http.Request) {
 
 	var imagePath string
 	if image != nil {
-
 		imagePath, err = SaveAvatar(image)
 		if err != nil {
 			http.Error(w, "Failed to save image", http.StatusInternalServerError)
@@ -61,16 +61,17 @@ func SetCommentHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// userID, err := auth.ValidateSession(r, dataB.SocialDB)
-	// if err != nil {
-	// 	http.Error(w, "Unauthorized", http.StatusUnauthorized)
-	// 	return
-	// }
+	userID, err := auth.ValidateSession(r, dataB.SocialDB)
+	if err != nil {
+		fmt.Println("---------------------bilalallalalal")
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 	fmt.Println(postID, content, imagePath)
 	result, err := dataB.SocialDB.Exec(`
 		INSERT INTO Comments (postId, userId, content, image)
 		VALUES (?, ?, ?, ?)`,
-		postID, 1, content, imagePath,
+		postID, userID, content, imagePath,
 	)
 	if err != nil {
 		fmt.Println(err)

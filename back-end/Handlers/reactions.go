@@ -34,6 +34,7 @@ func ReactionHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid item type", http.StatusBadRequest)
 		return
 	}
+	fmt.Println(itemId, itemType , reaction_type)
 	if itemType == "post" {
 		_, err := database.SocialDB.Exec(`INSERT INTO postReactions (postId, userId, reactionType) VALUES (?, ?, ?)
 		ON CONFLICT(postId, userId) 
@@ -44,7 +45,6 @@ func ReactionHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		w.WriteHeader(http.StatusCreated)
 		w.Write([]byte("Reaction added successfully"))
-
 	}
 	if itemType == "comment" {
 		_, err := database.SocialDB.Exec(`INSERT INTO commentReactions (commentId, userId, reactionType) VALUES (?, ?, ?)
