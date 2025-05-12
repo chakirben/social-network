@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react"
 import Post from "@/components/post"
 import CreatPostInGroup from "@/components/groups/creat_postgroup"
-import GroupInfo from "@/components/groups/group_info"
-export default function GroupDetails({ groupId , title }) {    
+
+export default function GroupDetails({ groupId, title }) {
     const [PostsGroup, setPostsGroup] = useState([])
     const [isLoading, setIsLoading] = useState(true)
 
@@ -17,8 +17,8 @@ export default function GroupDetails({ groupId , title }) {
                 })
                 const PostsGroupData = await rep.json()
                 setPostsGroup(PostsGroupData || [])
-                
-            } catch (error){
+
+            } catch (error) {
                 console.error("Error fetching groups:", error);
             } finally {
                 setIsLoading(false);
@@ -35,7 +35,10 @@ export default function GroupDetails({ groupId , title }) {
 
     return (
         <div>
-            <GroupInfo title={title}/>
+            <div className="GPTitle">
+                <img src="./../images/group.svg" />
+                <p>{title}</p>
+            </div>
             <CreatPostInGroup gpid={groupId} />
             {PostsGroup.map((pst) => (
                 <Post key={pst.id} pst={pst} />

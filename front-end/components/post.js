@@ -5,6 +5,8 @@ import { timePassed } from '@/public/utils/timePassed';
 
 export default function Post({ pst }) {
     const router = useRouter();
+    console.log(pst);
+    
     return (
         <div className="post" onClick={() => router.push(`/post/${pst.id}`)}>
             <div className="content df cl gp12">

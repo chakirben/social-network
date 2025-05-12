@@ -36,7 +36,10 @@ export default function JustMyGroupsPage() {
     <div className="home">
       <SideBar />
       <div className="divallGroups">
+
         <Groupbar onCreateGroup={handleBTNCreateGroup} />
+
+
         {showCreateGroup && <DataToCreatGroup onCreate={creatgroupGroup} onSkip={() => setShowCreateGroup(false)} />}
         <MyGroupsPage onJoin={Jointogroup} />
       </div>

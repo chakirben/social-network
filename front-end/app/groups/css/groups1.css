@@ -3,6 +3,31 @@
     display: flex;
 }
 
+/* scroll */
+.groupsmn {
+  height: 95vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+}
+.groupsmn::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .groupsmn::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  .groupsmn::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+  
+  .groupsmn::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+/*end scroll*/
 /*about groups*/
 .groups {
     width: fit-content;
@@ -48,9 +73,10 @@
     align-items: center;
     background-color: #2e7d32;
     border-radius: 8px;
-    padding: 2px 5px;
+
     cursor: pointer;
     transition: background-color 0.3s ease;
+   
 }
 
 .rightgroupbar:hover {
@@ -77,13 +103,12 @@
 .groupc {
     width: 100%;
     display: flex;
-    justify-content: space-between;
-    padding: 16px 40px;
+    padding: 12px 30px;
     font-family: Arial, Helvetica, sans-serif;
     border-bottom: 1px solid rgb(73, 73, 73);
 }
 .groupc .groupContent {
-    width: 80%;
+    width: 75%;
 }
 
 .groupc .groupContent h3 {
@@ -121,4 +146,13 @@
     padding: 0 40px;
     font-size: 25px;
     font-weight: bold;
+    padding: 5px 5px ;
+    justify-content: center;
+    display: flex;
+    border-bottom: 1px solid rgb(73, 73, 73);
+}
+
+.GPTitle img {
+    width: 20px;
+    margin-right: 10px;
 }

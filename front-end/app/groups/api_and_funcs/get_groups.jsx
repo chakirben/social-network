@@ -10,6 +10,7 @@ export default function MyGroupsPage({ onJoin }) {
 
     useEffect(() => {
         const fetchGroups = async () => {
+            setIsLoading(true)
             try {
                 const [myGroupsRes, notMyGroupsRes] = await Promise.all([
                     fetch("http://localhost:8080/api/MyGroups", { credentials: "include"  }),
