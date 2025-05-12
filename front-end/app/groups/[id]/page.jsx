@@ -5,10 +5,16 @@ import "./../css/groups1.css"
 import "./../css/creatgroup.css"
 import "./../../home/home.css"
 import { use } from "react";
+import { useSearchParams } from 'next/navigation';
+
 export default function DisplyGroup({ params }) {
     const { id } = use(params);
-    const { title } = use(params);
-    console.log("params here -->",params);
+  
+    const searchParams = useSearchParams();
+    const title = searchParams.get('title');
+
+    console.log("here ---->>>>", id , title);
+    
     
 
     return (

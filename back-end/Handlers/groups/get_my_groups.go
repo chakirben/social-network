@@ -14,6 +14,7 @@ type MyGroups struct {
 	Title        string
 	Description  string
 	MembersCount int
+	PostCont int
 }
 
 // Get all groups that the user has joined...
@@ -28,10 +29,12 @@ func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 		g.id, 
 		g.title, 
 		g.description, 
-		COUNT(gm2.memberId) AS members_count
+		COUNT(gm2.memberId) AS members_count,
+		COUNT(P.groupId) AS CP
 	FROM Groups g
 	JOIN GroupsMembers gm1 ON g.id = gm1.groupId
 	LEFT JOIN GroupsMembers gm2 ON g.id = gm2.groupId
+	LEFT JOIN Posts P ON P.groupId = g.id
 	WHERE gm1.memberId = ?
 	GROUP BY g.id, g.title, g.description
 	`
@@ -47,7 +50,7 @@ func GetMyGroups(w http.ResponseWriter, r *http.Request) {
 	var groups []MyGroups
 	for rows.Next() {
 		var g MyGroups
-		if err := rows.Scan(&g.Id, &g.Title, &g.Description, &g.MembersCount); err != nil {
+		if err := rows.Scan(&g.Id, &g.Title, &g.Description, &g.MembersCount, &g.PostCont); err != nil {
 			fmt.Println("error to get groups", err)
 			http.Error(w, "error to get groups", http.StatusInternalServerError)
 			return

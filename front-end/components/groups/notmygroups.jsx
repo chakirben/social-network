@@ -8,7 +8,7 @@ export default function NoMyGroup({ group , onJoin }) {
                     <img src="./images/users.svg"></img>
                     <p>{group.MembersCount}Users</p>
                     <img src="./images/postgroups.svg"></img>
-                    <p> 2 Posts</p>
+                    <p> {group.PostCont} Posts</p>
                 </div>
             </div>
             <div className="buttonjoin">
