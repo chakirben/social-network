@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"socialN/Handlers/auth"
 	dataB "socialN/dataBase"
 )
 
@@ -29,11 +30,11 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// userID, err := auth.ValidateSession(r, dataB.SocialDB)
-	// if err != nil {
-	// 	http.Error(w, "Invalid session", http.StatusUnauthorized)
-	// 	return
-	// }
+	userID, err := auth.ValidateSession(r, dataB.SocialDB)
+	if err != nil {
+		http.Error(w, "Invalid session", http.StatusUnauthorized)
+		return
+	}
 
 	postID, err := strconv.Atoi(postIDStr)
 	if err != nil {
@@ -57,7 +58,7 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 		JOIN Users u ON c.userId = u.id
 		WHERE c.postId = ?
 		ORDER BY c.createdAt DESC
-	`, 1, postID)
+	`,userID, postID)
 	if err != nil {
 		log.Println("Error fetching comments:", err)
 		http.Error(w, "Failed to fetch comments", http.StatusInternalServerError)

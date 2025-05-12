@@ -1,29 +1,29 @@
 package posts
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"time"
 
+	"socialN/Handlers/auth"
 	dataB "socialN/dataBase"
 )
 
 func GetCreatedPostsHandler(w http.ResponseWriter, r *http.Request) {
-	// userID, err := auth.ValidateSession(r, dataB.SocialDB)
-	// if err != nil {
-	// 	http.Error(w, "Invalid session", http.StatusUnauthorized)
-	// 	return
-	// }
+	userID, err := auth.ValidateSession(r, dataB.SocialDB)
+	if err != nil {
+		http.Error(w, "Invalid session", http.StatusUnauthorized)
+		return
+	}
 
 	query := `
 		SELECT
 			p.id,
-			p.title,
 			p.content,
 			p.image,
+			u.avatar,
 			u.firstName,
 			u.lastName,
 			(SELECT COUNT(*) FROM postReactions WHERE postId = p.id AND reactionType = 1) AS likeCount,
@@ -35,7 +35,7 @@ func GetCreatedPostsHandler(w http.ResponseWriter, r *http.Request) {
 		WHERE p.creatorId = ?
 		ORDER BY p.createdAt DESC
 	`
-	rows, err := dataB.SocialDB.Query(query, 2, 2)
+	rows, err := dataB.SocialDB.Query(query, userID, userID)
 	if err != nil {
 		log.Println("Error fetching created posts:", err)
 		http.Error(w, "Error fetching created posts", http.StatusInternalServerError)
@@ -47,27 +47,28 @@ func GetCreatedPostsHandler(w http.ResponseWriter, r *http.Request) {
 
 	for rows.Next() {
 		var postID int
-		var title, content, firstName, lastName string
-		var image sql.NullString
-		var likeCount, dislikeCount, userReaction sql.NullInt32
+		var content, firstName, lastName string
+		var image *string
+		var avatar *string
+		var likeCount, dislikeCount, userReaction int
 		var createdAt time.Time
 
-		err := rows.Scan(&postID, &title, &content,&image, &firstName, &lastName, &likeCount, &dislikeCount, &userReaction, &createdAt)
+		err := rows.Scan(&postID, &content, &image, &avatar, &firstName, &lastName, &likeCount, &dislikeCount, &userReaction, &createdAt)
 		if err != nil {
 			log.Println("Error scanning row:", err)
 			continue
 		}
 
 		post := map[string]interface{}{
-			"id":           postID,
-			"title":        title,
-			"content":      content,
-			"image":      image,
-			"creator":      fmt.Sprintf("%s %s", firstName, lastName),
-			"likeCount":    likeCount.Int32,
-			"dislikeCount": dislikeCount.Int32,
-			"userReaction": userReaction.Int32,
-			"createdAt":    createdAt,
+			"id":            postID,
+			"content":       content,
+			"image":         image,
+			"creator":       fmt.Sprintf("%s %s", firstName, lastName),
+			"avatar":        avatar,
+			"like_count":    likeCount,
+			"dislike_count": dislikeCount,
+			"user_reaction":  userReaction,
+			"createdAt":     createdAt,
 		}
 
 		posts = append(posts, post)

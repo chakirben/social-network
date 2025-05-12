@@ -1,6 +1,6 @@
 import { useState, useRef } from "react"
 
-export default function CommentInput({id}) {
+export default function CommentInput({ id }) {
 
     const [cmnt, setcmnt] = useState('')
     const [image, setImage] = useState(null)
@@ -29,6 +29,7 @@ export default function CommentInput({id}) {
 
         try {
             const res = await fetch('http://localhost:8080/api/SetComment', {
+                credentials: 'include',
                 method: 'POST',
                 body: formData
             })
