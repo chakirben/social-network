@@ -1,6 +1,7 @@
-import Link from "next/link";
+import { useRouter } from 'next/navigation';
 export default function MyGroup({ group, onView }) {
     console.log(group.Id);
+    const router = useRouter();
 
     return (
         <div className="groupc">
@@ -15,7 +16,7 @@ export default function MyGroup({ group, onView }) {
                 </div>
             </div>
             <div className="buttonjoin">
-                <Link href={`/groups/${group.Id}`} onClick={() => onView(group.Id)}>View</Link>
+                <button href={`/groups/${group.Id}`} onClick={() => router.push(`/groups/${group.Id}`) }>View</button>
             </div>
         </div>
     );

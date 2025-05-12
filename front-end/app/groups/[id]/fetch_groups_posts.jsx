@@ -3,9 +3,7 @@
 import { useEffect, useState } from "react"
 import Post from "@/components/post"
 import CreatPostInGroup from "@/components/groups/creat_postgroup"
-export default function GroupDetails({ groupId, back }) {
-    console.log("hawoooooooo",groupId);
-    
+export default function GroupDetails({ groupId }) {    
     const [PostsGroup, setPostsGroup] = useState([])
     const [isLoading, setIsLoading] = useState(true)
 

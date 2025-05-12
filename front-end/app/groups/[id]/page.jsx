@@ -4,18 +4,15 @@ import GroupDetails from "./fetch_groups_posts"
 import "./../css/groups1.css"
 import "./../css/creatgroup.css"
 import "./../../home/home.css"
-import { useState , useEffect} from "react";
-export default function DisplyGroup({ groupId , back}) {
-    console.log("fahd",groupId);
-    const [id , setid] = useState()
-    useEffect(() => {
-      setid(groupId);
-    }, []);
+import { use } from "react";
+export default function DisplyGroup({ params }) {
+    const { id } = use(params); 
+    console.log("fahd jj", id);
     return (
          <div className="home">
               <SideBar />
               <div className="divallGroups">
-                <GroupDetails groupId={id}  />
+                <GroupDetails groupId={id}/>
               </div>
             </div>
     )

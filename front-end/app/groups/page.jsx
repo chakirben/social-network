@@ -48,9 +48,7 @@ export default function JustMyGroupsPage() {
         {showCreateGroup && <DataToCreatGroup onCreate={creatgroupGroup} onSkip={() => setShowCreateGroup(false)} />}
 
         <MyGroupsPage onJoin={Jointogroup} onView={viewGroup} />
-        {viewingGroup && (
-          <DisplyGroup groupId={viewingGroup} back={() => setViewingGroup(null)} />
-        )}
+      
 
 
       </div>
