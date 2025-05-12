@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react"
 import Post from "@/components/post"
 import CreatPostInGroup from "@/components/groups/creat_postgroup"
-export default function GroupDetails({ groupId }) {    
+import GroupInfo from "@/components/groups/group_info"
+export default function GroupDetails({ groupId , title }) {    
     const [PostsGroup, setPostsGroup] = useState([])
     const [isLoading, setIsLoading] = useState(true)
 
@@ -34,6 +35,7 @@ export default function GroupDetails({ groupId }) {
 
     return (
         <div>
+            <GroupInfo title={title}/>
             <CreatPostInGroup gpid={groupId} />
             {PostsGroup.map((pst) => (
                 <Post key={pst.id} pst={pst} />

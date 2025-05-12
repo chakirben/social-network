@@ -20,6 +20,7 @@ type Posts struct {
 	DislikeCount sql.NullInt32  `json:"dislikeCount"`
 	UserReaction sql.NullInt32  `json:"userReaction"`
 	CreatedAt    time.Time      `json:"createdAt"`
+	GPTitle string 
 }
 
 func GetPostGroups(w http.ResponseWriter, r *http.Request) {
@@ -73,6 +74,16 @@ func GetPostGroups(w http.ResponseWriter, r *http.Request) {
 
 		allposts = append(allposts, P)
 	}
+
+	queryid := `SELECT Title FROM Groups WHERE id = ?`
+	var GPTitle = ""
+	err = dataB.SocialDB.QueryRow(queryid , idInt).Scan(&GPTitle)
+	if err != nil {
+		fmt.Println("error to get title groups", err)
+		http.Error(w, "error to get title groups", http.StatusInternalServerError)
+		return	
+	}
+	
 	w.WriteHeader(http.StatusAccepted)
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(allposts); err != nil {

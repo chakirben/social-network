@@ -9,9 +9,6 @@
     width: 100%;
 }
 
-.divallGroups {
-   
-}
 
 /* Group bar container */
 .groupbar {
@@ -117,3 +114,11 @@
 }
 /**/
 
+
+/* THIS IS FOR THE INFO OF THE GROUP*/ 
+.GPTitle {
+    margin-top: 40px;
+    padding: 0 40px;
+    font-size: 25px;
+    font-weight: bold;
+}
