@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 export default function SearchBar() {
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -6,16 +7,24 @@ export default function SearchBar() {
         console.log('Searching for:', searchTerm);
     };
 
+    const handleKeyUp = (e) => {
+        FetchSearch(searchTerm)
+    };
+
     return (
         <div className="SearchBar">
-            <img src="./images/search.svg"></img>
-            <input
-                type="text"
-                placeholder="Type to search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="searchInput"
-            />
+            <div>
+                <img src="./images/search.svg" alt="search icon" />
+                <input
+                    type="text"
+                    placeholder="Type to search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyUp={handleKeyUp}
+                    className="searchInput"
+                />
+            </div>
+            <button onClick={handleSearch}>Search</button>
         </div>
     );
 };
