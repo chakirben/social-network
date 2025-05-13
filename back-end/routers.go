@@ -73,11 +73,11 @@ func SetupHandlers() {
 
 	// follows
 	//	http.HandleFunc("/api/follow", AccessMiddleware(u.Follow))
-	//http.HandleFunc("/api/follow", followers.HandleFollow)
-	http.HandleFunc("/api/acceptFollowRequest", followers.AcceptFollowRequest)
+	http.HandleFunc("/api/follow", AccessMiddleware(followers.HandleFollow))
+	http.HandleFunc("/api/acceptFollowRequest", AccessMiddleware(followers.AcceptFollowRequest))
 
 	// profile
-	http.HandleFunc("/api/profile", profile.GetData)
+	http.HandleFunc("/api/profile", AccessMiddleware(profile.GetData))
 
 	//reactions
 	http.HandleFunc("/api/reaction", AccessMiddleware(h.ReactionHandler))

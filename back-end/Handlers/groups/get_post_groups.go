@@ -63,7 +63,7 @@ func GetPostGroups(w http.ResponseWriter, r *http.Request) {
 		WHERE groupId = ?
 	`
 
-	rows, err := dataB.SocialDB.Query(query, userID ,idInt)
+	rows, err := dataB.SocialDB.Query(query, userID, idInt)
 	if err != nil {
 		fmt.Println("--->", err)
 		http.Error(w, "error to get my groups :(", http.StatusInternalServerError)
