@@ -24,7 +24,7 @@ export default function Users() {
             <div className="homeP">
                 <Header pageName={'users'}></Header>
                 <div className="usersList">
-                    {users.map(user => (
+                    {users?.map(user => (
                         <UserCard key={user.id} user={user}  />
                     ))}
                 </div>

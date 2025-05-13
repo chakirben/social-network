@@ -10,12 +10,12 @@ import (
 )
 
 type UnfollowedUser struct {
-	ID            int    `json:"id"`
-	FirstName     string `json:"firstName"`
-	LastName      string `json:"lastName"`
-	About         string `json:"about"`
-	Avatar        string `json:"avatar"`
-	FollowerCount int    `json:"followerCount"`
+	ID            int     `json:"id"`
+	FirstName     string  `json:"firstName"`
+	LastName      string  `json:"lastName"`
+	About         *string `json:"about"`
+	Avatar        string  `json:"avatar"`
+	FollowerCount int     `json:"followerCount"`
 }
 
 func GetUnfollowedUsers(w http.ResponseWriter, r *http.Request) {
