@@ -14,6 +14,8 @@ import (
 	Post "socialN/Handlers/posts"
 	profile "socialN/Handlers/profile"
 
+	Search "socialN/Handlers/Search"
+
 	u "socialN/Handlers/users"
 	db "socialN/dataBase"
 )
@@ -53,6 +55,9 @@ func SetupHandlers() {
 	http.HandleFunc("/api/NotMyGroups", AccessMiddleware(SessionMiddleware(Group.GetGroupsUserNotJoined)))
 	http.HandleFunc("/api/PostsGroups", AccessMiddleware(SessionMiddleware(Group.GetPostGroups)))
 	http.HandleFunc("/api/RequestToJoinGroups", AccessMiddleware(SessionMiddleware(Group.Req_To_Join_Groups)))
+
+	//SearchData
+	http.HandleFunc("/api/SearchData", AccessMiddleware(SessionMiddleware(Search.SearchData)))
 
 	// // chat
 	// http.HandleFunc("/api/Chat", chat.ChatHandler)

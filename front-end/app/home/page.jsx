@@ -7,6 +7,7 @@ import "../../styles/global.css"
 import Post from "@/components/post";
 import SearchBar from "@/components/searchBar";
 import CreatePost from "@/components/creatPostForm";
+import SearchTerm from "@/components/search_term"
 export default function Home() {
     const [posts, setPosts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -48,7 +49,9 @@ export default function Home() {
                 ) : (
                    <div>
                       hi : {searchTerm}
+                      <SearchTerm searchTerm={searchTerm}/>
                    </div>
+                   
                 )}
             </div>
         </div>
