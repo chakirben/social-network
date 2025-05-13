@@ -30,7 +30,7 @@ export default function ProfileClient({ session, searchParams }) {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ id: id }),
+                    body: JSON.stringify({ session: session, id: id }),
                 });
 
                 if (!response.ok) {
@@ -60,7 +60,9 @@ export default function ProfileClient({ session, searchParams }) {
         followed_count,
         followers_data,
         followeds_data,
-        posts
+        posts,
+        follow_status,
+        profile_status
     } = profileData;
 
 
@@ -77,7 +79,9 @@ export default function ProfileClient({ session, searchParams }) {
                             <div className="follow">
                                 <p onClick={() => setShowFollowModal(true)}><strong className="followers-number">{followers_count}</strong> Followers</p>
                                 <p onClick={() => setShowFollowModal(true)}><strong className="following-number">{followed_count}</strong> Following</p>
-                                <FollowButton session={session} id={id} />
+                                {profile_status === "auther" && (
+                                    <FollowButton follow_status={follow_status} session={session} id={id} />
+                                )}
                             </div>
                         </div>
                         <h2>{personal_data[0].Nickname || personal_data[0].Firstname + " " + personal_data[0].Lastname }</h2>
@@ -85,6 +89,10 @@ export default function ProfileClient({ session, searchParams }) {
                     </div>
                     <hr />
                 </div>
+
+                {posts && posts.map((p, i) => (
+                    <Post key={i} pst={p} />
+                ))}
             </div>
 
 

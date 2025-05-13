@@ -1,11 +1,11 @@
 package profile
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	dataB "socialN/dataBase"
@@ -13,10 +13,11 @@ import (
 
 type ProfileOwner struct {
 	ID string `json:"id"`
+	Session string `json:"session"`
 }
 
 type FollowData struct {
-	ID int
+	ID        int
 	Nickname  string
 	Firstname string
 	Lastname  string
@@ -33,9 +34,8 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	//get account type of the user
-	var accountType string
+	var accountType interface{}
 	err = dataB.SocialDB.QueryRow("SELECT accountType FROM Users WHERE id=?", profile_owner.ID).Scan(&accountType)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -43,8 +43,15 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//get the user id from the username
-	var user_id = profile_owner.ID
+	user_id, _ := strconv.Atoi(profile_owner.ID)
 
+	//get the user if of the loggedin
+	var logged_user_id int
+	err = dataB.SocialDB.QueryRow("SELECT userId FROM Sessions WHERE id=?", profile_owner.Session).Scan(&logged_user_id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	//get personal data of profile owner
 	var personal_data []interface{}
@@ -55,8 +62,6 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	personal_data = append(personal_data, data)
-
-
 
 	//count how much followers and followeds
 	var followers_count int
@@ -89,7 +94,7 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 				follower_id = 0
 			}
 
-			err = dataB.SocialDB.QueryRow("SELECT id, nickname, firstName, lastName, avatar, about FROM Users WHERE id=?", follower_id).Scan(&followerData.ID ,&followerData.Nickname, &followerData.Firstname, &followerData.Lastname, &followerData.Avatar, &followerData.About)
+			err = dataB.SocialDB.QueryRow("SELECT id, nickname, firstName, lastName, avatar, about FROM Users WHERE id=?", follower_id).Scan(&followerData.ID, &followerData.Nickname, &followerData.Firstname, &followerData.Lastname, &followerData.Avatar, &followerData.About)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
@@ -113,7 +118,7 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 				followed_id = 0
 			}
 
-			err = dataB.SocialDB.QueryRow("SELECT id, nickname, firstName, lastName, avatar, about FROM Users WHERE id=?", followed_id).Scan(&followedData.ID ,&followedData.Nickname, &followedData.Firstname, &followedData.Lastname, &followedData.Avatar, &followedData.About)
+			err = dataB.SocialDB.QueryRow("SELECT id, nickname, firstName, lastName, avatar, about FROM Users WHERE id=?", followed_id).Scan(&followedData.ID, &followedData.Nickname, &followedData.Firstname, &followedData.Lastname, &followedData.Avatar, &followedData.About)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
@@ -122,13 +127,14 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 			followeds = append(followeds, followedData)
 		}
 
+
 		//get posts
 		query := `
 			SELECT
 				p.id,
-				p.title,
 				p.content,
 				p.image,
+				u.avatar,
 				u.firstName,
 				u.lastName,
 				(SELECT COUNT(*) FROM postReactions WHERE postId = p.id AND reactionType = 1) AS likeCount,
@@ -142,49 +148,79 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 		`
 		rows, err := dataB.SocialDB.Query(query, user_id, user_id)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			log.Println("Error fetching created posts:", err)
+			http.Error(w, "Error fetching created posts", http.StatusInternalServerError)
 			return
 		}
 		defer rows.Close()
 
-
 		for rows.Next() {
 			var postID int
-			var title, content, firstName, lastName *string
-			var image sql.NullString
-			var likeCount, dislikeCount, userReaction sql.NullInt32
+			var content, firstName, lastName string
+			var image *string
+			var avatar *string
+			var likeCount, dislikeCount, userReaction int
 			var createdAt time.Time
 
-			err := rows.Scan(&postID, &title, &content, &image, &firstName, &lastName, &likeCount, &dislikeCount, &userReaction, &createdAt)
+			err := rows.Scan(&postID, &content, &image, &avatar, &firstName, &lastName, &likeCount, &dislikeCount, &userReaction, &createdAt)
 			if err != nil {
 				log.Println("Error scanning row:", err)
 				continue
 			}
 
 			post := map[string]interface{}{
-				"id":           postID,
-				"title":        title,
-				"content":      content,
-				"image":        image,
-				"creator":      fmt.Sprintf("%s %s", firstName, lastName),
-				"likeCount":    likeCount.Int32,
-				"dislikeCount": dislikeCount.Int32,
-				"userReaction": userReaction.Int32,
-				"createdAt":    createdAt,
+				"id":            postID,
+				"content":       content,
+				"image":         image,
+				"creator":       fmt.Sprintf("%s %s", firstName, lastName),
+				"avatar":        avatar,
+				"like_count":    likeCount,
+				"dislike_count": dislikeCount,
+				"user_reaction": userReaction,
+				"created_at":    createdAt,
 			}
 
 			posts = append(posts, post)
 		}
 	}
 
+	//check if the visitor is the profile ownwer
+	var profile_status = "auther"
+	if logged_user_id == user_id {
+		profile_status = "mine"
+	}
+
+
+	//check if the logged use is already follow the profile owner
+	var follow_status string
+	if checkAlreadyFollow(logged_user_id, user_id) {
+		follow_status = "Unfollow"
+	} else {
+		follow_status = "Follow"
+	}
+
 	//send response
 	response := map[string]interface{}{
-		"personal_data": personal_data,
+		"personal_data":   personal_data,
 		"followers_count": followers_count,
 		"followed_count":  followed_count,
 		"followers_data":  followers,
 		"followeds_data":  followeds,
-		"posts": posts,
+		"posts":           posts,
+		"follow_status": follow_status,
+		"profile_status": profile_status,
 	}
 	json.NewEncoder(w).Encode(response)
+}
+
+
+
+
+func checkAlreadyFollow(followerID, followedID int) bool {
+	rows, err := dataB.SocialDB.Query(`SELECT 1 FROM Followers WHERE followerId = ? AND followedId = ?`, followerID, followedID)
+	if err != nil {
+		return false
+	}
+	defer rows.Close()
+	return rows.Next()
 }

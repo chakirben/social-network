@@ -1,6 +1,6 @@
 'use client';
 
-export default function FollowButton({ session, id }) {
+export default function FollowButton({ follow_status,session, id }) {
   
 
   const handleFollow = async (e) => {
@@ -22,11 +22,12 @@ export default function FollowButton({ session, id }) {
       const errorText = await response.text();
       console.error('Error:', errorText);
     } else {
-        const data = await response.json();
-        console.log('Success:', data);
-        document.querySelector(".followers-number").textContent = data.followers_count;
+      const data = await response.json();
+      console.log('Success:', data);
+      document.querySelector(".followers-number").textContent = data.followers_count;
+      document.querySelector(".follow-button").textContent = data.status;
     }
   };
 
-  return <button onClick={handleFollow}>Follow</button>;
+  return <button className="follow-button" onClick={handleFollow}>{follow_status}</button>;
 }

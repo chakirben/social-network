@@ -60,7 +60,7 @@ func HandleFollow(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			followed = true
-			followedText = "followed successfuly"
+			followedText = "Unfollow"
 		} else {
 			_, exec_err := dataB.SocialDB.Exec(`DELETE FROM Followers WHERE followerId=? AND followedId=?`, followerid, followedid)
 			if exec_err != nil {
@@ -68,7 +68,7 @@ func HandleFollow(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			followed = false
-			followedText = "unfollowed successfuly"
+			followedText = "Follow"
 		}
 
 		var followers_count int
