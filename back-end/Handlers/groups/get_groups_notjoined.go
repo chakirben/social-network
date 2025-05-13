@@ -14,14 +14,11 @@ type NotMyGroups struct {
 	Title        string
 	Description  string
 	MembersCount int
+	PostCont int
 }
 
 // Get all groups that the user has not joined yet...
 func GetGroupsUserNotJoined(w http.ResponseWriter, r *http.Request) {
-	// if r.Method != http.MethodPost {
-	// 	http.Error(w, "Invalid Method", http.StatusMethodNotAllowed)
-	// 	return
-	// }
 	userID, err := auth.ValidateSession(r, dataB.SocialDB)
 	if err != nil {
 		http.Error(w, "Invalid session :(", http.StatusUnauthorized)
@@ -33,9 +30,11 @@ func GetGroupsUserNotJoined(w http.ResponseWriter, r *http.Request) {
 		g.id,
 		g.title,
 		g.description,
-		COUNT(gm.memberId) AS members_count
+		COUNT(gm.memberId) AS members_count,
+		COUNT(P.groupId) AS CP
 	FROM Groups g
 	LEFT JOIN GroupsMembers gm ON g.id = gm.groupId
+	LEFT JOIN Posts P ON P.groupId = g.id
 	WHERE g.id NOT IN (
 		SELECT groupId 
 		FROM GroupsMembers 
@@ -55,7 +54,7 @@ func GetGroupsUserNotJoined(w http.ResponseWriter, r *http.Request) {
 	var groups []NotMyGroups
 	for rows.Next() {
 		var g NotMyGroups
-		if err := rows.Scan(&g.Id, &g.Title, &g.Description, &g.MembersCount); err != nil {
+		if err := rows.Scan(&g.Id, &g.Title, &g.Description, &g.MembersCount, &g.PostCont); err != nil {
 			fmt.Println("error to get groups", err)
 			http.Error(w, "error to get groups", http.StatusInternalServerError)
 			return

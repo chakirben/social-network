@@ -29,20 +29,17 @@ func Creat_Groups(w http.ResponseWriter, r *http.Request) {
 
 	var group Grouppp
 
-	fmt.Println(r.Body)
+
 	err = json.NewDecoder(r.Body).Decode(&group)
 	if err != nil {
-		fmt.Println("hiiii yosf")
-
 		http.Error(w, "Invalid JSON :(", http.StatusBadRequest)
 		return
 	}
-
 	if group.Title == "" || group.Description == "" {
 		http.Error(w, "Invalid JSON Title and Description are required... :(", http.StatusBadRequest)
 		return
 	}
-
+	fmt.Println( group.Title,  group.Description)
 	query := `
 	  INSERT INTO groups (title , description , adminId) VALUES (?,?,?);
 	`
@@ -70,4 +67,9 @@ func Creat_Groups(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "applicaton/json")
+	if err := json.NewEncoder(w).Encode("Group created successfully:"); err != nil {
+		fmt.Println("JSON encode error", err)
+		http.Error(w, "JSON encode error", http.StatusInternalServerError)
+	}
 }

@@ -1,4 +1,4 @@
-export default function NoMyGroup({ group }) {
+export default function NoMyGroup({ group , onJoin }) {
     return (
         <div className="groupc">
             <div className="groupContent">
@@ -8,11 +8,11 @@ export default function NoMyGroup({ group }) {
                     <img src="./images/users.svg"></img>
                     <p>{group.MembersCount}Users</p>
                     <img src="./images/postgroups.svg"></img>
-                    <p> 2 Posts</p>
+                    <p> {group.PostCont} Posts</p>
                 </div>
             </div>
             <div className="buttonjoin">
-                <button id="buttontoseegroup">Join</button>
+                <button id="buttontoseegroup" onClick={() => onJoin(group.Id)}>Join</button>
             </div>
         </div>
     );

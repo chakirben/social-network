@@ -27,7 +27,7 @@ func main() {
 	}()
 
 	<-sig
-	
+
 	err := db.SocialDB.Close()
 	if err != nil {
 		log.Println("\nerror to close database", err)

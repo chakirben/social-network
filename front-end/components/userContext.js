@@ -21,7 +21,7 @@ export const UserProvider = ({ children }) => {
                 })
                 .finally(() => {
                     setLoading(false);
-                });
+                });//GetCurrentUserData
         }
     }, []);
 
