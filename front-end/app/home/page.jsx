@@ -48,8 +48,7 @@ export default function Home() {
                     </div>
                 ) : (
                    <div>
-                      hi : {searchTerm}
-                      <SearchTerm searchTerm={searchTerm}/>
+                      <SearchTerm search={searchTerm}/>
                    </div>
                    
                 )}

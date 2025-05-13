@@ -26,8 +26,8 @@ type NotJoinGroups struct {
 }
 
 type Data struct {
-	Notfollowed  []NotfollowedUser
-	UnJoinGroups []NotJoinGroups
+	Notfollowed  []NotfollowedUser `json:"Notfollowed"`
+	UnJoinGroups []NotJoinGroups `json:"UnJoinGroups"`
 }
 
 func SearchData(w http.ResponseWriter, r *http.Request) {
@@ -87,10 +87,11 @@ func SearchData(w http.ResponseWriter, r *http.Request) {
 		FROM GroupsMembers 
 		WHERE memberId = ?
 	)
+	AND (g.title LIKE ? OR g.description LIKE ?)
 	GROUP BY g.id, g.title, g.description
 	`
 
-	rows2, err := dataB.SocialDB.Query(query2, userID)
+	rows2, err := dataB.SocialDB.Query(query2, userID, searchTerm, searchTerm)
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "error to get my groups :(", http.StatusInternalServerError)
@@ -99,7 +100,7 @@ func SearchData(w http.ResponseWriter, r *http.Request) {
 
 	defer rows2.Close()
 	var groups []NotJoinGroups
-	for rows.Next() {
+	for rows2.Next() {
 		var g NotJoinGroups
 		if err := rows2.Scan(&g.Id, &g.Title, &g.Description, &g.MembersCount, &g.PostCont); err != nil {
 			fmt.Println("error to get groups", err)
