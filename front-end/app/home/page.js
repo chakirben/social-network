@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from "react";
+import {FetchSearch} from "./fetch_search"
 import SideBar from "@/components/sidebar";
 import "./home.css"
 import "../../styles/global.css"
@@ -21,11 +22,15 @@ export default function Home() {
         fetchPosts();
     }, []);
 
+    const hhh = (pr) => {
+        console.log(pr); 
+    }
+
     return (
         <div className="home">
             <SideBar />
             <div className="homeP">
-                <SearchBar />
+                <SearchBar shv={hhh}/>
                 <div className="sc">
                     <CreatePost />
                     <div className="posts">

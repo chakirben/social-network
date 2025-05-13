@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import {FetchSearch} from './app/home/fetch_search'
-export default function SearchBar() {
-    const [searchTerm, setSearchTerm] = useState('');
+import React from 'react';
 
+export default function SearchBar({ searchTerm, setSearchTerm }) {
     const handleSearch = () => {
         console.log('Searching for:', searchTerm);
     };
 
     const handleKeyUp = (e) => {
-        FetchSearch(searchTerm)
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
     };
 
     return (
@@ -27,4 +27,4 @@ export default function SearchBar() {
             <button onClick={handleSearch}>Search</button>
         </div>
     );
-};
+}
