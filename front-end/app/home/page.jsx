@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from "react";
-import {FetchSearch} from "./fetch_search"
+import { FetchSearch } from "./fetch_search"
 import SideBar from "@/components/sidebar";
 import "./home.css"
 import "../../styles/global.css"
@@ -9,6 +9,9 @@ import SearchBar from "@/components/searchBar";
 import CreatePost from "@/components/creatPostForm";
 export default function Home() {
     const [posts, setPosts] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+  
+
     useEffect(() => {
         const fetchPosts = async () => {
             try {
@@ -22,27 +25,31 @@ export default function Home() {
         fetchPosts();
     }, []);
 
-    const hhh = (pr) => {
-        console.log(pr); 
-    }
 
+    FetchSearch(searchTerm)
     return (
         <div className="home">
             <SideBar />
             <div className="homeP">
-                <SearchBar shv={hhh}/>
-                <div className="sc">
-                    <CreatePost />
-                    <div className="posts">
-                        {posts.length === 0 ? (
-                            <div className="loading">Loading posts...</div>
-                        ) : (
-                            posts.map((post) => (
-                                <Post key={post.id || post._id} pst={post} />
-                            ))
-                        )}
+                <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+                {searchTerm.trim() === "" ? (
+                    <div className="sc">
+                        <CreatePost />
+                        <div className="posts">
+                            {posts.length === 0 ? (
+                                <div className="loading">Loading posts...</div>
+                            ) : (
+                                posts.map((post) => (
+                                    <Post key={post.id || post._id} pst={post} />
+                                ))
+                            )}
+                        </div>
                     </div>
-                </div>
+                ) : (
+                   <div>
+                      hi : {searchTerm}
+                   </div>
+                )}
             </div>
         </div>
     );

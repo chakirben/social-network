@@ -1,6 +1,7 @@
 import React from 'react';
 
 export default function SearchBar({ searchTerm, setSearchTerm }) {
+    
     const handleSearch = () => {
         console.log('Searching for:', searchTerm);
     };
