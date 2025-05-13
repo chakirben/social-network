@@ -1,29 +1,35 @@
 package groups
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"socialN/Handlers/auth"
+	dataB "socialN/dataBase"
 	"strconv"
 	"time"
-	dataB "socialN/dataBase"
 )
 
 type Posts struct {
-	Id           int            `json:"id"`
-	Image        sql.NullString `json:"image"`
-	Content      string         `json:"content"`
-	FirstName    string         `json:"creator"`
-	LastName     string         `json:"groupid"`
-	LikeCount    sql.NullInt32  `json:"likeCount"`
-	DislikeCount sql.NullInt32  `json:"dislikeCount"`
-	UserReaction sql.NullInt32  `json:"userReaction"`
-	CreatedAt    time.Time      `json:"createdAt"`
-	GPTitle string 
+	Id           int       `json:"id"`
+	Image        *string   `json:"image"`
+	Content      string    `json:"content"`
+	FirstName    string    `json:"creator"`
+	LastName     string    `json:"groupid"`
+	LikeCount    *int      `json:"like_count"`
+	DislikeCount *int      `json:"dislike_count"`
+	UserReaction *int      `json:"user_reaction"`
+	CreatedAt    time.Time `json:"created_at"`
+	GPTitle      string
 }
 
 func GetPostGroups(w http.ResponseWriter, r *http.Request) {
+	userID, err := auth.ValidateSession(r, dataB.SocialDB)
+	if err != nil {
+		http.Error(w, "Invalid session :(", http.StatusUnauthorized)
+		return
+	}
+
 	// Get the `id` parameter from the URL query
 	groupID := r.URL.Query().Get("id")
 	if groupID == "" {
@@ -37,7 +43,7 @@ func GetPostGroups(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid group ID", http.StatusBadRequest)
 		return
 	}
-	
+
 	if idInt < 1 {
 		http.Error(w, "Invalid request :(", http.StatusBadRequest)
 		return
@@ -48,13 +54,16 @@ func GetPostGroups(w http.ResponseWriter, r *http.Request) {
 		  P.image,
 		  U.firstName,
           U.lastName,
-          P.createdAt
+          P.createdAt,
+		  	(SELECT COUNT(*) FROM postReactions WHERE postId = p.id AND reactionType = 1) AS likeCount,
+			(SELECT COUNT(*) FROM postReactions WHERE postId = p.id AND reactionType = -1) AS dislikeCount,
+			(SELECT reactionType FROM postReactions WHERE postId = p.id AND userId = ?) AS userReaction
 		FROM Posts P
 		JOIN Users U ON P.creatorId = U.id
 		WHERE groupId = ?
 	`
 
-	rows, err := dataB.SocialDB.Query(query, idInt)
+	rows, err := dataB.SocialDB.Query(query, userID ,idInt)
 	if err != nil {
 		fmt.Println("--->", err)
 		http.Error(w, "error to get my groups :(", http.StatusInternalServerError)
@@ -66,7 +75,7 @@ func GetPostGroups(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var P Posts
 		if err := rows.Scan(&P.Id, &P.Content, &P.Image,
-			&P.FirstName, &P.LastName, &P.CreatedAt); err != nil {
+			&P.FirstName, &P.LastName, &P.CreatedAt, &P.LikeCount, &P.DislikeCount, &P.UserReaction); err != nil {
 			fmt.Println("error to get posts groups", err)
 			http.Error(w, "error to get posts groups", http.StatusInternalServerError)
 			return
