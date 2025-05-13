@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import {FetchSearch} from '../app/home/fetch_search'
 export default function SearchBar() {
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -8,7 +8,7 @@ export default function SearchBar() {
     };
 
     const handleKeyUp = (e) => {
-        FetchSearch(searchTerm)
+        FetchSearch({searchTerm})
     };
 
     return (
