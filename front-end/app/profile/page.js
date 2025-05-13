@@ -95,8 +95,8 @@ export default function Profile() {
                         <div className="imgAndFollow sb">
                             {profile && <img className="userAvatar" src={`http://localhost:8080/${profile.avatar}`} />}
                             <div className="follow">
-                                <p><strong className="number">11K</strong> Followers</p>
-                                <p><strong className="number">15K</strong> Following</p>
+                                <p><strong className="number">{profile?.followers}</strong> Followers</p>
+                                <p><strong className="number">{profile?.following}</strong> Following</p>
                                 <span onClick={handle} className="privacyOptions">
                                     privacy {profile?.accountType === "public"
                                         ? <img className="icon" src="http://localhost:8080/uploads/unlock.svg" />

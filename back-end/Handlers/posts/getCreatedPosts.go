@@ -68,7 +68,7 @@ func GetCreatedPostsHandler(w http.ResponseWriter, r *http.Request) {
 			"like_count":    likeCount,
 			"dislike_count": dislikeCount,
 			"user_reaction":  userReaction,
-			"createdAt":     createdAt,
+			"created_at":     createdAt,
 		}
 
 		posts = append(posts, post)

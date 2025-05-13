@@ -13,7 +13,8 @@ import (
 	Group "socialN/Handlers/groups"
 	Post "socialN/Handlers/posts"
 	profile "socialN/Handlers/profile"
-	// u "socialN/Handlers/users"
+
+	u "socialN/Handlers/users"
 	db "socialN/dataBase"
 )
 
@@ -71,22 +72,22 @@ func SetupHandlers() {
 	fmt.Println(followers.GetFollowedUsers(2))
 
 	// follows
-//	http.HandleFunc("/api/follow", AccessMiddleware(u.Follow))
+	//	http.HandleFunc("/api/follow", AccessMiddleware(u.Follow))
 	//http.HandleFunc("/api/follow", followers.HandleFollow)
 	http.HandleFunc("/api/acceptFollowRequest", followers.AcceptFollowRequest)
 
 	// profile
 	http.HandleFunc("/api/profile", profile.GetData)
 
-	// reactions
+	//reactions
 	http.HandleFunc("/api/reaction", AccessMiddleware(h.ReactionHandler))
 
-	// //users
-	// http.HandleFunc("/api/getUserData", AccessMiddleware(u.GetCurrentUserData))
-	// http.HandleFunc("/api/getUnfollowedUsers", AccessMiddleware(u.GetUnfollowedUsers))
+	//users
+	http.HandleFunc("/api/getUserData", AccessMiddleware(u.GetCurrentUserData))
+	http.HandleFunc("/api/getUnfollowedUsers", AccessMiddleware(u.GetUnfollowedUsers))
 
-	// http.HandleFunc("/api/updatePrivacy", AccessMiddleware(u.SetPrivacy))
-	// http.HandleFunc("/api/getFollowersList", AccessMiddleware(u.GetFollowersListHandler))
+	http.HandleFunc("/api/updatePrivacy", AccessMiddleware(u.SetPrivacy))
+	http.HandleFunc("/api/getFollowersList", AccessMiddleware(u.GetFollowersListHandler))
 }
 
 func SessionMiddleware(fun http.HandlerFunc) http.HandlerFunc {

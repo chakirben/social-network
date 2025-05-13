@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"time"
 
+	"socialN/Handlers/auth"
 	dataB "socialN/dataBase"
 )
 
@@ -25,11 +26,11 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// userID, err := auth.ValidateSession(r, dataB.SocialDB)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
+	userID, err := auth.ValidateSession(r, dataB.SocialDB)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	baseQuery := `
 		SELECT
@@ -62,7 +63,7 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 			LIMIT 10 OFFSET ?;
 
 	`
-	rows, err := dataB.SocialDB.Query(baseQuery, 1,1, 1, 1, 1, offsetInt)
+	rows, err := dataB.SocialDB.Query(baseQuery, userID, userID, userID, userID, userID, offsetInt)
 	if err != nil {
 		log.Println("Error fetching posts:", err)
 		fmt.Println(err)
