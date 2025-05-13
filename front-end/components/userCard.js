@@ -1,7 +1,7 @@
 import { useRouter } from 'next/navigation';
 import { use, useState } from 'react';
 
-export default function UserCard({ user }) {
+export default function UserCard({ user , Showchat = false}) {
     const router = useRouter();
     const [isFollowed, setIsfollowed] = useState(user.requested)
     const followReq = async (id) => {
@@ -31,11 +31,15 @@ export default function UserCard({ user }) {
             )}
             <div className="userInfo">
                 <div className="userName">{user.firstName} {user.lastName}</div>
-                <div className="followerCount">{user.followerCount} followers</div>
+                {!Showchat ? <div className="userEmail">{user.email}</div> : null}
             </div>
-            <button className={isFollowed ? "followedBtn" : "follow"} onClick={()=>{followReq(user.id)}}>
-                {isFollowed ? "cancel follow" : "follow"}
-            </button>
+            {!Showchat ? (
+        <button className="followButton" onClick={() => followReq(user.id)}>
+          {isFollowed ? "Unfollow" : "Follow"}
+        </button>
+      ) : (
+        <p>Send</p>
+      )}
         </div>
     );
 }
