@@ -11,11 +11,11 @@
   width: 100%;
 }
 .groupsmn::-webkit-scrollbar {
-    width: 8px;
+    width: 4px;
   }
   
   .groupsmn::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: #0A0A0A;
     border-radius: 10px;
   }
   
@@ -37,7 +37,7 @@
 
 /* Group bar container */
 .groupbar {
-    background-color: black;
+    background-color: #0A0A0A;
     width: 500px;
     height: 68px;
     display: flex;
@@ -113,7 +113,7 @@
 
 .groupc .groupContent h3 {
     display: flex;
-    background-color: black;
+    background-color: #0A0A0A;
 
 }
 
@@ -147,14 +147,34 @@
     font-size: 25px;
     font-weight: bold;
     padding: 5px 5px ;
-    justify-content: center;
+    justify-content: space-between;
     display: flex;
     border-bottom: 1px solid rgb(73, 73, 73);
+}
+
+.GPTitle .titleandimg {
+    width: 80%;
+    justify-content: center;
+    display: flex;
 }
 
 .GPTitle img {
     width: 20px;
     margin-right: 10px;
+}
+
+.GPTitle .btnback {
+    width: 20%;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    width: 100px;
+    height: 40px;
+    display: flex;    
+}
+
+.GPTitle .btnback .backbtn{
+    background-color: rgb(80, 80, 80);
 }
 
 
