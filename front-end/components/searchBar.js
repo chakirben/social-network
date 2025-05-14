@@ -10,6 +10,7 @@ export default function SearchBar({ searchTerm, setSearchTerm }) {
         if (e.key === 'Enter') {
             handleSearch();
         }
+        
     };
 
     return (

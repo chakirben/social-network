@@ -1,22 +1,29 @@
 'use client'
 import { useEffect, useState } from "react";
-import { FetchSearch } from "./fetch_search"
+import { FetchSearch } from "./fetch_search";
 import SideBar from "@/components/sidebar";
-import "./home.css"
-import "../../styles/global.css"
+import "./home.css";
+import "../../styles/global.css";
+import "./../groups/css/groups1.css"
+
+
 import Post from "@/components/post";
 import SearchBar from "@/components/searchBar";
 import CreatePost from "@/components/creatPostForm";
-import SearchTerm from "@/components/search_term"
+import SearchTerm from "@/components/search_term";
+
 export default function Home() {
     const [posts, setPosts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
-  
+    const [searchResults, setSearchResults] = useState(null); // optional if needed
 
+    // fetch all posts initially
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/GetPosts", { credentials: "include" });
+                const response = await fetch("http://localhost:8080/api/GetPosts", {
+                    credentials: "include"
+                });
                 const data = await response.json();
                 setPosts(data);
             } catch (error) {
@@ -26,13 +33,23 @@ export default function Home() {
         fetchPosts();
     }, []);
 
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            if (searchTerm.trim() !== "") {
+                FetchSearch(searchTerm);
+            }
+        }, 300); // delay in ms
+    
+        return () => clearTimeout(timeout); // clean up the previous timer
+    }, [searchTerm]);
+    
 
-    FetchSearch(searchTerm)
     return (
         <div className="home">
             <SideBar />
             <div className="homeP">
                 <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+                
                 {searchTerm.trim() === "" ? (
                     <div className="sc">
                         <CreatePost />
@@ -47,10 +64,9 @@ export default function Home() {
                         </div>
                     </div>
                 ) : (
-                   <div>
-                      <SearchTerm search={searchTerm}/>
-                   </div>
-                   
+                    
+                        <SearchTerm search={searchTerm} />
+                    
                 )}
             </div>
         </div>

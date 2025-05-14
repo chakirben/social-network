@@ -17,54 +17,44 @@ export default function SearchTerm(Search) {
                     credentials: "include"
                 });
                 if (!response.ok) {
-                    console.log("error to fetch SearchData")
-                    return
+                    console.log("error to fetch SearchData");
+                    return;
                 }
-                const Data = await response.json()
-                setSearchTerm(Data)
+                const Data = await response.json();
+                setSearchTerm(Data);
             } catch (error) {
-
+                console.error("Error during search fetch:", error);
             }
+        };
+
+        if (Search.search.trim() !== "") {
+            FetchSearchData();
         }
-        FetchSearchData()
-    }, [])
+    }, [Search.search]);
 
     console.log(searchdata);
 
-    if (!searchdata || (!searchdata.Notfollowed && !searchdata.UnJoinGroups) ) {
+    if (!searchdata || (!searchdata.Notfollowed && !searchdata.UnJoinGroups)) {
         return <p>Loading or not search found...</p>;
     }
     return (
-        <>
-
-            <div className="usersList">
-                {searchdata.Notfollowed && searchdata.Notfollowed.length > 0 ?(
-                    searchdata.Notfollowed.map(user => (
-                        <UserCard key={user.id} user={user}  />
-                    ))  
-                ): null}
-            </div>
-            
+        <div className="divallGroups">
             <div className="groupsmn">
+                
+                {searchdata.Notfollowed && searchdata.Notfollowed.length > 0 ? (
+                    searchdata.Notfollowed.map(user => (
+                        <UserCard key={user.id} user={user} />
+                    ))
+                ) : null}
                 {searchdata.UnJoinGroups && searchdata.UnJoinGroups.length > 0 ? (
                     searchdata.UnJoinGroups.map(g => (
                         <NoMyGroup key={g.Id} group={g} />
                     ))
-                ): null}
-            </div> 
+                ) : null}
+            </div>
 
+            </div>
 
-        </>
+        
     )
 }
-
-/**?
- * 
- *   UnJoinGroups
-
- 
-
-          
-
-
- */
