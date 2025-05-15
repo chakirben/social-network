@@ -116,6 +116,7 @@ h5 {
     display: flex;
     gap: 16px;
     border-bottom: rgba(255, 255, 255, 0.137) solid 1px;
+    justify-content: space-between;
 }
 
 .searchInput {

@@ -1,5 +1,5 @@
 "use client"
-
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react"
 import Post from "@/components/post"
 import CreatPostInGroup from "@/components/groups/creat_postgroup"
@@ -8,6 +8,8 @@ export default function GroupDetails({ groupId, title }) {
     const [PostsGroup, setPostsGroup] = useState([])
     const [isLoading, setIsLoading] = useState(true)
 
+    const router = useRouter();
+    
     useEffect(() => {
         const fetchposts = async () => {
             try {
@@ -36,8 +38,14 @@ export default function GroupDetails({ groupId, title }) {
     return (
         <div>
             <div className="GPTitle">
-                <img src="./../images/group.svg" />
-                <p>{title}</p>
+                <div className="btnback">
+                    <img src="./../images/arrow-left.svg"/>
+                    <button className="backbtn" onClick={()=> router.push(`/groups`)}>back</button>
+                </div>
+                <div className="titleandimg" >
+                    <img src="./../images/group.svg" />
+                    <p>{title}</p>
+                </div>
             </div>
             <CreatPostInGroup gpid={groupId} />
             {PostsGroup.map((pst) => (

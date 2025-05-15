@@ -43,7 +43,6 @@ export default function CreatPostInGroup( { gpid } ) {
         credentials: 'include',
       });
       const result = await res.json();
-      console.log('Post submitted:', result);
       setText('');
   
       setImageSrc(null);

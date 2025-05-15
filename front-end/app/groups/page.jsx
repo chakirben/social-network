@@ -5,7 +5,7 @@ import MyGroupsPage from "./api_and_funcs/get_groups"
 import SideBar from "@/components/sidebar";
 import DataToCreatGroup from "@/components/groups/creatGroup"
 import FetchCreatGroup from "./api_and_funcs/fetch_creat_gp"
-import FetchJoinToGroup from "./api_and_funcs/fetch_req_join_gp"
+
 import "./css/groups1.css"
 import "./css/creatgroup.css"
 import "./../home/home.css"
@@ -27,10 +27,7 @@ export default function JustMyGroupsPage() {
     setShowCreateGroup(false);
   }
 
-  // For the button to JOIN group...
-  const Jointogroup = (groupId) => {
-    FetchJoinToGroup(groupId)
-  }
+ 
 
   return (
     <div className="home">
@@ -41,7 +38,7 @@ export default function JustMyGroupsPage() {
 
 
         {showCreateGroup && <DataToCreatGroup onCreate={creatgroupGroup} onSkip={() => setShowCreateGroup(false)} />}
-        <MyGroupsPage onJoin={Jointogroup} />
+        <MyGroupsPage />
       </div>
     </div>
   );
