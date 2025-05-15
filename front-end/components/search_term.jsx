@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 
 import UserCard from "@/components/userCard";
 import NoMyGroup from "./groups/notmygroups";
+import MyGroup from "./groups/mygroups"
 
 export default function SearchTerm(Search) {
 
@@ -40,10 +41,15 @@ export default function SearchTerm(Search) {
     return (
         <div className="divallGroups">
             <div className="groupsmn">
-                
+
                 {searchdata.Notfollowed && searchdata.Notfollowed.length > 0 ? (
                     searchdata.Notfollowed.map(user => (
                         <UserCard key={user.id} user={user} />
+                    ))
+                ) : null}
+                {searchdata.JoinedGroups && searchdata.JoinedGroups.length > 0 ? (
+                    searchdata.JoinedGroups.map(g => (
+                        <MyGroup key={g.id} group={g} />
                     ))
                 ) : null}
                 {searchdata.UnJoinGroups && searchdata.UnJoinGroups.length > 0 ? (
@@ -53,8 +59,8 @@ export default function SearchTerm(Search) {
                 ) : null}
             </div>
 
-            </div>
+        </div>
 
-        
+
     )
 }

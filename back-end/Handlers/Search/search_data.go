@@ -17,7 +17,15 @@ type NotfollowedUser struct {
 	Avatar        string `json:"avatar"`
 	FollowerCount int    `json:"followerCount"`
 }
+
 type NotJoinGroups struct {
+	Id           int
+	Title        string
+	Description  string
+	MembersCount int
+	PostCont     int
+}
+type JoinedGroups struct {
 	Id           int
 	Title        string
 	Description  string
@@ -28,12 +36,12 @@ type NotJoinGroups struct {
 type Data struct {
 	Notfollowed  []NotfollowedUser `json:"Notfollowed"`
 	UnJoinGroups []NotJoinGroups `json:"UnJoinGroups"`
+	JoinedGroups []JoinedGroups `json:"JoinedGroups"`
 }
 
 func SearchData(w http.ResponseWriter, r *http.Request) {
 	searchfromfrontend := r.URL.Query().Get("query")
     searchTerm := "%" + searchfromfrontend + "%"
-	fmt.Println("here---->", searchfromfrontend)
 	userID, err := auth.ValidateSession(r, dataB.SocialDB)
 	if err != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
@@ -110,11 +118,47 @@ func SearchData(w http.ResponseWriter, r *http.Request) {
 		groups = append(groups, g)
 	}
 
+
+	query3 := `
+	SELECT 
+		g.id, 
+		g.title, 
+		g.description, 
+		COUNT(gm2.memberId) AS members_count,
+		COUNT(P.groupId) AS CP
+	FROM Groups g
+	JOIN GroupsMembers gm1 ON g.id = gm1.groupId
+	LEFT JOIN GroupsMembers gm2 ON g.id = gm2.groupId
+	LEFT JOIN Posts P ON P.groupId = g.id
+	WHERE gm1.memberId = ?
+	AND (g.title LIKE ? OR g.description LIKE ?)
+	GROUP BY g.id, g.title, g.description
+	`
+
+	rows3, err := dataB.SocialDB.Query(query3, userID,searchTerm,searchTerm)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "error to get my groups :(", http.StatusInternalServerError)
+		return
+	}
+
+	defer rows3.Close()
+	var groups1 []JoinedGroups
+	for rows3.Next() {
+		var g JoinedGroups
+		if err := rows3.Scan(&g.Id, &g.Title, &g.Description, &g.MembersCount, &g.PostCont); err != nil {
+			fmt.Println("error to get groups", err)
+			http.Error(w, "error to get groups", http.StatusInternalServerError)
+			return
+		}
+		groups1 = append(groups1, g)
+	}
+
 	var databackend Data
 
 	databackend.Notfollowed = unfollowedUsers
 	databackend.UnJoinGroups = groups
-
+	databackend.JoinedGroups = groups1
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(databackend); err != nil {
 		fmt.Println("JSON encode error", err)
