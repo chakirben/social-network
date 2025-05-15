@@ -78,7 +78,9 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 	var followers []interface{}
 	var followeds []interface{}
 	posts := []map[string]interface{}{}
+	var profile_type string
 	if accountType == "public" {
+		profile_type = "public"
 		//get followers
 		rows, errf := dataB.SocialDB.Query(`SELECT followerId FROM Followers WHERE followedId=?`, user_id)
 		if errf != nil {
@@ -182,6 +184,8 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 
 			posts = append(posts, post)
 		}
+	} else {
+		profile_type = "private"
 	}
 
 	//check if the visitor is the profile ownwer
@@ -195,8 +199,13 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 	var follow_status string
 	if checkAlreadyFollow(logged_user_id, user_id) {
 		follow_status = "Unfollow"
-	} else {
+	} else if !checkAlreadyFollow(logged_user_id, user_id) {
 		follow_status = "Follow"
+	}
+
+	//check if the follower send follow request to followed
+	if checkAlreadyFollowRequest(logged_user_id, user_id) {
+		follow_status = "waiting for followed accept"
 	}
 
 	//send response
@@ -209,6 +218,7 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 		"posts":           posts,
 		"follow_status": follow_status,
 		"profile_status": profile_status,
+		"profile_type": profile_type,
 	}
 	json.NewEncoder(w).Encode(response)
 }
@@ -218,6 +228,19 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 
 func checkAlreadyFollow(followerID, followedID int) bool {
 	rows, err := dataB.SocialDB.Query(`SELECT 1 FROM Followers WHERE followerId = ? AND followedId = ?`, followerID, followedID)
+	if err != nil {
+		return false
+	}
+	defer rows.Close()
+	return rows.Next()
+}
+
+
+func checkAlreadyFollowRequest(followerID, followedID int) bool {
+	rows, err := dataB.SocialDB.Query(`
+		SELECT 1 FROM Notifications 
+		WHERE senderId = ? AND receiverId = ? AND type = 'follow_request'
+	`, followerID, followedID)
 	if err != nil {
 		return false
 	}
