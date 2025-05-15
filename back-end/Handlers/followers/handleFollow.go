@@ -3,8 +3,10 @@ package followers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	dataB "socialN/dataBase"
 )
@@ -83,10 +85,29 @@ func HandleFollow(w http.ResponseWriter, r *http.Request) {
 			"followers_count": followers_count,
 		}
 	} else if followedtype == "private" {
+		var followers_count int
+		err = dataB.SocialDB.QueryRow("SELECT COUNT(*) FROM Followers WHERE followedId=?", followedid).Scan(&followers_count)
+		if err != nil {
+			followers_count = 0
+		}
+
+		
+		//insert into notifications table
+		_, err = dataB.SocialDB.Exec(`
+			INSERT INTO Notifications (senderId, receiverId, type, status, notificationDate)
+			VALUES (?, ?, 'follow_request', 'pending', ?)
+		`, followerid, followedid, time.Now().Format("2006-01-02 15:04:05"))
+		if err != nil {
+			log.Println("Error inserting notification:", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
 		response = map[string]interface{}{
-			"status":   "waiting for followed accept",
-			"followed": followInfo.Followed_id,
-			"follower": followInfo.Follower_session,
+			"status":          "waiting for followed accept",
+			"followed":        followedid,
+			"follower":        followerid,
+			"followers_count": followers_count,
 		}
 	}
 
