@@ -408,3 +408,39 @@ h5 {
     background-color: #e2e2e2;
 }
 
+.ChatButton{
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    background-color: #007AFF;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+.Card_message {
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+.time {
+    color: #888;
+    font-size: 12px;
+    margin-top: 2px;
+}
+.text-sm_rd {
+    font-size: 15px;
+    color: #fff;
+}
+/* meessage  not read */
+.text-sm_nrd { 
+    font-size: 15px;
+    color: #007AFF;
+}

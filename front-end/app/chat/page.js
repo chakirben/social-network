@@ -1,7 +1,8 @@
 'use client'
 import { useState, useEffect } from "react";
 import SideBar from "@/components/sidebar";
-import UserCard from "@/components/userCard";
+import UserCard, { UserCardChat } from "@/components/userCard";
+import Header from "@/components/header";
 
 export default function Chat() {
   const [followedUsers, setFollowedUsers] = useState([]);
@@ -23,20 +24,22 @@ export default function Chat() {
   }, []);
 
   return (
-    <div>
-     
-      <p>Hello Chat</p>
+    <div className="home">
+      <SideBar />
+      
+    <div className="homeP">
+      <Header pageName={'chat'}></Header>
       <ChatSection users={followedUsers } />
     </div>
+  </div>
   );
 }
 function  ChatSection({ users }) {
   return (
-    
     <div className="usersList">
       {users.map(user => (
         <section key={user.id}  className="userCard">
-          <UserCard user={user} Showchat = {true } />
+          <UserCardChat user={user} Showchat = {true } />
         </section>
       ))}
     </div>
