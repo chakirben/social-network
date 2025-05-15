@@ -1,0 +1,14 @@
+.event{
+    display: flex;
+    justify-content: space-between;
+    padding: 40px;
+    align-items: center;
+}
+.eventData{
+    display: flex;
+    flex-direction: column;
+}
+.dateAndName{
+    display: flex;
+    gap: 20px;
+}

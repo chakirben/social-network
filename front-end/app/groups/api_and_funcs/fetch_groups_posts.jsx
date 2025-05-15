@@ -3,13 +3,16 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react"
 import Post from "@/components/post"
 import CreatPostInGroup from "@/components/groups/creat_postgroup"
+import Events from '@/components/events';
+import "../../../styles/global.css"
+
 
 export default function GroupDetails({ groupId, title }) {
     const [PostsGroup, setPostsGroup] = useState([])
     const [isLoading, setIsLoading] = useState(true)
 
     const router = useRouter();
-    
+
     useEffect(() => {
         const fetchposts = async () => {
             try {
@@ -36,11 +39,11 @@ export default function GroupDetails({ groupId, title }) {
     }
 
     return (
-        <div>
+        <div className='postEventsInGroup' >
             <div className="GPTitle">
                 <div className="btnback">
-                    <img src="./../images/arrow-left.svg"/>
-                    <button className="backbtn" onClick={()=> router.push(`/groups`)}>back</button>
+                    <img src="./../images/arrow-left.svg" />
+                    <button className="backbtn" onClick={() => router.push(`/groups`)}>back</button>
                 </div>
                 <div className="titleandimg" >
                     <img src="./../images/group.svg" />
@@ -51,6 +54,7 @@ export default function GroupDetails({ groupId, title }) {
             {PostsGroup.map((pst) => (
                 <Post key={pst.id} pst={pst} />
             ))}
+            <Events />
         </div>
     )
 }   

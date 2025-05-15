@@ -2,7 +2,6 @@ package events
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -10,24 +9,28 @@ import (
 )
 
 type GetEvents struct {
-	Title        string    `json:"title"`
-	Description  string    `json:"description"`
-	EventDate    time.Time `json:"eventDate"`
-	CreatorId    int       `json:"creatorId"`
-	GroupId      int       `json:"groupId"`
-	GoingMembers int       `json:"goingMembers"`
-	IsUserGoing  *bool     `json:"isUserGoing"`
+	Title        string     `json:"title"`
+	Description  string     `json:"description"`
+	EventDate    *time.Time `json:"eventDate"`
+	FirstName    string     `json:"firstName"`
+	LastName     string     `json:"lastName"`
+	CreatorId    int        `json:"creatorId"`
+	GroupId      int        `json:"groupId"`
+	GoingMembers int        `json:"goingMembers"`
+	IsUserGoing  *bool      `json:"isUserGoing"`
 }
 
 func GetEventsHandler(w http.ResponseWriter, r *http.Request) {
-	userID := 1
-	query := `SELECT e.title, e.description, e.eventDate, e.creatorId, e.groupId,
+	userID := 3
+	query := `SELECT e.title, e.description, e.eventDate, e.creatorId,
+					(SELECT u.firstName FROM Users u WHERE u.id = ?) AS firstName,
+					(SELECT u.lastName FROM Users u WHERE u.id = ?) AS lastName, e.groupId,
 			(SELECT COUNT(*) FROM EventsAttendance ea WHERE ea.eventId = e.id AND ea.isGoing = true) AS goingMembers,
 			(SELECT ea.isGoing FROM EventsAttendance ea WHERE ea.eventId = e.id AND  ea.memberId = ? LIMIT 1) AS isUserGoing
 
 			FROM Events e`
 
-	rows, err := database.SocialDB.Query(query, userID)
+	rows, err := database.SocialDB.Query(query, userID, userID, userID)
 	if err != nil {
 		http.Error(w, "Failed retrieve events ---"+err.Error(), http.StatusInternalServerError)
 	}
@@ -36,7 +39,7 @@ func GetEventsHandler(w http.ResponseWriter, r *http.Request) {
 
 	for rows.Next() {
 		var e GetEvents
-		err := rows.Scan(&e.Title, &e.Description, &e.EventDate, &e.CreatorId, &e.GroupId, &e.GoingMembers, &e.IsUserGoing)
+		err := rows.Scan(&e.Title, &e.Description, &e.EventDate, &e.CreatorId, &e.FirstName, &e.LastName, &e.GroupId, &e.GoingMembers, &e.IsUserGoing)
 		if err != nil {
 			http.Error(w, "Error scanning event: "+err.Error(), http.StatusInternalServerError)
 			return
@@ -47,5 +50,5 @@ func GetEventsHandler(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(events); err != nil {
 		http.Error(w, "Error encoding JSON: "+err.Error(), http.StatusInternalServerError)
 	}
-	fmt.Println("eve", events)
+	// fmt.Println("eve", events)
 }

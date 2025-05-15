@@ -46,7 +46,7 @@ func SetupHandlers() {
 	// Events
 	http.HandleFunc("/api/CreateEvent", event.SetEventHandler)
 	http.HandleFunc("/api/SetAttendance", event.SetAttendanceHandler)
-	http.HandleFunc("/api/GetEvents", event.GetEventsHandler)
+	http.HandleFunc("/api/GetEvents", AccessMiddleware(event.GetEventsHandler))
 
 	// groups Creat_Groups
 	http.HandleFunc("/api/CreatGroup", AccessMiddleware(SessionMiddleware(Group.Creat_Groups)))
