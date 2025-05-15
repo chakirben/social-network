@@ -1,6 +1,7 @@
 import { useRouter } from 'next/navigation';
 import { use, useState } from 'react';
 
+
 export default function UserCard({ user , Showchat = false}) {
     const router = useRouter();
     const [isFollowed, setIsfollowed] = useState(user.requested)
@@ -50,7 +51,6 @@ export function UserCardChat({ user }) {
   const router = useRouter();
   return (
     <div
-    onClick={() => router.push(`/chat/${user.id}`)}
       className="flex items-center justify-between bg-white shadow-md p-4 rounded-lg hover:shadow-lg transition cursor-pointer"
     >
       {user.avatar ? (
@@ -58,7 +58,6 @@ export function UserCardChat({ user }) {
           className="userAvatar "
           src={`http://localhost:8080/${user.avatar}`}
           alt={`${user.firstName}'s avatar`}
-        onClick={() => router.push(`/users/${user.id}`)}
         />
       ) : (
         <div className="Username">

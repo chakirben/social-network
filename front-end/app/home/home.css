@@ -444,3 +444,89 @@ h5 {
     font-size: 15px;
     color: #007AFF;
 }
+.no-friends-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.no-friends-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.chat-box {
+  display: flex;
+  flex-direction: column;
+  height: 500px; 
+  width: 400px;  
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+  font-size: 14px;
+  color: #333;
+}
+
+.message {
+  margin-bottom: 12px;
+  max-width: 75%;
+  padding: 10px 15px;
+  border-radius: 20px;
+  word-wrap: break-word;
+}
+
+.chat-sender {
+  background-color: #e0e0e0;
+  align-self: flex-start;
+  color: #000;
+}
+
+.chat-me{
+  background-color: #0072ff;
+  color: white;
+  align-self: flex-end;
+}
+
+/* صندوق الإدخال */
+.chat-input-container {
+  border-top: 1px solid #ddd;
+  padding: 10px 15px;
+  display: flex;
+  gap: 10px;
+  background-color: #fff;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.chat-send-button {
+  background-color: #0072ff;
+  border: none;
+  color: white;
+  padding: 0 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.chat-send-button:hover {
+  background-color: #005ecb;
+}
