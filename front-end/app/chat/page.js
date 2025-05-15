@@ -46,28 +46,45 @@ export default function Chat() {
   </div>
   );
 }
-function  ChatSection({ users }) {
-  const router = useRouter();
-  const  [Chatiseractive, setChatActive] = useState(null);
+
+function ChatSection({ users }) {
+  const [Chatiseractive, setChatActive] = useState(null);
+  const [messages, setMessages] = useState([]);
+
+  const handleSend = (text) => {
+    const newMsg = {
+      sender: "You",
+      text,
+      time: new Date().toLocaleTimeString(),
+      fromUser: true
+    };
+    setMessages([...messages, newMsg]);
+  };
+
+  if (Chatiseractive) {
+    return (
+      <div className="usersList">
+      <div className="chat-container">
+
+        <h2 className="label">Chat with {Chatiseractive.firstName}</h2>
+                <button className ="btback" onClick={() => setChatActive(null)} >← Back to friends</button>
+        <ChatBox messages={messages} onSend={handleSend} />
+      </div>
+      </div>
+    );
+  }
+
   return (
     <div className="usersList">
       {users.map(user => (
-        <section key={user.id}  className="userCard" onClick={() => setChatActive(user)}>
-          {Chatiseractive === user && (
-            <ChatBox
-              messages={user.messages}
-              onSend={(text) => {
-                user.messages.push({ fromUser: true, text });
-                setChatActive(null);
-              }}
-            />
-          )}
-          <UserCardChat user={user} />
-        </section>
+        <div key={user.id} className="userCard">
+          <UserCardChat user={user}  onClick={() => setChatActive(user)} />
+        </div>
       ))}
     </div>
   );
 }
+
 import { useRef } from "react";
 
 export function ChatBox({ messages = [], onSend }) {
@@ -95,7 +112,7 @@ export function ChatBox({ messages = [], onSend }) {
 
   return (
     <div>
-      <div className="chat-box" style={{ height: 300, overflowY: "auto", border: "1px solid #ccc" }}>
+      <div className="chat-box" >
         {messages.length === 0 ? (
           <p>No messages yet</p>
         ) : (
@@ -111,8 +128,6 @@ export function ChatBox({ messages = [], onSend }) {
         )}
         <div ref={messagesEndRef} />
       </div>
-
-      
       <div className="chat-input-container">
         <textarea
               className="message-input" 

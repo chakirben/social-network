@@ -462,11 +462,11 @@ h5 {
 .chat-box {
   display: flex;
   flex-direction: column;
-  height: 500px; 
-  width: 400px;  
+  height: 400px; 
+  width: 600px;  
   border: 1px solid #ccc;
   border-radius: 8px;
-  background-color: #fff;
+  background-color: #c90707;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   overflow: hidden;
 }
@@ -500,7 +500,6 @@ h5 {
   align-self: flex-end;
 }
 
-/* صندوق الإدخال */
 .chat-input-container {
   border-top: 1px solid #ddd;
   padding: 10px 15px;
@@ -510,6 +509,7 @@ h5 {
 }
 
 .chat-input {
+    width: 100%;
   flex: 1;
   padding: 10px 12px;
   border: 1px solid #ccc;

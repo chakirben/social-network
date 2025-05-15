@@ -46,11 +46,12 @@ export default function UserCard({ user , Showchat = false}) {
 }
 
 
-export function UserCardChat({ user }) {
+export function UserCardChat({ user , onClick }) {  
     user.lastMessage = "feen aaa "
   const router = useRouter();
   return (
     <div
+    onClick={onClick}
       className="flex items-center justify-between bg-white shadow-md p-4 rounded-lg hover:shadow-lg transition cursor-pointer"
     >
       {user.avatar ? (
