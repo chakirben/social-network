@@ -14,7 +14,6 @@ import SearchTerm from "@/components/search_term";
 export default function Home() {
     const [posts, setPosts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
-    const [searchResults, setSearchResults] = useState(null); // optional if needed
 
     // fetch all posts initially
     useEffect(() => {
@@ -30,19 +29,8 @@ export default function Home() {
             }
         };
         fetchPosts();
-    }, []);
-
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            if (searchTerm.trim() !== "") {
-                FetchSearch(searchTerm);
-            }
-        }, 300);
+    }, [])
     
-        return () => clearTimeout(timeout); // clean up the previous timer
-    }, [searchTerm]);
-    
-
     return (
         <div className="home">
             <SideBar />

@@ -10,13 +10,8 @@ import { useSearchParams } from 'next/navigation';
 export default function DisplyGroup({ params }) {
     const { id } = use(params);
   
-    const searchParams = useSearchParams();
-    const title = searchParams.get('title');
-
-    console.log("here ---->>>>", id , title);
-    
-    
-
+    const searchParams = useSearchParams()
+    const title = searchParams.get('title')
     return (
          <div className="home">
               <SideBar />

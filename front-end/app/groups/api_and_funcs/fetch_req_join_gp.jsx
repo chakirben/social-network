@@ -16,8 +16,7 @@ export default async function FetchJoinToGroup(groupId) {
         if (!rep.ok) {
             throw new Error("Failed to send Request to join the group");
         }
-        const repData = await rep.json();
-        console.log("Request send successfully:", repData);        
+        const repData = await rep.json();      
     } catch {
         console.error("Error creating the group:", error);
     }
