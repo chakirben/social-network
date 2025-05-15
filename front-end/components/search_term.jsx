@@ -35,9 +35,10 @@ export default function SearchTerm(Search) {
 
     console.log(searchdata);
 
-    if (!searchdata || (!searchdata.Notfollowed && !searchdata.UnJoinGroups)) {
+    if (!searchdata ||(!searchdata.JoinedGroups && !searchdata.Notfollowed && !searchdata.UnJoinGroups)) {
         return <p>Loading or not search found...</p>;
     }
+    
     return (
         <div className="divallGroups">
             <div className="groupsmn">
@@ -49,7 +50,7 @@ export default function SearchTerm(Search) {
                 ) : null}
                 {searchdata.JoinedGroups && searchdata.JoinedGroups.length > 0 ? (
                     searchdata.JoinedGroups.map(g => (
-                        <MyGroup key={g.id} group={g} />
+                        <MyGroup key={g.Id} group={g} />
                     ))
                 ) : null}
                 {searchdata.UnJoinGroups && searchdata.UnJoinGroups.length > 0 ? (

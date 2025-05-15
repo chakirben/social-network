@@ -42,6 +42,7 @@ type Data struct {
 func SearchData(w http.ResponseWriter, r *http.Request) {
 	searchfromfrontend := r.URL.Query().Get("query")
     searchTerm := "%" + searchfromfrontend + "%"
+	fmt.Println("", searchTerm)
 	userID, err := auth.ValidateSession(r, dataB.SocialDB)
 	if err != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
@@ -159,6 +160,7 @@ func SearchData(w http.ResponseWriter, r *http.Request) {
 	databackend.Notfollowed = unfollowedUsers
 	databackend.UnJoinGroups = groups
 	databackend.JoinedGroups = groups1
+	fmt.Println("hi yousesf", databackend)
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(databackend); err != nil {
 		fmt.Println("JSON encode error", err)
