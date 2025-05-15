@@ -11,15 +11,15 @@ export default async function FetchCreatGroup(title, description) {
                 title: title,
                 description: description,
             }),
-        });
+        })
 
         if (!rep.ok) {
-            throw new Error("Failed to create the group");
+            throw new Error("Failed to create the group")
         }
 
-        const repData = await rep.json();
-        console.log("Group created successfully:", repData);
+        const repData = await rep.json()
+        return repData
     } catch (error) {
-        console.error("Error creating the group:", error);
+        console.error("Error creating the group:", error)
     }
 }

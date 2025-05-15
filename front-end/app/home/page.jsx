@@ -1,6 +1,5 @@
 'use client'
 import { useEffect, useState } from "react";
-import { FetchSearch } from "./fetch_search";
 import SideBar from "@/components/sidebar";
 import "./home.css";
 import "../../styles/global.css";
@@ -38,7 +37,7 @@ export default function Home() {
             if (searchTerm.trim() !== "") {
                 FetchSearch(searchTerm);
             }
-        }, 300); // delay in ms
+        }, 300);
     
         return () => clearTimeout(timeout); // clean up the previous timer
     }, [searchTerm]);
