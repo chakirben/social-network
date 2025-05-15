@@ -36,19 +36,23 @@ export default function CreatPostInGroup( { gpid } ) {
       formData.append('image', file);
     }
 
-    try {
-      const res = await fetch('http://localhost:8080/api/CreatePost', {
-        method: 'POST',
-        body: formData,
-        credentials: 'include',
-      });
-      const result = await res.json();
-      setText('');
-  
-      setImageSrc(null);
-      inputRef.current.value = null;
-    } catch (err) {
-      console.error('Post failed:', err);
+    if (text.trim() == "") {
+      return
+    }  else {
+      try {
+        const res = await fetch('http://localhost:8080/api/CreatePost', {
+          method: 'POST',
+          body: formData,
+          credentials: 'include',
+        });
+        const result = await res.json();
+        setText('');
+    
+        setImageSrc(null);
+        inputRef.current.value = null;
+      } catch (err) {
+        console.error('Post failed:', err);
+      }
     }
   };
   
