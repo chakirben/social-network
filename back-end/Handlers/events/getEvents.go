@@ -52,5 +52,4 @@ func GetEventsHandler(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(events); err != nil {
 		http.Error(w, "Error encoding JSON: "+err.Error(), http.StatusInternalServerError)
 	}
-	// fmt.Println("eve", events)
 }

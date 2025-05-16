@@ -54,7 +54,7 @@ export default function GroupDetails({ groupId, title }) {
             {PostsGroup.map((pst) => (
                 <Post key={pst.id} pst={pst} />
             ))}
-            <Events />
+            <Events id = {groupId} />
         </div>
     )
 }   

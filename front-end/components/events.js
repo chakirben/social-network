@@ -1,21 +1,18 @@
 import { useEffect, useState } from "react"
 import "../styles/events.css"
 
-export default function Events() {
+export default function Events(groupId) {
 
     const [events, setEvents] = useState([])
-    // const [state, setStl] = useState({})
-
-
     useEffect(() => {
         const fetchEvent = async () => {
             try {
-                let res = await fetch('http://localhost:8080/api/GetEvents', {
+                let res = await fetch(`http://localhost:8080/api/GetEvents?id=${groupId}`, {
                     credentials: 'include',
 
                 })
                 const data = await res.json()
-                setEvents(data)                
+                setEvents(data)
             } catch (error) {
                 console.error("Error fetching Events:", error);
 
