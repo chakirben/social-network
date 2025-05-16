@@ -5,29 +5,29 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"socialN/Handlers/auth"
 	database "socialN/dataBase"
 )
 
 var eveAttendence struct {
 	EventId int  `json:"eventId"`
-	GroupId int  `json:"group_id"`
+	GroupId int  `json:"groupId"`
 	IsGoing bool `json:"isGoing"`
 }
 
 func SetAttendanceHandler(w http.ResponseWriter, r *http.Request) {
-	// userID, err := auth.ValidateSession(r, database.SocialDB)
-	// if err != nil {
-	// 	http.Error(w, "Unauthorized", http.StatusUnauthorized)
-	// 	return
-	// }
+	userID, err := auth.ValidateSession(r, database.SocialDB)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 
-	userID := 1
 	if err := json.NewDecoder(r.Body).Decode(&eveAttendence); err != nil {
 		http.Error(w, "Bad request: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	err := database.SocialDB.QueryRow(`SELECT 1 FROM GroupsMembers WHERE memberId = ? AND groupId = ? LIMIT 1`, userID, eveAttendence.GroupId).Scan(new(interface{}))
+	err = database.SocialDB.QueryRow(`SELECT 1 FROM GroupsMembers WHERE memberId = ? AND groupId = ? LIMIT 1`, userID, eveAttendence.GroupId).Scan(new(interface{}))
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "You are not a member of this group", http.StatusForbidden)

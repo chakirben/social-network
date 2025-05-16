@@ -1,14 +1,72 @@
-.event{
+* {
+    margin: 0px;
+}
+
+.event {
     display: flex;
     justify-content: space-between;
     padding: 40px;
     align-items: center;
 }
-.eventData{
+
+.eventData {
     display: flex;
     flex-direction: column;
+    gap: 18px;
 }
-.dateAndName{
+
+.twoBtns {
     display: flex;
-    gap: 20px;
+    gap: 24px;
+}
+
+.avatarAndName {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.iconAndDate {
+    display: flex;
+}
+
+.iconAndDate {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    width: max-content;
+}
+
+.eventDate {
+    width: fit-content;
+}
+
+.goingBtn,
+.notGoingBtn {
+    padding: 12px;
+    border: 2px solid #484848;
+    border-radius: 10px;
+}
+
+.selected {
+    background-color: #FFFFFF;
+    color: black;
+}
+
+.EventTitle {
+    font-size: 22px;
+}
+
+.eventAvatar {
+    width: 20px;
+    border-radius: 50px;
+}
+
+hr {
+    transform: translate(90);
+}
+
+.dateAndName {
+    display: flex;
+    gap: 12px;
 }

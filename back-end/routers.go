@@ -44,8 +44,8 @@ func SetupHandlers() {
 	// http.HandleFunc("/api/GetLikedPosts", Post.GetLikedPostsHandler)
 
 	// Events
-	http.HandleFunc("/api/CreateEvent", event.SetEventHandler)
-	http.HandleFunc("/api/SetAttendance", event.SetAttendanceHandler)
+	http.HandleFunc("/api/CreateEvent", AccessMiddleware(event.SetEventHandler))
+	http.HandleFunc("/api/SetAttendance", AccessMiddleware(event.SetAttendanceHandler))
 	http.HandleFunc("/api/GetEvents", AccessMiddleware(event.GetEventsHandler))
 
 	// groups Creat_Groups
