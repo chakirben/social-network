@@ -16,6 +16,7 @@ import (
 
 	u "socialN/Handlers/users"
 	db "socialN/dataBase"
+	ws "socialN/Handlers/ws"
 )
 
 func SetupHandlers() {
@@ -88,6 +89,7 @@ func SetupHandlers() {
 
 	http.HandleFunc("/api/updatePrivacy", AccessMiddleware(u.SetPrivacy))
 	http.HandleFunc("/api/getFollowersList", AccessMiddleware(u.GetFollowersListHandler))
+	http.HandleFunc("/api/ws", AccessMiddleware(ws.Entry))
 }
 
 func SessionMiddleware(fun http.HandlerFunc) http.HandlerFunc {
