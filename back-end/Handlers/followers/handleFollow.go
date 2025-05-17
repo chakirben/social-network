@@ -85,26 +85,38 @@ func HandleFollow(w http.ResponseWriter, r *http.Request) {
 			"followers_count": followers_count,
 		}
 	} else if followedtype == "private" {
+
+		var followedText = "waiting for followed accept"
+		if checkAlreadyFollow(followerid, followedid) {
+			_, exec_err := dataB.SocialDB.Exec(`DELETE FROM Followers WHERE followerId=? AND followedId=?`, followerid, followedid)
+			if exec_err != nil {
+				fmt.Println("Error delete in db:", exec_err)
+				return
+			}
+			followedText = "Follow"
+		} else {
+			//insert into notifications table
+			_, err = dataB.SocialDB.Exec(`
+				INSERT INTO Notifications (senderId, receiverId, type, status, notificationDate)
+				VALUES (?, ?, 'follow_request', 'pending', ?)
+			`, followerid, followedid, time.Now().Format("2006-01-02 15:04:05"))
+			if err != nil {
+				log.Println("Error inserting notification:", err)
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				return
+			}
+		}
+		
+		
 		var followers_count int
 		err = dataB.SocialDB.QueryRow("SELECT COUNT(*) FROM Followers WHERE followedId=?", followedid).Scan(&followers_count)
 		if err != nil {
 			followers_count = 0
 		}
-
 		
-		//insert into notifications table
-		_, err = dataB.SocialDB.Exec(`
-			INSERT INTO Notifications (senderId, receiverId, type, status, notificationDate)
-			VALUES (?, ?, 'follow_request', 'pending', ?)
-		`, followerid, followedid, time.Now().Format("2006-01-02 15:04:05"))
-		if err != nil {
-			log.Println("Error inserting notification:", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
-		}
 
 		response = map[string]interface{}{
-			"status":          "waiting for followed accept",
+			"status":          followedText,
 			"followed":        followedid,
 			"follower":        followerid,
 			"followers_count": followers_count,
@@ -123,8 +135,15 @@ func checkAlreadyFollow(followerID, followedID int) bool {
 	return rows.Next()
 }
 
+
+type acceptFollow struct {
+	FollowerID int `json:"follower_id"`
+	FollowedSession string `json:"followed_session"`
+}
+
+
 func AcceptFollowRequest(w http.ResponseWriter, r *http.Request) {
-	var followInfo FollowInfo
+	var followInfo acceptFollow
 
 	err := json.NewDecoder(r.Body).Decode(&followInfo)
 	if err != nil {
@@ -132,11 +151,11 @@ func AcceptFollowRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var followerid int
-	followedid, err := strconv.Atoi(followInfo.Followed_id)
+	var followedid int
+	followerid := followInfo.FollowerID
 
-	errq2 := dataB.SocialDB.QueryRow(`SELECT userId FROM Sessions WHERE id=?`, followInfo.Follower_session).Scan(&followerid)
-	if errq2 != nil || err != nil {
+	errq2 := dataB.SocialDB.QueryRow(`SELECT userId FROM Sessions WHERE id=?`, followInfo.FollowedSession).Scan(&followedid)
+	if errq2 != nil {
 		fmt.Println("Error get ID:", errq2)
 		return
 	}
@@ -147,8 +166,63 @@ func AcceptFollowRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+
+	
+	stmt, err := dataB.SocialDB.Prepare("UPDATE Notifications SET status = ? WHERE senderId = ? AND receiverId = ?")
+    if err != nil {
+        fmt.Println("Error change elem in db:", err)
+		return
+    }
+    defer stmt.Close()
+	_, err = stmt.Exec("accepted", followerid, followedid)
+    if err != nil {
+        fmt.Println("Error change elem in db:", err)
+		return
+    }
+
+
 	response := map[string]interface{}{
-		"status": "followed successfuly",
+		"status": "follow accepted successfuly",
+	}
+	json.NewEncoder(w).Encode(response)
+}
+
+
+func DeclineFollowRequest(w http.ResponseWriter, r *http.Request) {
+	var followInfo acceptFollow
+
+	err := json.NewDecoder(r.Body).Decode(&followInfo)
+	if err != nil {
+		fmt.Println("Invalid Json:", err)
+		return
+	}
+
+	var followedid int
+	followerid := followInfo.FollowerID
+
+	errq2 := dataB.SocialDB.QueryRow(`SELECT userId FROM Sessions WHERE id=?`, followInfo.FollowedSession).Scan(&followedid)
+	if errq2 != nil {
+		fmt.Println("Error get ID:", errq2)
+		return
+	}
+
+
+	
+	stmt, err := dataB.SocialDB.Prepare("UPDATE Notifications SET status = ? WHERE senderId = ? AND receiverId = ?")
+    if err != nil {
+        fmt.Println("Error change elem in db:", err)
+		return
+    }
+    defer stmt.Close()
+	_, err = stmt.Exec("refused", followerid, followedid)
+    if err != nil {
+        fmt.Println("Error change elem in db:", err)
+		return
+    }
+
+
+	response := map[string]interface{}{
+		"status": "follow declined successfuly",
 	}
 	json.NewEncoder(w).Encode(response)
 }

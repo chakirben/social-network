@@ -40,6 +40,10 @@ export default function SideBar() {
                     <img src='/images/users-icon.svg' alt='Users icon' />
                     {!collapsed && 'Users'}
                 </Link>
+                <Link href="/notifications" className={`navLink ${pathname === '/notifications' ? 'active' : ''}`}>
+                    <img src='/images/users-icon.svg' alt='Users icon' />
+                    {!collapsed && 'Notifications'}
+                </Link>
             </nav>
         </aside>
     )

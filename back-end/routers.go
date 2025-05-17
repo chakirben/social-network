@@ -6,6 +6,7 @@ import (
 
 	"socialN/Handlers/auth"
 	"socialN/Handlers/followers"
+	"socialN/Handlers/notification"
 
 	h "socialN/Handlers"
 	Comment "socialN/Handlers/comments"
@@ -81,6 +82,7 @@ func SetupHandlers() {
 	//	http.HandleFunc("/api/follow", AccessMiddleware(u.Follow))
 	http.HandleFunc("/api/follow", AccessMiddleware(followers.HandleFollow))
 	http.HandleFunc("/api/acceptFollowRequest", AccessMiddleware(followers.AcceptFollowRequest))
+	http.HandleFunc("/api/declineFollowRequest", AccessMiddleware(followers.DeclineFollowRequest))
 
 	// profile
 	http.HandleFunc("/api/profile", AccessMiddleware(profile.GetData))
@@ -94,6 +96,9 @@ func SetupHandlers() {
 
 	http.HandleFunc("/api/updatePrivacy", AccessMiddleware(u.SetPrivacy))
 	http.HandleFunc("/api/getFollowersList", AccessMiddleware(u.GetFollowersListHandler))
+
+	//notifications
+	http.HandleFunc("/api/getNotifications", AccessMiddleware(notification.GetNotifications))
 }
 
 func SessionMiddleware(fun http.HandlerFunc) http.HandlerFunc {
