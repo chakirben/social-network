@@ -17,6 +17,7 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+
 type Message struct {
 	Type    string `json:"type"`
 	Content string `json:"content"`
