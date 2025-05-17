@@ -1,0 +1,55 @@
+.creatPostForm input.searchInput,
+.creatPostForm textarea.textArea {
+    background: transparent;
+    color: white;
+    width: 100%;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    border: none;
+    padding: 12px 0;
+    resize: none;
+}
+
+.creatPostForm input:focus,
+.creatPostForm textarea:focus {
+    outline: none;
+    border: none;
+}
+
+.textArea {
+    min-height: 120px;
+    margin-top: 12px;
+    margin-bottom: 12px;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.button-active {
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.button-active:hover {
+    background-color: #e0e0e0;
+}
+
+.button-disabled {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #666;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: not-allowed;
+}
+
+.err {
+    margin-top: 8px;
+    color: #ff6b6b;
+    font-size: 14px;
+}

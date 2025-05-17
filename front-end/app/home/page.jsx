@@ -10,6 +10,7 @@ import Post from "@/components/post";
 import SearchBar from "@/components/searchBar";
 import CreatePost from "@/components/creatPostForm";
 import SearchTerm from "@/components/search_term";
+import HomeEvents from "@/components/events/homeEvents";
 
 export default function Home() {
     const [posts, setPosts] = useState([]);
@@ -38,20 +39,21 @@ export default function Home() {
                 FetchSearch(searchTerm);
             }
         }, 300);
-    
+
         return () => clearTimeout(timeout); // clean up the previous timer
     }, [searchTerm]);
-    
+
 
     return (
         <div className="home">
             <SideBar />
             <div className="homeP">
                 <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-                
+
                 {searchTerm.trim() === "" ? (
                     <div className="sc">
                         <CreatePost />
+                        <HomeEvents />
                         <div className="posts">
                             {posts.length === 0 ? (
                                 <div className="loading">Loading posts...</div>
@@ -63,9 +65,9 @@ export default function Home() {
                         </div>
                     </div>
                 ) : (
-                    
-                        <SearchTerm search={searchTerm} />
-                    
+
+                    <SearchTerm search={searchTerm} />
+
                 )}
             </div>
         </div>

@@ -2,6 +2,8 @@
     margin: 0px;
 }
 
+
+
 .event {
     display: flex;
     justify-content: space-between;
@@ -17,8 +19,17 @@
 
 .twoBtns {
     display: flex;
+    flex-direction: column;
     gap: 24px;
 }
+.goingBtn,
+.notGoingBtn {
+    padding: 12px;
+    border: 2px solid #484848;
+    border-radius: 10px;
+    text-align: center;
+}
+
 
 .avatarAndName {
     display: flex;
@@ -41,12 +52,6 @@
     width: fit-content;
 }
 
-.goingBtn,
-.notGoingBtn {
-    padding: 12px;
-    border: 2px solid #484848;
-    border-radius: 10px;
-}
 
 .selected {
     background-color: #FFFFFF;
