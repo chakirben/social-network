@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react"
 import "../styles/events.css"
+import { useParams } from "next/navigation"
 
-export default function Events(groupId) {
+export default function Events() {
 
     const [events, setEvents] = useState([])
+    const { id } = useParams()
     useEffect(() => {
         const fetchEvent = async () => {
             try {
-                let res = await fetch(`http://localhost:8080/api/GetEvents?id=${groupId}`, {
+                let res = await fetch(`http://localhost:8080/api/GetEvents?id=${id}`, {
                     credentials: 'include',
 
                 })
@@ -56,7 +58,7 @@ export default function Events(groupId) {
 
     return (
         <>
-            {events.map((event, index) => (
+            {events?.map((event, index) => (
                 <div className="event" key={index}>
                     <div className="eventData">
                         <p className="EventTitle">{event.title}</p>

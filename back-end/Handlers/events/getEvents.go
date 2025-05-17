@@ -2,7 +2,9 @@ package events
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	database "socialN/dataBase"
@@ -23,31 +25,48 @@ type GetEvents struct {
 }
 
 func GetEventsHandler(w http.ResponseWriter, r *http.Request) {
-	userID := 3
-	query := `SELECT e.id, e.title, e.description, e.eventDate, e.creatorId,
-					(SELECT u.firstName FROM Users u WHERE u.id = ?) AS firstName,
-					(SELECT u.lastName FROM Users u WHERE u.id = ?) AS lastName, e.groupId,
-					(SELECT u.avatar FROM Users u WHERE u.id = ?) AS avatar,
-			(SELECT COUNT(*) FROM EventsAttendance ea WHERE ea.eventId = e.id AND ea.isGoing = true) AS goingMembers,
-			(SELECT ea.isGoing FROM EventsAttendance ea WHERE ea.eventId = e.id AND  ea.memberId = ? LIMIT 1) AS isUserGoing
-			FROM Events e`
-
-	rows, err := database.SocialDB.Query(query, userID, userID, userID, userID)
+	groupIdStr := r.URL.Query().Get("id")
+	groupId, err := strconv.Atoi(groupIdStr)
+	fmt.Println("groupid ", groupId)
 	if err != nil {
-		http.Error(w, "Failed retrieve events ---"+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Invalid group ID", http.StatusBadRequest)
+		return
+	}
+
+	userID := 3
+
+	query := `
+	SELECT 
+		e.id, e.title, e.description, e.eventDate, e.creatorId,
+		u.firstName, u.lastName, u.avatar,
+		e.groupId,
+		(SELECT COUNT(*) FROM EventsAttendance ea WHERE ea.eventId = e.id AND ea.isGoing = true) AS goingMembers,
+		(SELECT ea.isGoing FROM EventsAttendance ea WHERE ea.eventId = e.id AND ea.memberId = ? LIMIT 1) AS isUserGoing
+	FROM Events e
+	JOIN Users u ON e.creatorId = u.id
+	WHERE e.groupId = ?
+	`
+
+	rows, err := database.SocialDB.Query(query, userID, groupId)
+	if err != nil {
+		http.Error(w, "Failed to retrieve events: "+err.Error(), http.StatusInternalServerError)
+		return
 	}
 	defer rows.Close()
+
 	var events []GetEvents
 
 	for rows.Next() {
 		var e GetEvents
-		err := rows.Scan(&e.Id, &e.Title, &e.Description, &e.EventDate, &e.CreatorId, &e.FirstName, &e.LastName, &e.GroupId, &e.Avatar, &e.GoingMembers, &e.IsUserGoing)
+		err := rows.Scan(&e.Id, &e.Title, &e.Description, &e.EventDate, &e.CreatorId,
+			&e.FirstName, &e.LastName, &e.Avatar, &e.GroupId, &e.GoingMembers, &e.IsUserGoing)
 		if err != nil {
-			http.Error(w, "Error scanning event-------: "+err.Error(), http.StatusInternalServerError)
+			http.Error(w, "Error scanning event: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 		events = append(events, e)
 	}
+
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(events); err != nil {
 		http.Error(w, "Error encoding JSON: "+err.Error(), http.StatusInternalServerError)
