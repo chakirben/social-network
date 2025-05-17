@@ -239,7 +239,7 @@ func checkAlreadyFollow(followerID, followedID int) bool {
 func checkAlreadyFollowRequest(followerID, followedID int) bool {
 	rows, err := dataB.SocialDB.Query(`
 		SELECT 1 FROM Notifications 
-		WHERE senderId = ? AND receiverId = ? AND type = 'follow_request'
+		WHERE senderId = ? AND receiverId = ? AND type = 'follow_request' AND status = 'pending'
 	`, followerID, followedID)
 	if err != nil {
 		return false
