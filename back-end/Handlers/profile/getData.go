@@ -79,7 +79,7 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 	var followeds []interface{}
 	posts := []map[string]interface{}{}
 	var profile_type string
-	if accountType == "public" {
+	if accountType == "public" || checkAlreadyFollow(logged_user_id, user_id) {
 		profile_type = "public"
 		//get followers
 		rows, errf := dataB.SocialDB.Query(`SELECT followerId FROM Followers WHERE followedId=?`, user_id)
