@@ -48,9 +48,7 @@ export default function GroupDetails({ groupId, title }) {
         }
         fetchposts(controller.signal)
 
-        return ( () => {
-            controller.abort('    ');
-        })
+       
     }, [groupId])
 
 
