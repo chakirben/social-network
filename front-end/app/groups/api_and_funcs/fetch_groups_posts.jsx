@@ -34,6 +34,25 @@ export default function GroupDetails({ groupId, title }) {
             setIsLoading(false);
         }
     };
+    const fetchEvents = async () => {
+        try {
+            const res = await fetch(`http://localhost:8080/api/GetUserEvents?id=${groupId}`, {
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+            });
+            const data = await res.json();
+            setEvents(data || []);
+        } catch (error) {
+            console.error("Error fetching events:", error);
+        }
+    };
+
+    useEffect(() => {
+        if (activeTab === "events") {
+            fetchEvents();
+        }
+    }, [groupId, activeTab]);
+
 
     useEffect(() => {
         if (activeTab === "posts") {

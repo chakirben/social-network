@@ -6,8 +6,8 @@ import { useUser } from './userContext';
 import "../styles/creatEvent.css"
 import { useParams } from 'next/navigation';
 
-export default function CreateEvent({ setEvents , evnts }) {
- // console.log(evnts , setEvents);
+export default function CreateEvent({ setEvents, evnts }) {
+  //  console.log("fffffff",evnts , setEvents);
   const { user } = useUser();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -42,16 +42,14 @@ export default function CreateEvent({ setEvents , evnts }) {
         body: JSON.stringify(body),
       });
       if (res.ok) {
-        
+
         setTitle('');
         setContent('');
         setEventDate('');
         setErr('');
         const newEvent = await res.json()
-        console.log(newEvent);
-        
-        setEvents(prevEvents => [...prevEvents, newEvent])
-        console.log(evnts);
+
+        setEvents(prevEvents => [newEvent, ...prevEvents])
       } else {
         const errorText = await res.text();
         setErr(errorText || 'Failed to create event');
