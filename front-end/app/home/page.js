@@ -6,6 +6,7 @@ import "../../styles/global.css"
 import Post from "@/components/post";
 import SearchBar from "@/components/searchBar";
 import CreatePost from "@/components/creatPostForm";
+import InitWs from "../websocket/websocket";
 export default function Home() {
     const [posts, setPosts] = useState([]);
     useEffect(() => {
@@ -14,6 +15,8 @@ export default function Home() {
                 const response = await fetch("http://localhost:8080/api/GetPosts", { credentials: "include" });
                 const data = await response.json();
                 setPosts(data);
+                await InitWs();
+
             } catch (error) {
                 console.error("Error fetching posts:", error);
             }
