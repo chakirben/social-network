@@ -50,7 +50,7 @@ export default function CreateEvent() {
 
   return (
     <form className="creatPostForm">
-      <div className="df center">
+      <div className="df center gp12">
         <img className="avatar" src={user ? `http://localhost:8080/${user.avatar}` : ''} />
         <input
           className="searchInput"

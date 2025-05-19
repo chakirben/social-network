@@ -9,6 +9,9 @@
     padding: 12px 0;
     resize: none;
 }
+.avatar{
+    border-radius: 50%;
+}
 
 .creatPostForm input:focus,
 .creatPostForm textarea:focus {
@@ -17,10 +20,8 @@
 }
 
 .textArea {
-    min-height: 120px;
-    margin-top: 12px;
-    margin-bottom: 12px;
-    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+    height: fit-content;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .button-active {
