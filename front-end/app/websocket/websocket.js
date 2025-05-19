@@ -1,7 +1,9 @@
 //import { useEffect } from "react";
 export default async function InitWs() {
+    console.log("Initializing WebSocket connection...");
+    
     const deferred = new Deferred()
-    const ws = new WebSocket(":8080/api/ws");
+    const ws = new WebSocket("ws://localhost:8080/api/ws");
     ws.onopen = () => {
         console.log("WebSocket connection opened");
         deferred.resolve(ws);
