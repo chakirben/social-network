@@ -4,12 +4,17 @@ import React, { useState } from 'react';
 import Divider from './divider';
 import { useUser } from './userContext';
 import "../styles/creatEvent.css"
+import { useParams } from 'next/navigation';
 
-export default function CreateEvent() {
+export default function CreateEvent({ setEvents , evnts }) {
+ // console.log(evnts , setEvents);
   const { user } = useUser();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [err, setErr] = useState('');
+  const [eventDate, setEventDate] = useState('');
+  const { id } = useParams()
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,8 +25,12 @@ export default function CreateEvent() {
 
     const body = {
       title,
-      content
+      description: content,
+      groupId: parseInt(id, 10),
+      eventDate: new Date(eventDate)
     };
+
+
 
     try {
       const res = await fetch('http://localhost:8080/api/CreateEvent', {
@@ -32,12 +41,17 @@ export default function CreateEvent() {
         credentials: 'include',
         body: JSON.stringify(body),
       });
-
       if (res.ok) {
+        
         setTitle('');
         setContent('');
+        setEventDate('');
         setErr('');
-        console.log('Event created successfully');
+        const newEvent = await res.json()
+        console.log(newEvent);
+        
+        setEvents(prevEvents => [...prevEvents, newEvent])
+        console.log(evnts);
       } else {
         const errorText = await res.text();
         setErr(errorText || 'Failed to create event');
@@ -70,7 +84,16 @@ export default function CreateEvent() {
       <Divider />
 
       <div className="spB pd8">
-        <div></div>
+        <div className="calendar-section">
+          <span className="eventsDate">Choose date</span>
+          <input
+            type="date"
+            value={eventDate}
+            onChange={(e) => setEventDate(e.target.value)}  // Update the eventDate state
+            placeholder="Select an event date"
+          />
+        </div>
+
         <button
           type="submit"
           onClick={handleSubmit}

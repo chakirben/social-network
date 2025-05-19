@@ -5,7 +5,9 @@ import EventsList from "./eventList"
 export default function GroupEventsPage() {
     const { id } = useParams()
     const [events, setEvents] = useState([])
-
+    useEffect(() => {
+        console.log("Updated events:", events);
+    }, [events]);
     useEffect(() => {
         const fetchEvents = async () => {
             const res = await fetch(`http://localhost:8080/api/GetEvents?id=${id}`, {

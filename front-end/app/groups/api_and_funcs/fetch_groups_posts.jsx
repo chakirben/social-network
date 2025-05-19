@@ -12,8 +12,11 @@ import CreateEvent from '@/components/createEventForm';
 export default function GroupDetails({ groupId, title }) {
     const [PostsGroup, setPostsGroup] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [events, setEvents] = useState([])
     const [activeTab, setActiveTab] = useState("posts");
-
+    useEffect(() => {
+        console.log("Updated events:", events);
+    }, [events]);
     const router = useRouter();
 
     const fetchPosts = async () => {
@@ -79,9 +82,8 @@ export default function GroupDetails({ groupId, title }) {
 
             {!isLoading && activeTab === "events" && (
                 <>
-                    <CreateEvent />
-
-                    <GroupEventsPage id={groupId} />
+                    <CreateEvent setEvents={setEvents} evnts={events} />
+                    <GroupEventsPage id={groupId} events={events} />
                 </>
             )}
         </div>

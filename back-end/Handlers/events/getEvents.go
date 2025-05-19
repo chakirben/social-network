@@ -45,6 +45,7 @@ func GetEventsHandler(w http.ResponseWriter, r *http.Request) {
 	FROM Events e
 	JOIN Users u ON e.creatorId = u.id
 	WHERE e.groupId = ?
+	ORDER BY e.createdAt DESC
 	`
 
 	rows, err := database.SocialDB.Query(query, userID, groupId)

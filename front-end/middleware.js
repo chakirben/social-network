@@ -24,7 +24,6 @@ export async function middleware(req) {
   });
 
   const isAuthenticated = authCheck.ok;
-
   const isProtectedRoute = protectedRoutes.some((route) =>
     path === route || path.startsWith(route + '/')
   );
