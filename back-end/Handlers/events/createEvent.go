@@ -60,7 +60,6 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Insert the new event into the database
 	result, err := database.SocialDB.Exec(`INSERT INTO Events (title, description, eventDate, creatorId, groupId, createdAt) VALUES (?, ?, ?, ?, ?, ?)`,
 		newEvent.Title, newEvent.Description, newEvent.EventDate, newEvent.CreatorId, newEvent.GroupId, newEvent.CreatedAt)
 	if err != nil {
@@ -68,7 +67,6 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get the ID of the newly inserted event
 	eventID, err := result.LastInsertId()
 	if err != nil {
 		http.Error(w, "Failed to retrieve the event ID: "+err.Error(), http.StatusInternalServerError)
@@ -80,7 +78,6 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 	var eventTitle, eventDescription string
 	var eventDate time.Time
 
-	// Query the database to fetch the creator's details and event data
 	err = database.SocialDB.QueryRow(`
 		SELECT u.firstName, u.lastName, u.avatar, e.title, e.description, e.eventDate
 		FROM Events e
@@ -90,8 +87,7 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to fetch event data: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	fmt.Println(creatorFirstName)
-	// Prepare the response without the "message" field
+	// fmt.Println(creatorFirstName)
 	response := map[string]interface{}{
 		"title":            eventTitle,
 		"description":      eventDescription,
@@ -101,7 +97,6 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 		"creatorAvatar":    creatorAvatar,
 	}
 	fmt.Println(response)
-	// Send the response as JSON
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(response)
