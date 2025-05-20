@@ -36,7 +36,7 @@ export default function GroupDetails({ groupId, title }) {
     };
     const fetchEvents = async () => {
         try {
-            const res = await fetch(`http://localhost:8080/api/GetUserEvents?id=${groupId}`, {
+            const res = await fetch(`http://localhost:8080/api/GetGroupEvents?id=${groupId}`, {
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
             });

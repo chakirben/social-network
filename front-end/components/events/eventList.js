@@ -3,6 +3,7 @@ import Divider from "../divider"
 // import Event from "./event"
 
 export default function EventsList({ events, onRespond }) {
+    
     return (
         <>
             {events?.map((event, index) => (

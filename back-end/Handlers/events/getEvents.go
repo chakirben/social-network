@@ -2,9 +2,7 @@ package events
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"strconv"
 	"time"
 
 	database "socialN/dataBase"
@@ -24,16 +22,8 @@ type GetEvents struct {
 	IsUserGoing  *bool      `json:"isUserGoing"`
 }
 
-func GetEventsHandler(w http.ResponseWriter, r *http.Request) {
-	groupIdStr := r.URL.Query().Get("id")
-	groupId, err := strconv.Atoi(groupIdStr)
-	fmt.Println("groupid ", groupId)
-	if err != nil {
-		http.Error(w, "Invalid group ID", http.StatusBadRequest)
-		return
-	}
-
-	userID := 3
+func GetHomeEventsHandler(w http.ResponseWriter, r *http.Request) {
+	userID := 3 // Replace with dynamic session-based user ID in production
 
 	query := `
 	SELECT 
@@ -44,11 +34,12 @@ func GetEventsHandler(w http.ResponseWriter, r *http.Request) {
 		(SELECT ea.isGoing FROM EventsAttendance ea WHERE ea.eventId = e.id AND ea.memberId = ? LIMIT 1) AS isUserGoing
 	FROM Events e
 	JOIN Users u ON e.creatorId = u.id
-	WHERE e.groupId = ?
-	ORDER BY e.createdAt DESC
+	JOIN GroupsMembers gm ON gm.groupId = e.groupId
+	WHERE gm.memberId = ?
+	ORDER BY e.eventDate ASC
 	`
 
-	rows, err := database.SocialDB.Query(query, userID, groupId)
+	rows, err := database.SocialDB.Query(query, userID, userID)
 	if err != nil {
 		http.Error(w, "Failed to retrieve events: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -59,8 +50,11 @@ func GetEventsHandler(w http.ResponseWriter, r *http.Request) {
 
 	for rows.Next() {
 		var e GetEvents
-		err := rows.Scan(&e.Id, &e.Title, &e.Description, &e.EventDate, &e.CreatorId,
-			&e.FirstName, &e.LastName, &e.Avatar, &e.GroupId, &e.GoingMembers, &e.IsUserGoing)
+		err := rows.Scan(
+			&e.Id, &e.Title, &e.Description, &e.EventDate, &e.CreatorId,
+			&e.FirstName, &e.LastName, &e.Avatar, &e.GroupId,
+			&e.GoingMembers, &e.IsUserGoing,
+		)
 		if err != nil {
 			http.Error(w, "Error scanning event: "+err.Error(), http.StatusInternalServerError)
 			return

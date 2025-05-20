@@ -7,7 +7,7 @@ export default function HomeEvents() {
 
     useEffect(() => {
         const fetchEvents = async () => {
-            const res = await fetch("http://localhost:8080/api/GetUserEvents", {
+            const res = await fetch("http://localhost:8080/api/GetHomeEvents", {
                 credentials: "include",
             })
             const data = await res.json()

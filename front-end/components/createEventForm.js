@@ -19,15 +19,20 @@ export default function CreateEvent({ setEvents, evnts }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) {
-      setErr("Title and content are required");
+      setErr("Title, content and date are required");
       return;
     }
+    if (!eventDate) {
+      setErr('Choose a date before.');
+      return
+    }
+
 
     const body = {
       title,
       description: content,
       groupId: parseInt(id, 10),
-      eventDate: new Date(eventDate)
+      eventDate: new Date(eventDate).toISOString()
     };
 
 
@@ -48,6 +53,7 @@ export default function CreateEvent({ setEvents, evnts }) {
         setEventDate('');
         setErr('');
         const newEvent = await res.json()
+
 
         setEvents(prevEvents => [newEvent, ...prevEvents])
       } else {

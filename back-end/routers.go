@@ -47,8 +47,8 @@ func SetupHandlers() {
 	// Events
 	http.HandleFunc("/api/CreateEvent", AccessMiddleware(event.SetEventHandler))
 	http.HandleFunc("/api/SetAttendance", AccessMiddleware(event.SetAttendanceHandler))
-	http.HandleFunc("/api/GetEvents", AccessMiddleware(event.GetEventsHandler))
-	http.HandleFunc("/api/GetUserEvents", AccessMiddleware(event.GetUserEventsHandler))
+	http.HandleFunc("/api/GetHomeEvents", AccessMiddleware(event.GetHomeEventsHandler))
+	http.HandleFunc("/api/GetGroupEvents", AccessMiddleware(event.GetGroupEventsHandler))
 
 	// groups Creat_Groups
 	http.HandleFunc("/api/CreatGroup", AccessMiddleware(SessionMiddleware(Group.Creat_Groups)))
@@ -58,7 +58,7 @@ func SetupHandlers() {
 	http.HandleFunc("/api/PostsGroups", AccessMiddleware(SessionMiddleware(Group.GetPostGroups)))
 	http.HandleFunc("/api/RequestToJoinGroups", AccessMiddleware(SessionMiddleware(Group.Req_To_Join_Groups)))
 
-	//SearchData
+	// SearchData
 	http.HandleFunc("/api/SearchData", AccessMiddleware(SessionMiddleware(Search.SearchData)))
 
 	// // chat
@@ -87,17 +87,17 @@ func SetupHandlers() {
 	// profile
 	http.HandleFunc("/api/profile", AccessMiddleware(profile.GetData))
 
-	//reactions
+	// reactions
 	http.HandleFunc("/api/reaction", AccessMiddleware(h.ReactionHandler))
 
-	//users
+	// users
 	http.HandleFunc("/api/getUserData", AccessMiddleware(u.GetCurrentUserData))
 	http.HandleFunc("/api/getUnfollowedUsers", AccessMiddleware(u.GetUnfollowedUsers))
 
 	http.HandleFunc("/api/updatePrivacy", AccessMiddleware(u.SetPrivacy))
 	http.HandleFunc("/api/getFollowersList", AccessMiddleware(u.GetFollowersListHandler))
 
-	//notifications
+	// notifications
 	http.HandleFunc("/api/getNotifications", AccessMiddleware(notification.GetNotifications))
 }
 

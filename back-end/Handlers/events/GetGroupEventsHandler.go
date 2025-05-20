@@ -3,11 +3,18 @@ package events
 import (
 	"encoding/json"
 	"net/http"
+
 	"socialN/Handlers/auth"
 	database "socialN/dataBase"
 )
 
-func GetUserEventsHandler(w http.ResponseWriter, r *http.Request) {
+func GetGroupEventsHandler(w http.ResponseWriter, r *http.Request) {
+	groupID := r.URL.Query().Get("id")
+	if groupID == "" {
+		http.Error(w, "Missing id parameter", http.StatusBadRequest)
+		return
+	}
+
 	userID, err := auth.ValidateSession(r, database.SocialDB)
 	if err != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
@@ -20,13 +27,12 @@ func GetUserEventsHandler(w http.ResponseWriter, r *http.Request) {
 	       (SELECT COUNT(*) FROM EventsAttendance ea WHERE ea.eventId = e.id AND ea.isGoing = true) AS goingMembers,
 	       (SELECT ea.isGoing FROM EventsAttendance ea WHERE ea.eventId = e.id AND ea.memberId = ? LIMIT 1) AS isUserGoing
 	FROM Events e
-	JOIN GroupsMembers gm ON e.groupId = gm.groupId
 	JOIN Users u ON u.id = e.creatorId
-	WHERE gm.memberId = ?
-	ORDER BY e.eventDate ASC
+	WHERE e.groupId = ?
+	ORDER BY e.eventDate DESC
 	`
 
-	rows, err := database.SocialDB.Query(query, userID, userID)
+	rows, err := database.SocialDB.Query(query, userID, groupID)
 	if err != nil {
 		http.Error(w, "Failed to retrieve events: "+err.Error(), http.StatusInternalServerError)
 		return
