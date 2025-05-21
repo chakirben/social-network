@@ -7,6 +7,7 @@ import (
 	"socialN/Handlers/auth"
 	"socialN/Handlers/followers"
 	"socialN/Handlers/notification"
+	"socialN/Handlers/ws"
 
 	h "socialN/Handlers"
 	Comment "socialN/Handlers/comments"
@@ -98,6 +99,7 @@ func SetupHandlers() {
 	http.HandleFunc("/api/getFollowersList", AccessMiddleware(u.GetFollowersListHandler))
 
 	//notifications
+	http.HandleFunc("/api/ws", AccessMiddleware(ws.Entry))
 	http.HandleFunc("/api/getNotifications", AccessMiddleware(notification.GetNotifications))
 }
 
