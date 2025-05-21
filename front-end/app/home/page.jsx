@@ -26,6 +26,8 @@ export default function Home() {
                 });
                 const data = await response.json();
                 setPosts(data);
+                console.log("here alll .....",data);
+                
             } catch (error) {
                 console.error("Error fetching posts:", error);
             }
@@ -45,6 +47,8 @@ export default function Home() {
 
 
     const handlernewpost = (newpost) => {
+        console.log(newpost);
+        
         setPosts((prev) => [newpost , ...prev])
     }
 
