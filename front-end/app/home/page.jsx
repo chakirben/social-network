@@ -44,6 +44,10 @@ export default function Home() {
     }, [searchTerm]);
 
 
+    const handlernewpost = (newpost) => {
+        setPosts((prev) => [newpost , ...prev])
+    }
+
     return (
         <div className="home">
             <SideBar />
@@ -52,7 +56,7 @@ export default function Home() {
 
                 {searchTerm.trim() === "" ? (
                     <div className="sc">
-                        <CreatePost />
+                        <CreatePost newpost={handlernewpost}/>
                         <HomeEvents />
                         <div className="posts">
                             {posts.length === 0 ? (

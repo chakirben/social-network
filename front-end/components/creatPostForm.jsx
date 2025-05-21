@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Divider from './divider';
 import UserData from "@/components/UserData";
 import { useUser } from './userContext';
-export default function CreatePost() {
+export default function CreatePost({newpost}) {
   const inputRef = useRef(null);
   const [imageSrc, setImageSrc] = useState(null);
   const [selectedOption, setSelectedOption] = useState('public');
@@ -14,6 +14,7 @@ export default function CreatePost() {
   const [collapsed, setCollapsed] = useState(false);
   const [err , setErr]  =  useState("")
   const { user, setUser } = useUser();
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -88,6 +89,10 @@ export default function CreatePost() {
         setImageSrc(null);
         inputRef.current.value = null;
       }
+
+       const result = await res.json();
+       newpost(result);
+
     } catch (err) {
       console.error('Post failed:', err);
     }

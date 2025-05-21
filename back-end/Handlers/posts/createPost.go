@@ -125,7 +125,7 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		Creator: userID,
 		GroupID: groupInt,
 	}
-
+	
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(response)

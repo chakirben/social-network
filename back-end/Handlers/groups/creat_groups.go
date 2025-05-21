@@ -45,8 +45,7 @@ func Creat_Groups(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Title and Description are required.", http.StatusBadRequest)
 		return
 	}
-
-	// إدخال المجموعة
+	
 	query := `INSERT INTO groups (title, description, adminId) VALUES (?, ?, ?)`
 	res, err := dataB.SocialDB.Exec(query, group.Title, group.Description, userID)
 	if err != nil {
