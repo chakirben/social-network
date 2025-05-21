@@ -33,7 +33,6 @@ export default function JustMyGroupsPage() {
         setIsLoading(false);
       }
     };
-
     fetchGroups();
   }, []);
 

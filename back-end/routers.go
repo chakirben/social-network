@@ -6,6 +6,7 @@ import (
 
 	"socialN/Handlers/auth"
 	"socialN/Handlers/followers"
+	"socialN/Handlers/notification"
 
 	h "socialN/Handlers"
 	Comment "socialN/Handlers/comments"
@@ -40,13 +41,14 @@ func SetupHandlers() {
 	http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.GetPostHandler)))
 	// http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.CreatePostHandler)))
 	http.HandleFunc("/api/CreatePost", AccessMiddleware(SessionMiddleware(Post.CreatePostHandler)))
-	http.HandleFunc("/api/GetPosts", AccessMiddleware(Post.GetPostsHandler))
+	http.HandleFunc("/api/GetPosts", AccessMiddleware(SessionMiddleware(Post.GetPostsHandler)))
 	// http.HandleFunc("/api/GetLikedPosts", Post.GetLikedPostsHandler)
 
 	// Events
-	http.HandleFunc("/api/CreateEvent", event.SetEventHandler)
-	http.HandleFunc("/api/SetAttendance", event.SetAttendanceHandler)
-	http.HandleFunc("/api/GetEvents", event.GetEventsHandler)
+	http.HandleFunc("/api/CreateEvent", AccessMiddleware(event.SetEventHandler))
+	http.HandleFunc("/api/SetAttendance", AccessMiddleware(event.SetAttendanceHandler))
+	http.HandleFunc("/api/GetHomeEvents", AccessMiddleware(event.GetHomeEventsHandler))
+	http.HandleFunc("/api/GetGroupEvents", AccessMiddleware(event.GetGroupEventsHandler))
 
 	// groups Creat_Groups
 	http.HandleFunc("/api/CreatGroup", AccessMiddleware(SessionMiddleware(Group.Creat_Groups)))
@@ -56,7 +58,7 @@ func SetupHandlers() {
 	http.HandleFunc("/api/PostsGroups", AccessMiddleware(SessionMiddleware(Group.GetPostGroups)))
 	http.HandleFunc("/api/RequestToJoinGroups", AccessMiddleware(SessionMiddleware(Group.Req_To_Join_Groups)))
 
-	//SearchData
+	// SearchData
 	http.HandleFunc("/api/SearchData", AccessMiddleware(SessionMiddleware(Search.SearchData)))
 
 	// // chat
@@ -80,19 +82,23 @@ func SetupHandlers() {
 	//	http.HandleFunc("/api/follow", AccessMiddleware(u.Follow))
 	http.HandleFunc("/api/follow", AccessMiddleware(followers.HandleFollow))
 	http.HandleFunc("/api/acceptFollowRequest", AccessMiddleware(followers.AcceptFollowRequest))
+	http.HandleFunc("/api/declineFollowRequest", AccessMiddleware(followers.DeclineFollowRequest))
 
 	// profile
 	http.HandleFunc("/api/profile", AccessMiddleware(profile.GetData))
 
-	//reactions
+	// reactions
 	http.HandleFunc("/api/reaction", AccessMiddleware(h.ReactionHandler))
 
-	//users
+	// users
 	http.HandleFunc("/api/getUserData", AccessMiddleware(u.GetCurrentUserData))
 	http.HandleFunc("/api/getUnfollowedUsers", AccessMiddleware(u.GetUnfollowedUsers))
 
 	http.HandleFunc("/api/updatePrivacy", AccessMiddleware(u.SetPrivacy))
 	http.HandleFunc("/api/getFollowersList", AccessMiddleware(u.GetFollowersListHandler))
+
+	// notifications
+	http.HandleFunc("/api/getNotifications", AccessMiddleware(notification.GetNotifications))
 }
 
 func SessionMiddleware(fun http.HandlerFunc) http.HandlerFunc {

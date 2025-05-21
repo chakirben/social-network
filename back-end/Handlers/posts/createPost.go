@@ -3,8 +3,10 @@ package posts
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"socialN/Handlers/auth"
 	cmnts "socialN/Handlers/comments"
@@ -12,12 +14,16 @@ import (
 )
 
 type PostResponse struct {
-	ID      int64  `json:"id"`
-	Content string `json:"content"`
-	Image   string `json:"image"`
-	Privacy string `json:"privacy"`
-	GroupID int   `json:"groupId,omitempty"`
-	Creator int    `json:"creatorId"`
+	Id           int       `json:"id"`
+	Image        *string   `json:"image"`
+	Content      string    `json:"content"`
+	FirstName    string    `json:"creator"`
+	LastName     string    `json:"groupid"`
+	LikeCount    *int      `json:"like_count"`
+	DislikeCount *int      `json:"dislike_count"`
+	UserReaction *int      `json:"user_reaction"`
+	CreatedAt    time.Time `json:"created_at"`
+	GPTitle      string
 }
 
 func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
@@ -45,7 +51,7 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	privacy := r.FormValue("privacy")
-	if privacy != "public" && privacy != "almostPrivate" && privacy != "private" &&  privacy != "inGroup" {
+	if privacy != "public" && privacy != "almostPrivate" && privacy != "private" && privacy != "inGroup" {
 		http.Error(w, "Invalid post privacy", http.StatusBadRequest)
 		return
 	}
@@ -70,8 +76,8 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	groupIDStr := r.FormValue("groupId")
 	var groupInt int
 	var result any
-	fmt.Println(groupIDStr , privacy )
-	if privacy =="inGroup" && groupIDStr != "" {
+	fmt.Println(groupIDStr, privacy)
+	if privacy == "inGroup" && groupIDStr != "" {
 
 		groupInt, err = strconv.Atoi(groupIDStr)
 		if err != nil {
@@ -88,7 +94,7 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		result, err = dataB.SocialDB.Exec(`
 			INSERT INTO Posts (content, image, privacy, creatorId)
 			VALUES (?, ?, ?, ?)`,
-			content,imagePath, privacy, userID,
+			content, imagePath, privacy, userID,
 		)
 	}
 	if err != nil {
@@ -112,21 +118,62 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 				INSERT OR IGNORE INTO PostViewPermissions (postId, userId)
 				VALUES (?, ?)`, postID, idStr)
 			if err != nil {
-				http.Error(w,"Permission insert error:" , http.StatusInternalServerError)
+				http.Error(w, "Permission insert error:", http.StatusInternalServerError)
 			}
 		}
 	}
 
-	response := PostResponse{
-		ID:      postID,
-		Content: content,
-		Image:   imagePath,
-		Privacy: privacy,
-		Creator: userID,
-		GroupID: groupInt,
+	baseQuery := `
+		SELECT
+				p.image,
+				p.content, 
+				u.firstName,
+				u.lastName, 
+				(SELECT COUNT(*) FROM postReactions WHERE postId = p.id AND reactionType = 1) AS likeCount,
+				(SELECT COUNT(*) FROM postReactions WHERE postId = p.id AND reactionType = -1) AS dislikeCount,
+				(SELECT reactionType FROM PostReactions WHERE postId = p.id AND userId = ?) AS userReaction,
+				p.createdAt
+			FROM Posts p
+			JOIN Users u ON p.creatorId = u.id
+			WHERE 
+				(
+					(p.creatorId = ?) OR
+					(p.groupId IS NOT NULL AND EXISTS (
+						SELECT 1 FROM GroupsMembers WHERE groupId = p.groupId AND memberId = ?
+					))
+					OR (p.privacy = 'public')
+					OR (p.privacy = "almostPrivate" AND EXISTS (
+						SELECT 1 FROM Followers WHERE followedId = p.creatorId AND followerId = ?
+					))
+					OR (p.privacy = "private" AND EXISTS (
+						SELECT 1 FROM PostViewPermissions WHERE postId = p.id AND userId = ?
+					))
+				)
+			AND p.id = ?
+	`
+
+	var post PostResponse
+
+	err = dataB.SocialDB.QueryRow(baseQuery, userID, userID, userID, userID, userID, postID).Scan(
+		&post.Image,        
+		&post.Content,      
+		&post.FirstName,  
+		&post.LastName,     
+		&post.LikeCount,    
+		&post.DislikeCount,
+		&post.UserReaction,
+		&post.CreatedAt,
+	)
+	if err != nil {
+		log.Println("Error fetching posts:", err)
+		fmt.Println(err)
+		http.Error(w, "Error fetching posts", http.StatusInternalServerError)
+		return
 	}
+
+	post.Id = int(postID)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(response)
+	json.NewEncoder(w).Encode(post)
 }

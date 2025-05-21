@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"socialN/Handlers/auth"
 	dataB "socialN/dataBase"
@@ -46,19 +47,22 @@ func Req_To_Join_Groups(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to join group. Please try again later. :(", http.StatusInternalServerError)
 		return
 	}
-	SendToAdmin := struct {
-		Admin  int
-		GroupID int
-		Userid int
-	}{
-		Admin:  adminId,
-		GroupID:  req.GroupID,
-		Userid: userID,
+
+	query2 := `
+	   INSERT INTO Notifications (senderId, receiverId, type, notificationDate) VALUES (?,?,?,?)
+	`
+
+	_, err = dataB.SocialDB.Exec(query2, userID, adminId, "group_join_request", time.Now())
+	if err != nil {
+		fmt.Println(err)
+		log.Println("Error to select admin in db :(", err)
+		http.Error(w, "Failed to join group. Please try again later. :(", http.StatusInternalServerError)
+		return
 	}
-	// this is a just a test until we  creat ws ...
+
 	w.WriteHeader(http.StatusAccepted)
 	w.Header().Set("Content-Type", "applicaton/json")
-	if err := json.NewEncoder(w).Encode(SendToAdmin); err != nil {
+	if err := json.NewEncoder(w).Encode("pending"); err != nil {
 		fmt.Println("JSON encode error", err)
 		http.Error(w, "JSON encode error", http.StatusInternalServerError)
 	}

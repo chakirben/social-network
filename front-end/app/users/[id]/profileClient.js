@@ -62,7 +62,8 @@ export default function ProfileClient({ session, searchParams }) {
         followeds_data,
         posts,
         follow_status,
-        profile_status
+        profile_status,
+        profile_type
     } = profileData;
 
 
@@ -89,6 +90,14 @@ export default function ProfileClient({ session, searchParams }) {
                     </div>
                     <hr />
                 </div>
+
+                {profile_type === "private" && (
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', marginTop: '16px', color: '#555' }}>
+                        <span>🔒</span>
+                        <span>This is a private account</span>
+                    </div>
+                )}
+
 
                 {posts && posts.map((p, i) => (
                     <Post key={i} pst={p} />
@@ -125,25 +134,27 @@ export default function ProfileClient({ session, searchParams }) {
                         <div className="followers_modal">
                             <h2 style={{color:'black',}}>Followers users</h2>
                             <ul>
-                                {followers_data.map((user) => (
+                                {followers_data && followers_data.map((user) => (
                                     <li key={user.ID} style={{ cursor: 'pointer' }}>
                                         <a href={`/users/${user.ID}`}>
                                             {user.Firstname} {user.Lastname}
                                         </a>
                                     </li>
                                 ))}
+                                {!followers_data && <div style={{color:'black',}}>There is no followers</div>}
                             </ul>
                         </div>
                         <div className="followeds_modal">
                             <h2 style={{color:'black',}}>Following users</h2>
                             <ul>
-                                {followeds_data.map((user) => (
+                                {followeds_data && followeds_data.map((user) => (
                                     <li key={user.ID} style={{ cursor: 'pointer' }}>
                                         <a href={`/users/${user.ID}`}>
                                             {user.Firstname} {user.Lastname}
                                         </a>
                                     </li>
                                 ))}
+                                {!followeds_data && <div style={{color:'black',}}>There is no following</div>}
                             </ul>
                         </div>
                         <button onClick={() => setShowFollowModal(false)} style={{ marginTop: '10px' }}>

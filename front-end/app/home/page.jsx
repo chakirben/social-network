@@ -4,12 +4,11 @@ import SideBar from "@/components/sidebar";
 import "./home.css";
 import "../../styles/global.css";
 import "./../groups/css/groups1.css"
-
-
-import Post from "@/components/post";
+import Post from "@/components/post"
 import SearchBar from "@/components/searchBar";
 import CreatePost from "@/components/creatPostForm";
 import SearchTerm from "@/components/search_term";
+import HomeEvents from "@/components/events/homeEvents";
 
 export default function Home() {
     const [posts, setPosts] = useState([]);
@@ -29,17 +28,32 @@ export default function Home() {
             }
         };
         fetchPosts();
-    }, [])
-    
+    }, []);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            if (searchTerm.trim() !== "") {
+                FetchSearch(searchTerm);
+            }
+        }, 300);
+
+        return () => clearTimeout(timeout); 
+    }, [searchTerm]);
+
+
+    const handlernewpost = (newpost) => {
+        setPosts((prev) => [newpost , ...prev])
+    }
+
     return (
         <div className="home">
             <SideBar />
             <div className="homeP">
                 <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-                
                 {searchTerm.trim() === "" ? (
                     <div className="sc">
-                        <CreatePost />
+                        <CreatePost newpost={handlernewpost}/>
+                        <HomeEvents />
                         <div className="posts">
                             {posts.length === 0 ? (
                                 <div className="loading">Loading posts...</div>
@@ -51,9 +65,7 @@ export default function Home() {
                         </div>
                     </div>
                 ) : (
-                    
-                        <SearchTerm search={searchTerm} />
-                    
+                    <SearchTerm search={searchTerm} />
                 )}
             </div>
         </div>
