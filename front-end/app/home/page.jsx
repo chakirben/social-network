@@ -4,9 +4,7 @@ import SideBar from "@/components/sidebar";
 import "./home.css";
 import "../../styles/global.css";
 import "./../groups/css/groups1.css"
-
-
-import Post from "@/components/post";
+import Post from "@/components/post"
 import SearchBar from "@/components/searchBar";
 import CreatePost from "@/components/creatPostForm";
 import SearchTerm from "@/components/search_term";
@@ -26,8 +24,6 @@ export default function Home() {
                 });
                 const data = await response.json();
                 setPosts(data);
-                console.log("here alll .....",data);
-                
             } catch (error) {
                 console.error("Error fetching posts:", error);
             }
@@ -42,13 +38,11 @@ export default function Home() {
             }
         }, 300);
 
-        return () => clearTimeout(timeout); // clean up the previous timer
+        return () => clearTimeout(timeout); 
     }, [searchTerm]);
 
 
     const handlernewpost = (newpost) => {
-        console.log(newpost);
-        
         setPosts((prev) => [newpost , ...prev])
     }
 
@@ -57,7 +51,6 @@ export default function Home() {
             <SideBar />
             <div className="homeP">
                 <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-
                 {searchTerm.trim() === "" ? (
                     <div className="sc">
                         <CreatePost newpost={handlernewpost}/>
@@ -73,9 +66,7 @@ export default function Home() {
                         </div>
                     </div>
                 ) : (
-
                     <SearchTerm search={searchTerm} />
-
                 )}
             </div>
         </div>
