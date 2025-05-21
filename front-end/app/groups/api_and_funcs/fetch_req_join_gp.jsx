@@ -6,19 +6,20 @@ export default async function FetchJoinToGroup(groupId) {
             method: "POST",
             credentials: "include",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json", 
             },
-            body : JSON.stringify({
-                groupId : groupId
-            })
-        
-        })
-        if (!rep.ok) {
+            body: JSON.stringify({
+                groupId: groupId, 
+            }),
+        });
+
+        if (rep.status !== 202) {
             throw new Error("Failed to send Request to join the group");
         }
-        const repData = await rep.json();
-        console.log("Request send successfully:", repData);        
-    } catch {
-        console.error("Error creating the group:", error);
+
+        return "pending"
+       
+    } catch (error) {
+        console.error("Error sending the join request:", error.message || error);
     }
 }
