@@ -150,8 +150,11 @@ button {
     font-weight: 800;
     outline: none;
     border: none;
+    cursor: pointer;
 }
-
+button:hover {
+    opacity: 0.8;
+}
 .df {
     display: flex;
 }

@@ -44,7 +44,7 @@
 /* Group bar container */
 .groupbar {
     background-color: #0A0A0A;
-    width: 500px;
+    width: 600px;
     height: 68px;
     display: flex;
     justify-content: space-between;
@@ -240,5 +240,5 @@
 }
 
 .divallGroups {
-    width: 700px;
+    width: 600px;
 }

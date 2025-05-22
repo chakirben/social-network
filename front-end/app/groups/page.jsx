@@ -1,96 +1,91 @@
-"use client"
-import { useEffect, useState } from "react"
-import Groupbar from "@/components/groups/groupbar"
-import SideBar from "@/components/sidebar"
-import DataToCreatGroup from "@/components/groups/creatGroup"
-import FetchCreatGroup from "./api_and_funcs/fetch_creat_gp"
-import MyGroupsPage from "./api_and_funcs/get_groups"
+"use client";
 
-import "./css/groups1.css"
-import "./css/creatgroup.css"
-import "./../home/home.css"
+import { useEffect, useState } from "react";
+import Groupbar from "@/components/groups/groupbar";
+import SideBar from "@/components/sidebar";
+import CreateGroupForm from "@/components/groups/creatGroup";
+import fetchCreateGroup from "./api_and_funcs/fetch_creat_gp";
+import MyGroupsPage from "./api_and_funcs/get_groups";
+
+import "./css/groups1.css";
+import "./css/creatgroup.css";
+import "./../home/home.css";
+import Header from "@/components/header";
 
 export default function JustMyGroupsPage() {
-  const [showCreateGroup, setShowCreateGroup] = useState(false)
+  const [showCreateGroupForm, setShowCreateGroupForm] = useState(false);
   const [myGroups, setMyGroups] = useState([]);
-  const [notMyGroups, setNotMyGroups] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); 
+  const [otherGroups, setOtherGroups] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const [myGroupsRes, notMyGroupsRes] = await Promise.all([
+        const [myRes, otherRes] = await Promise.all([
           fetch("http://localhost:8080/api/MyGroups", { credentials: "include" }),
           fetch("http://localhost:8080/api/NotMyGroups", { credentials: "include" }),
         ]);
-        const myGroupsData = await myGroupsRes.json();
-        const notMyGroupsData = await notMyGroupsRes.json();
-        setMyGroups(myGroupsData || []);
-        setNotMyGroups(notMyGroupsData || []);
+        const myData = await myRes.json();
+        const otherData = await otherRes.json();
+        setMyGroups(myData || []);
+        setOtherGroups(otherData || []);
       } catch (error) {
         console.error("Error fetching groups:", error);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
+
     fetchGroups();
   }, []);
 
-  const handleBTNCreateGroup = () => {
-    setShowCreateGroup(true);
-  }
+  const handleCreateGroupClick = () => {
+    setShowCreateGroupForm(true);
+  };
 
-  const creatgroupGroup = async (groupData) => {
-    const newGroup = await FetchCreatGroup(groupData.title, groupData.description);
+  const handleCreateGroup = async (groupData) => {
+    const newGroup = await fetchCreateGroup(groupData.title, groupData.description);
     if (newGroup) {
       setMyGroups((prev) => [...prev, newGroup]);
-      setShowCreateGroup(false);
+      setShowCreateGroupForm(false);
     }
-  }
+  };
 
+  const renderGroupContent = () => {
+    if (myGroups.length === 0 && otherGroups.length === 0) {
+      return <div>No groups found...</div>;
+    }
 
-  if (isLoading) {
-    return <div className="loading">Loading groups...</div>;
-  }
-
- 
-  if (myGroups.length === 0 && notMyGroups.length === 0) {
     return (
-      <div className="home">
-        <SideBar />
-        <div className="divallGroups">
-          <Groupbar onCreateGroup={handleBTNCreateGroup} />
-          <div>No groups found...</div>
-          {showCreateGroup && (
-            <DataToCreatGroup
-              onCreate={creatgroupGroup}
-              onSkip={() => setShowCreateGroup(false)}
-            />
-          )}
-        </div>
-      </div>
+      <MyGroupsPage
+        myGroups={myGroups}
+        notMyGroups={otherGroups}
+      />
     );
-  }
+  };
 
   return (
     <div className="home">
       <SideBar />
       <div className="divallGroups">
-
-        <Groupbar onCreateGroup={handleBTNCreateGroup} />
-
-        {showCreateGroup &&
-          <DataToCreatGroup
-            onCreate={creatgroupGroup}
-            onSkip={() => setShowCreateGroup(false)}
-          />
-        }
-
-        <MyGroupsPage
-          myGroups={myGroups}
-          notMyGroups={notMyGroups}
+        <Header
+          pageName="Groups"
+          ele={
+            <button onClick={handleCreateGroupClick} className="create-group-btn">
+              + Create Group
+            </button>
+          }
         />
+
+        {showCreateGroupForm && (
+          <CreateGroupForm
+            onCreate={handleCreateGroup}
+            onSkip={() => setShowCreateGroupForm(false)}
+          />
+        )}
+
+        {renderGroupContent()}
       </div>
     </div>
-  );
+  )
 }

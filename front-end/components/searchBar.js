@@ -26,7 +26,6 @@ export default function SearchBar({ searchTerm, setSearchTerm }) {
                     className="searchInput"
                 />
             </div>
-            <button onClick={handleSearch}>Search</button>
         </div>
     );
 }

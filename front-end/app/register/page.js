@@ -123,7 +123,7 @@ export default function Register() {
         </form>
 
         <p className="registerLink">
-          Already have an account? <a href="/login">Login</a>
+          Already have an account? <a onClick={()=> {router.push("/login")}}>Login</a>
         </p>
       </div>
     </div>

@@ -30,6 +30,7 @@ export default function Login() {
       setErrorMessage(resp || 'Login failed.');
     } else {
       console.log("success");
+      router.push('/'); 
       
     }
   }
@@ -60,7 +61,7 @@ export default function Login() {
         </form>
 
         <p className="registerLink">
-          Don't have an account? <a href="/register">Register</a>
+          Don't have an account? <a onClick={()=> {router.push("/register")}}>Register</a>
         </p>
       </div>
     </div>
