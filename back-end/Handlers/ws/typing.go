@@ -10,3 +10,5 @@ func Typinsend(msg Tyoping) {
 		}
 	}
 }
+
+
