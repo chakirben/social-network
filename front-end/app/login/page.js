@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import '../register/register.css';
+import InitWs from '../websocket/websocket';
 
 export default function Login() {
   const router = useRouter();
@@ -29,6 +30,7 @@ export default function Login() {
       const resp = await response.text();
       setErrorMessage(resp || 'Login failed.');
     } else {
+      await InitWs();
       console.log("success");
       
     }

@@ -1,7 +1,8 @@
 import { UserProvider } from "@/components/userContext";
 import "../styles/global.css";
+import InitWs from "./websocket/websocket";
 
-export default function Main({ children }) {
+export default async function Main({ children }) {
     return (
         <html lang="en">
             <body>
