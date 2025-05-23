@@ -1,4 +1,5 @@
 import { handleClientScriptLoad } from "next/script";
+import { WS } from "../login/page";
 
 export default async function InitWs() {
     console.log("Initializing WebSocket connection...");
@@ -10,8 +11,9 @@ export default async function InitWs() {
         deferred.resolve(ws);
     };
     ws.onmessage = (event) => {
-      Handelmsj(event);
-        console.log("Message from server: ", event.data);
+      console.log(event);
+    //  handemsj(event.data);
+      console.log("Message from server: ", event.data);
     };
     ws.onclose = () => {
         deferred.resolve();
@@ -25,15 +27,10 @@ export default async function InitWs() {
 
 }
 export class Deferred {
-    constructor() {
-      this.promise = new Promise((res, rej) => {
-        this.resolve = res;
-        this.reject = rej;
-      });
-    }
+  constructor() {
+    this.promise = new Promise((res, rej) => {
+    this.resolve = res;
+    this.reject = rej;
+    });
   }
-
-
-export function Handelmsj(event) {
-  
 }

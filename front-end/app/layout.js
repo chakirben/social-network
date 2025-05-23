@@ -3,6 +3,10 @@ import "../styles/global.css";
 import InitWs from "./websocket/websocket";
 
 export default async function Main({ children }) {
+    if (!InitWs()) {
+        ws = await InitWs();
+        ws.send()
+    }
     return (
         <html lang="en">
             <body>

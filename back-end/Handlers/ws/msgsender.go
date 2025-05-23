@@ -7,7 +7,7 @@ import (
 )
 
 func Sendmessage(msg Message) {
-	for _, conn := range connections[msg.Resever] {
+	for _, conn := range Connections[msg.Resever] {
 		err := conn.WriteJSON(msg)
 		if err != nil {
 			fmt.Println("Error sending message:", err)
