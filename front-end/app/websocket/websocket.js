@@ -1,10 +1,11 @@
 import { handleClientScriptLoad } from "next/script";
-import { WS } from "../login/page";
+
 
 export default async function InitWs() {
     console.log("Initializing WebSocket connection...");
     
     const deferred = new Deferred()
+
     const ws = new WebSocket("ws://localhost:8080/api/ws");
     ws.onopen = () => {
         console.log("WebSocket connection opened");

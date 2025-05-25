@@ -2,9 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import '../register/register.css';
-import InitWs, { sendMsg } from '../websocket/websocket';
 import { sendError } from 'next/dist/server/api-utils';
-export let WS 
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -18,9 +16,9 @@ export default function Login() {
       return;
     }
 
-    const response = await fetch(`:8080/api/login`, {
+    const response = await fetch(`http://localhost:8080/api/login`, {
       method: 'POST',
-      credentials: 'include',  
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -31,8 +29,8 @@ export default function Login() {
       const resp = await response.text();
       setErrorMessage(resp || 'Login failed.');
     } else {
-      WS = await InitWs();
       console.log("success");
+      router.push('/home');
     }
   }
 

@@ -1,19 +1,17 @@
 import { UserProvider } from "@/components/userContext";
 import "../styles/global.css";
-import InitWs from "./websocket/websocket";
+import WebSocketProvider from "./websocket/WebSocketProvider";
 
-export default async function Main({ children }) {
-    if (!InitWs()) {
-        ws = await InitWs();
-        ws.send()
-    }
+export default function Main({ children }) {
+
     return (
         <html lang="en">
             <body>
                 <UserProvider>
-                    <div className="layout">
-                        <main className="mainContent">{children}</main>
-                    </div>
+                    <WebSocketProvider />
+                        <div className="layout">
+                            <main className="mainContent">{children}</main>
+                        </div>
                 </UserProvider>
             </body>
         </html>
