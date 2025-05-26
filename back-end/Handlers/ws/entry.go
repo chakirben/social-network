@@ -25,6 +25,12 @@ type Message struct {
 	Sender  int    `json:"sender"`
 	Resever int    `json:"receiver"`
 }
+type goupmsg struct {
+	Type    string `json:"type"`
+	Content string `json:"content"`
+	Sender  int    `json:"sender"`
+	GroupID int    `json:"groupID"`
+}
 type Status struct {
 	Type       string `json:"type"`
 	StatusType string `json:"statusType"`
@@ -60,6 +66,7 @@ func Entry(resp http.ResponseWriter, req *http.Request) {
 		})
 	}
 	defer conn.Close()
+	defer dalateactiveuser(userID)
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
@@ -73,8 +80,13 @@ func Entry(resp http.ResponseWriter, req *http.Request) {
 			if err != nil {
 				log.Println("Error reading JSON:", err)
 			}
-			MsgToDatabase(msg)
-			Sendmessage(msg)
+			err = MsgToDatabase(msg)
+			if err == nil {
+				Sendmessage(msg)
+			}else {
+				log.Println("Error sending message:", err)
+
+			}
 
 		case "Status":
 			var status Status
@@ -90,6 +102,15 @@ func Entry(resp http.ResponseWriter, req *http.Request) {
 				log.Println("Error reading JSON:", err)
 				Typinsend(typing)
 			}
+		case "groupmsg":
+			var groupmsg goupmsg
+			err := conn.ReadJSON(&groupmsg)
+			if err != nil {
+				log.Println("Error reading JSON:", err)
+			} else {
+				GroupMsgToDatabase(groupmsg)
+				SendGroupMessage(groupmsg)
+			}
 		}
 	}
 }
@@ -99,4 +120,21 @@ func GetType(msg []byte) string {
 	str1 := strings.Split(str, ",")
 	str1 = strings.Split(str1[0], ":")
 	return strings.Trim(str1[1], "\"")
+}
+func dalateactiveuser(userID int) {
+	for i, conn := range Connections[userID] {
+		if conn == nil {
+			Connections[userID] = append(Connections[userID][:i], Connections[userID][i+1:]...)
+			if len(Connections[userID]) == 0 {
+				delete(Connections, userID)
+			}
+			break
+		}
+	}
+	sendStutus(Status{
+		Type:       "Status",
+		StatusType: "offline",
+		Receiver:   userID,
+		Sender:     userID,
+	})
 }
