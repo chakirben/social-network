@@ -99,7 +99,11 @@ body {
     display: flex;
     justify-content: center;
 }
-
+.mainContent {
+   position: absolute;
+   width: calc(100% - 200px);
+   height: 100vh; 
+}
 .navBar {
     display: flex;
     flex-direction: column;

@@ -1,31 +1,37 @@
-import { useEffect, useRef } from "react";
+import { handleClientScriptLoad } from "next/script";
 
-export default function InitWs() {
-  const ws = useRef<WebSocket | null>(null);
 
-  useEffect(() => {
-    ws.current = new WebSocket("ws://localhost:8080/api/ws");
+export default async function InitWs() {
+    console.log("Initializing WebSocket connection...");
+    
+    const deferred = new Deferred()
 
-    ws.current.onopen = () => {
-      console.log("WebSocket connected");
+    const ws = new WebSocket("ws://localhost:8080/api/ws");
+    ws.onopen = () => {
+        console.log("WebSocket connection opened");
+        deferred.resolve(ws);
     };
-
-    ws.current.onmessage = (event) => {
-      console.log("Received:", event.data);
+    ws.onmessage = (event) => {
+      console.log(event);
+    //  handemsj(event.data);
+      console.log("Message from server: ", event.data);
     };
-
-    ws.current.onerror = (error) => {
-      console.error("WebSocket error:", error);
+    ws.onclose = () => {
+        deferred.resolve();
+        console.log("WebSocket connection closed");
     };
-
-    ws.current.onclose = () => {
-      console.log("WebSocket closed");
+    ws.onerror = (error) => {
+        console.log("WebSocket error: ", error);
+        deferred.reject(error);
     };
+    await deferred.promise;
 
-    return () => {
-      ws.current?.close();
-    };
-  }, []);
-
-  // You can add UI here if needed
+}
+export class Deferred {
+  constructor() {
+    this.promise = new Promise((res, rej) => {
+    this.resolve = res;
+    this.reject = rej;
+    });
+  }
 }
