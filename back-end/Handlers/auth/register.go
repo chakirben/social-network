@@ -162,7 +162,7 @@ func handleAvatarUpload(r *http.Request, w http.ResponseWriter) (string, error) 
 }
 
 func checkUserExistence(nickname, email string) error {
-	fmt.Println(nickname , email)
+	fmt.Println(nickname, email)
 	if nickname != "" {
 		var existingNickname string
 		err := db.SocialDB.QueryRow("SELECT nickname FROM Users WHERE nickname = ?", nickname).Scan(&existingNickname)
@@ -185,8 +185,8 @@ func checkUserExistence(nickname, email string) error {
 
 func insertUser(db *sql.DB, user User, hashedPassword string) error {
 	query := `
-		INSERT INTO Users (nickname, email, password, firstName, lastName, dateOfBirth, avatar, about)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+		INSERT INTO Users (nickname, email, password, firstName, lastName, dateOfBirth, avatar, about, accountType)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, "public")
 	`
 	_, err := db.Exec(query,
 		user.Nickname,

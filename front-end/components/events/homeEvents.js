@@ -1,5 +1,8 @@
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import EventsList from "./eventList"
+import "../../styles/eventInHome.css"
+import Events from "./event"
+import Divider from "../divider"
 
 
 export default function HomeEvents() {
@@ -16,26 +19,17 @@ export default function HomeEvents() {
         fetchEvents()
     }, [])
 
-    const handleRespond = async (eventId, isGoing, groupId) => {
-        const res = await fetch("http://localhost:8080/api/SetAttendance", {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ eventId, isGoing, groupId })
-        })
-
-        if (res.ok) {
-            setEvents(prev =>
-                prev.map(e => e.id === eventId ? { ...e, isUserGoing: isGoing } : e)
-            )
-        }
-    }
-
     return (
-        <div>
-            <EventsList events={events} onRespond={handleRespond} />
+        <div className="EventInHome">
+            <div className="type">Active Events</div>
+
+            {events?.map((eve, index) => (
+                <React.Fragment key={eve.id}>
+                    <Events event={eve} index={index} />
+                    <Divider />
+                </React.Fragment>
+            ))}
         </div>
     )
+
 }

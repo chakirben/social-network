@@ -5,9 +5,9 @@ export default function ProfileButton() {
     const { user, setUser } = useUser();
     console.log(user);
     return (
-        <div className="profileButton" onClick={() => { router.push("/profile") }}>
+        <div className="profileButton">
             {user ? (
-                <div className="profileInfo df gp12 center">
+                <div className="profileInfo df gp12 center" onClick={() => { router.push("/profile") }}>
                     <img className="avatar" src={"http://localhost:8080/" + user.avatar} />
                     <div className="profileDetails df col gp6">
                         <h4>{user.firstName}</h4>

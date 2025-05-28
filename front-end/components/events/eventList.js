@@ -1,4 +1,4 @@
-import "../../styles/events.css"
+import "../../styles/eventInGroup.css"
 import Divider from "../divider"
 // import Event from "./event"
 

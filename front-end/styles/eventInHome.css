@@ -1,0 +1,20 @@
+.event {
+    display: flex;
+    /* background-color: aqua; */
+    gap: 10px;
+    padding: 10px;
+}
+.eventCreator, .eventDate{
+    font-size: 10px;
+    
+}
+
+.eventData{
+    gap: 12px;
+}
+.type{
+    font-size: 18px;
+    background-color: #1a1a1aaf;
+    width: 100%;
+    padding: 10px;
+}

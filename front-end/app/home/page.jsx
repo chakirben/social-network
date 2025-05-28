@@ -11,6 +11,10 @@ import SearchTerm from "@/components/search_term";
 import HomeEvents from "@/components/events/homeEvents";
 import ProfileButton from "@/components/profileButton";
 import { useRouter } from "next/navigation";
+import EventsList from "@/components/events/eventList";
+import Divider from "@/components/divider";
+
+
 export default function Home() {
     const router = useRouter();
     const [posts, setPosts] = useState([]);
@@ -38,12 +42,12 @@ export default function Home() {
             }
         }, 300);
 
-        return () => clearTimeout(timeout); 
+        return () => clearTimeout(timeout);
     }, [searchTerm]);
 
 
     const handlernewpost = (newpost) => {
-        setPosts((prev) => [newpost , ...prev])
+        setPosts((prev) => [newpost, ...prev])
     }
 
     return (
@@ -53,8 +57,7 @@ export default function Home() {
                 <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
                 {searchTerm.trim() === "" ? (
                     <div className="sc">
-                        <CreatePost newpost={handlernewpost}/>
-                        <HomeEvents />
+                        <CreatePost newpost={handlernewpost} />
                         <div className="posts">
                             {posts.length === 0 ? (
                                 <div className="loading">Loading posts...</div>
@@ -69,7 +72,12 @@ export default function Home() {
                     <SearchTerm search={searchTerm} />
                 )}
             </div>
-            <ProfileButton />
+            <div className="rightProfileBtnAndEventsList ">
+
+                <ProfileButton />
+                <HomeEvents />
+            </div>
+
         </div>
     );
 }

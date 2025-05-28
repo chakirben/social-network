@@ -1,4 +1,5 @@
-export default function Event({ event  , index}) {
+export default function Events({ event  , index}) {
+    if(!event)return null
     return (
         <div className="event" key={index}>
             <div className="eventData">
@@ -15,14 +16,6 @@ export default function Event({ event  , index}) {
                         <p className="eventCreator">{event.firstName} {event.lastName}</p>
                     </div>
                 </div>
-            </div>
-            <div className="twoBtns">
-                <span className={`goingBtn ${event.isUserGoing === true ? "selected" : ""}`}
-                    onClick={() => onRespond(event.id, true, event.groupId)}
-                >Going</span>
-                <span className={`notGoingBtn ${event.isUserGoing === false ? "selected" : ""}`}
-                    onClick={() => onRespond(event.id, false, event.groupId)}
-                >Not Going</span>
             </div>
         </div>
     )
