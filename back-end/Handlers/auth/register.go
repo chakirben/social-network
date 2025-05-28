@@ -185,8 +185,8 @@ func checkUserExistence(nickname, email string) error {
 
 func insertUser(db *sql.DB, user User, hashedPassword string) error {
 	query := `
-		INSERT INTO Users (nickname, email, password, firstName, lastName, dateOfBirth, avatar, about)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+		INSERT INTO Users (nickname, email, password, firstName, lastName, dateOfBirth, avatar, about, accountType)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'public')
 	`
 	_, err := db.Exec(query,
 		user.Nickname,
