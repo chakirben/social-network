@@ -49,3 +49,27 @@
 .skipbtn img {
     width: 10px;
 }
+
+
+.filterGroups{
+    display: flex;
+    padding: 5px 40px;
+    align-items: center;
+    justify-content: space-between;
+    width: 85%;
+    height: 60px;
+    border-bottom: rgba(255, 255, 255, 0.137) solid 1px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bolder
+}
+
+
+.MyGroupsSpam {
+    border-bottom: #00C5FF solid 5px;
+    height: 60%;
+}
+
+.GroupsNotJoinYetSpam {
+    border-bottom: #00C5FF solid 5px;
+    height: 60%;
+}
