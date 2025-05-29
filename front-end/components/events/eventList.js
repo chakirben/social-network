@@ -3,10 +3,10 @@ import Divider from "../divider"
 // import Event from "./event"
 
 export default function EventsList({ events, onRespond }) {
-    
+
     return (
         <>
-            {events?.map((event, index) => (
+            {events ? events.map((event, index) => (
                 <div key={index}>
                     <div className="event">
                         <div className="eventData">
@@ -41,7 +41,9 @@ export default function EventsList({ events, onRespond }) {
                     </div>
                     <Divider />
                 </div>
-            ))}
+            )) : <div className="noEvents">
+                <img className="noContent" src="/images/noContent.svg"></img>
+                 No events created, be the first</div>}
         </>
     )
 }

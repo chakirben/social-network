@@ -7,6 +7,7 @@ import (
 	"socialN/Handlers/auth"
 	"socialN/Handlers/followers"
 	"socialN/Handlers/notification"
+	"socialN/Handlers/ws"
 
 	h "socialN/Handlers"
 	Comment "socialN/Handlers/comments"
@@ -79,7 +80,6 @@ func SetupHandlers() {
 	fmt.Println(followers.GetFollowedUsers(2))
 
 	// follows
-	//	http.HandleFunc("/api/follow", AccessMiddleware(u.Follow))
 	http.HandleFunc("/api/follow", AccessMiddleware(followers.HandleFollow))
 	http.HandleFunc("/api/acceptFollowRequest", AccessMiddleware(followers.AcceptFollowRequest))
 	http.HandleFunc("/api/declineFollowRequest", AccessMiddleware(followers.DeclineFollowRequest))
@@ -99,6 +99,7 @@ func SetupHandlers() {
 
 	// notifications
 	http.HandleFunc("/api/getNotifications", AccessMiddleware(notification.GetNotifications))
+	http.HandleFunc("/api/ws", ws.Entry)
 }
 
 func SessionMiddleware(fun http.HandlerFunc) http.HandlerFunc {
@@ -118,6 +119,7 @@ func AccessMiddleware(fun http.HandlerFunc) http.HandlerFunc {
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Cookie")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
 			return

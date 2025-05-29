@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"socialN/Handlers/auth"
 	dataB "socialN/dataBase"
 )
 
@@ -21,14 +22,29 @@ type FollowInfo struct {
 func HandleFollow(w http.ResponseWriter, r *http.Request) {
 	var followInfo FollowInfo
 
+	var followerid int
 	err := json.NewDecoder(r.Body).Decode(&followInfo)
 	if err != nil {
-		fmt.Println("Invalid Json:", err)
-		return
+		/*fmt.Println("Invalid Json:", err)
+		return*/
+		receiverIdStr := r.URL.Query().Get("id")
+		if receiverIdStr == "" {
+			http.Error(w, "Invalid receiver id", http.StatusBadRequest)
+			return
+		}
+
+		senderId, err := auth.ValidateSession(r, dataB.SocialDB)
+		if err != nil {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		followInfo.Followed_id = receiverIdStr
+		followerid = senderId
 	}
 
 	followedid, err := strconv.Atoi(followInfo.Followed_id)
-	var followerid int
+	//var followerid int
 	var followedtype string
 	errq := dataB.SocialDB.QueryRow(`SELECT accountType FROM Users WHERE id=?`, followedid).Scan(&followedtype)
 	if errq != nil || err != nil {
@@ -36,19 +52,22 @@ func HandleFollow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	row2, errq2 := dataB.SocialDB.Query(`SELECT userId FROM Sessions WHERE id=?`, followInfo.Follower_session)
-	if errq2 != nil {
-		fmt.Println("Error get ID:", errq2)
-		return
-	}
-	defer row2.Close()
-	for row2.Next() {
-		errs2 := row2.Scan(&followerid)
-		if errs2 != nil {
-			fmt.Println("Error Scan:", errs2)
+	if followInfo.Follower_session != "" {
+		row2, errq2 := dataB.SocialDB.Query(`SELECT userId FROM Sessions WHERE id=?`, followInfo.Follower_session)
+		if errq2 != nil {
+			fmt.Println("Error get ID:", errq2)
 			return
 		}
+		defer row2.Close()
+		for row2.Next() {
+			errs2 := row2.Scan(&followerid)
+			if errs2 != nil {
+				fmt.Println("Error Scan:", errs2)
+				return
+			}
+		}
 	}
+	
 
 	var response map[string]interface{}
 

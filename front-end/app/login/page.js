@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import '../register/register.css';
-
+import { sendError } from 'next/dist/server/api-utils';
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -18,7 +18,7 @@ export default function Login() {
 
     const response = await fetch(`http://localhost:8080/api/login`, {
       method: 'POST',
-      credentials: 'include',  
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -30,6 +30,7 @@ export default function Login() {
       setErrorMessage(resp || 'Login failed.');
     } else {
       console.log("success");
+      router.push('/'); 
       
     }
   }
@@ -60,7 +61,7 @@ export default function Login() {
         </form>
 
         <p className="registerLink">
-          Don't have an account? <a href="/register">Register</a>
+          Don't have an account? <a onClick={()=> {router.push("/register")}}>Register</a>
         </p>
       </div>
     </div>

@@ -4,6 +4,7 @@
     display: flex;
     position: sticky;
     top: 0;
+    width: 100%;
 }
 
 .layout {
@@ -18,9 +19,10 @@
 }
 .homeP {
    max-width: 600px;
+   min-width: 600px;
    display: flex;
    flex-direction: column;
-   gap: 24px;
+   overflow: hidden;
 }
 .pic.sm {
     width: 24px;
@@ -108,7 +110,7 @@ h5 {
 }
 
 .SearchBar {
-    width: 100%;
+    align-self: stretch;
     padding: 0px 40px;
     position: sticky;
     top: 0;
@@ -142,10 +144,11 @@ h5 {
     gap: 16px;
 }
 .creatPostForm {
+    align-self: stretch;
     display: flex;
     flex-direction: column;
     padding: 16px 40px 16px 40px;
-    width: 100%;
+
     background: linear-gradient(89.97deg, rgba(255, 255, 255, 0.03) 0.02%, rgba(255, 255, 255, 0) 99.97%);
     border-bottom: rgba(255, 255, 255, 0.137) solid 1px;
 }
@@ -256,7 +259,7 @@ h5 {
 }
 
 .header {
-    padding: 8px 40px;
+    padding: 16px 40px;
     position: sticky;
     top: 0px;
     gap: 16px;
@@ -377,6 +380,23 @@ h5 {
     background-color: #333;
 }
 
+
+.letterAvatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    background-color: white;
+    border-radius: 50%;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center; 
+}
+
+
 .userInfo {
     flex: 1;
 }
@@ -406,4 +426,18 @@ h5 {
 
 .followedBtn:hover {
     background-color: #e2e2e2;
+}
+.profileInfo {
+    padding: 24px;
+}
+.profileButton {
+    flex-grow: 1;
+}
+.profileInfo:hover {
+    background: linear-gradient(90.89deg, rgba(255, 255, 255, 0.06) 0.95%, rgba(255, 255, 255, 0) 100.41%);
+    cursor: pointer;
+}
+.mainContent {
+    width: 100%;
+    max-width: 1200px;
 }

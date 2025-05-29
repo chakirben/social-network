@@ -76,7 +76,7 @@ export default function ProfileClient({ session, searchParams }) {
                     <img className="coverture" src={"http://localhost:8080/uploads/coverture.png"} alt="Coverture" />
                     <div className="userdata gp12">
                         <div className="imgAndFollow sb">
-                            <img className="userAvatar" src={"http://localhost:8080/"+personal_data[0].Avatar || "http://localhost:8080/default-avatar.png"} alt="Avatar" />
+                            <img className="userAvatar" src={"http://localhost:8080/" + personal_data[0].Avatar || "http://localhost:8080/default-avatar.png"} alt="Avatar" />
                             <div className="follow">
                                 <p onClick={() => setShowFollowModal(true)}><strong className="followers-number">{followers_count}</strong> Followers</p>
                                 <p onClick={() => setShowFollowModal(true)}><strong className="following-number">{followed_count}</strong> Following</p>
@@ -85,8 +85,8 @@ export default function ProfileClient({ session, searchParams }) {
                                 )}
                             </div>
                         </div>
-                        <h2>{personal_data[0].Nickname || personal_data[0].Firstname + " " + personal_data[0].Lastname }</h2>
-                        <p>{personal_data[0].About || personal_data[0].Firstname+"'s Profile"}</p>
+                        <h2>{personal_data[0].Nickname || personal_data[0].Firstname + " " + personal_data[0].Lastname}</h2>
+                        <p>{personal_data[0].About || personal_data[0].Firstname + "'s Profile"}</p>
                     </div>
                     <hr />
                 </div>
@@ -132,7 +132,7 @@ export default function ProfileClient({ session, searchParams }) {
                         }}
                     >
                         <div className="followers_modal">
-                            <h2 style={{color:'black',}}>Followers users</h2>
+                            <h2 style={{ color: 'black', }}>Followers users</h2>
                             <ul>
                                 {followers_data && followers_data.map((user) => (
                                     <li key={user.ID} style={{ cursor: 'pointer' }}>
@@ -141,11 +141,11 @@ export default function ProfileClient({ session, searchParams }) {
                                         </a>
                                     </li>
                                 ))}
-                                {!followers_data && <div style={{color:'black',}}>There is no followers</div>}
+                                {!followers_data && <div style={{ color: 'black', }}>There is no followers</div>}
                             </ul>
                         </div>
                         <div className="followeds_modal">
-                            <h2 style={{color:'black',}}>Following users</h2>
+                            <h2 style={{ color: 'black', }}>Following users</h2>
                             <ul>
                                 {followeds_data && followeds_data.map((user) => (
                                     <li key={user.ID} style={{ cursor: 'pointer' }}>
@@ -154,7 +154,7 @@ export default function ProfileClient({ session, searchParams }) {
                                         </a>
                                     </li>
                                 ))}
-                                {!followeds_data && <div style={{color:'black',}}>There is no following</div>}
+                                {!followeds_data && <div style={{ color: 'black', }}>There is no following</div>}
                             </ul>
                         </div>
                         <button onClick={() => setShowFollowModal(false)} style={{ marginTop: '10px' }}>

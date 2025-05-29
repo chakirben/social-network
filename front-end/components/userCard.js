@@ -1,5 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { use, useState } from 'react';
+import Avatar  from './avatar';
 
 export default function UserCard({ user }) {
     const router = useRouter();
@@ -27,7 +28,8 @@ export default function UserCard({ user }) {
                     alt={`${user.firstName}'s avatar`}
                 />
             ) : (
-                <div className="userAvatar fallback" />
+                //<div className="userAvatar fallback" />
+                <Avatar user={user} />
             )}
             <div className="userInfo">
                 <div className="userName">{user.firstName} {user.lastName}</div>

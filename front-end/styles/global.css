@@ -99,7 +99,11 @@ body {
     display: flex;
     justify-content: center;
 }
-
+.mainContent {
+   position: absolute;
+   width: calc(100% - 200px);
+   height: 100vh; 
+}
 .navBar {
     display: flex;
     flex-direction: column;
@@ -150,8 +154,11 @@ button {
     font-weight: 800;
     outline: none;
     border: none;
+    cursor: pointer;
 }
-
+button:hover {
+    opacity: 0.8;
+}
 .df {
     display: flex;
 }

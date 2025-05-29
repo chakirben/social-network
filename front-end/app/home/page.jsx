@@ -9,11 +9,12 @@ import SearchBar from "@/components/searchBar";
 import CreatePost from "@/components/creatPostForm";
 import SearchTerm from "@/components/search_term";
 import HomeEvents from "@/components/events/homeEvents";
-
+import ProfileButton from "@/components/profileButton";
+import { useRouter } from "next/navigation";
 export default function Home() {
+    const router = useRouter();
     const [posts, setPosts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
-
     // fetch all posts initially
     useEffect(() => {
         const fetchPosts = async () => {
@@ -68,6 +69,7 @@ export default function Home() {
                     <SearchTerm search={searchTerm} />
                 )}
             </div>
+            <ProfileButton />
         </div>
     );
 }

@@ -6,13 +6,14 @@ import "../profile/profile.css"
 import Post from "@/components/post";
 import "../home/home.css"
 import Header from "@/components/header";
+import { useRouter } from "next/navigation";
 
 
 export default function Profile() {
     const [profile, setProfile] = useState(null)
     const [profileData, setData] = useState([])
     const [showOptions, setShowOptions] = useState(false)
-
+    const router = useRouter()
 
     const handle = () => {
         setShowOptions(!showOptions)
@@ -38,7 +39,25 @@ export default function Profile() {
             console.error("Failed to update privacy:", error)
         }
     }
+    const handleLogout = async () => {
+        fetch('http://localhost:8080/api/logout', {
+            method: 'POST',
+            credentials: 'include',
+        })
+            .then((res) => {
+                if (res.ok) {
+                    console.log("logout");
+                    router.push('/login')
 
+                } else {
+                    console.log("error");
+                }
+            })
+            .catch((err) => {
+                console.log("error", err);
+            }
+            )
+    }
 
     useEffect(() => {
         async function fetchProfile() {
@@ -88,7 +107,7 @@ export default function Profile() {
         <div className="profileContainer">
             <SideBar />
             <div className="classname df cl">
-                <Header />
+                <Header pageName={"profile"} ele={<button className="Secondary" onClick={handleLogout}>logout</button>} />
                 <div className="userProfile">
                     <img className="coverture" src="http://localhost:8080/uploads/coverture.png"></img>
                     <div className="userdata gp12">
