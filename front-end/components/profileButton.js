@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { useUser } from "./userContext";
+import { useUser } from "./context/userContext";
 export default function ProfileButton() {
     const router = useRouter();
     const { user, setUser } = useUser();

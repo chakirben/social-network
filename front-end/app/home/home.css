@@ -29,7 +29,10 @@
     height: 24px;
     border-radius: 40px;
 }
-
+.avatar32 {
+    height: 32px;
+    border-radius: 40px;
+}
 .posts {
     display: flex;
     flex-direction: column;

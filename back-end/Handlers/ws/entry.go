@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -46,7 +47,7 @@ type Tyoping struct {
 
 var Connections = make(map[int][]*websocket.Conn)
 
-func Entry(resp http.ResponseWriter, req *http.Request) {
+func OpenWsConn(resp http.ResponseWriter, req *http.Request) {
 	userID, err := auth.ValidateSession(req, dataB.SocialDB)
 	if err != nil {
 		http.Error(resp, "Unauthorized", http.StatusUnauthorized)
@@ -66,10 +67,12 @@ func Entry(resp http.ResponseWriter, req *http.Request) {
 		})
 	}
 	defer conn.Close()
-	defer dalateactiveuser(userID)
+	defer deleteActiveuser(userID)
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
+			conn.Close()
+			deleteActiveuser(userID)
 			break
 		}
 		msgtype := GetType(msg)
@@ -83,9 +86,8 @@ func Entry(resp http.ResponseWriter, req *http.Request) {
 			err = MsgToDatabase(msg)
 			if err == nil {
 				Sendmessage(msg)
-			}else {
+			} else {
 				log.Println("Error sending message:", err)
-
 			}
 
 		case "Status":
@@ -121,7 +123,35 @@ func GetType(msg []byte) string {
 	str1 = strings.Split(str1[0], ":")
 	return strings.Trim(str1[1], "\"")
 }
-func dalateactiveuser(userID int) {
+
+func removeConnection(username string, conn *websocket.Conn) {
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	conns := clients[username]
+	for i, c := range conns {
+		if c == conn {
+			c.Close()
+			conns = append(conns[:i], conns[i+1:]...)
+			break
+		}
+	}
+
+	if len(conns) == 0 {
+		delete(clients, username)
+		msg := StatusChangeMessage{
+			MessageType: "statusChange",
+			UserName:    username,
+			IsOnline:    false,
+		}
+		broadcastToAll(msg)
+	} else {
+		clients[username] = conns
+	}
+}
+
+func deleteActiveuser(userID int) {
+	fmt.Println("Deleting user:", userID)
 	for i, conn := range Connections[userID] {
 		if conn == nil {
 			Connections[userID] = append(Connections[userID][:i], Connections[userID][i+1:]...)
@@ -137,4 +167,47 @@ func dalateactiveuser(userID int) {
 		Receiver:   userID,
 		Sender:     userID,
 	})
+}
+
+func GetOnlineUsers(w http.ResponseWriter, r *http.Request) {
+	ids := []int{}
+	for id := range Connections {
+		ids = append(ids, id)
+	}
+	if len(ids) == 0 {
+		json.NewEncoder(w).Encode([]interface{}{})
+		return
+	}
+
+	query := "SELECT id, firstName, lastName, avatar FROM Users WHERE id IN (?" + strings.Repeat(",?", len(ids)-1) + ")"
+	args := make([]interface{}, len(ids))
+	for i, id := range ids {
+		args[i] = id
+	}
+
+	rows, err := dataB.SocialDB.Query(query, args...)
+	if err != nil {
+		http.Error(w, "Error", 500)
+		return
+	}
+	defer rows.Close()
+
+	type User struct {
+		ID        int    `json:"id"`
+		FirstName string `json:"firstName"`
+		LastName  string `json:"lastName"`
+		Avatar    string `json:"avatar"`
+		Status    string `json:"status"`
+	}
+
+	var onlineUsers []User
+
+	for rows.Next() {
+		var u User
+		rows.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Avatar)
+		u.Status = "online"
+		onlineUsers = append(onlineUsers, u)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(onlineUsers)
 }

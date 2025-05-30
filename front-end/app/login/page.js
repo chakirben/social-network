@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import '../register/register.css';
-import { sendError } from 'next/dist/server/api-utils';
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState('');

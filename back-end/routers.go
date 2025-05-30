@@ -100,7 +100,8 @@ func SetupHandlers() {
 
 	// notifications
 	http.HandleFunc("/api/getNotifications", AccessMiddleware(notification.GetNotifications))
-	http.HandleFunc("/api/ws", ws.Entry)
+	http.HandleFunc("/api/ws", ws.OpenWsConn)
+	http.HandleFunc("/api/online" , AccessMiddleware(ws.GetOnlineUsers))
 }
 
 func SessionMiddleware(fun http.HandlerFunc) http.HandlerFunc {

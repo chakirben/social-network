@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Divider from './divider';
 import UserData from "@/components/UserData";
-import { useUser } from './userContext';
+import { useUser } from './context/userContext';
 export default function CreatePost({newpost}) {
   const inputRef = useRef(null);
   const [imageSrc, setImageSrc] = useState(null);

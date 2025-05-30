@@ -1,6 +1,6 @@
-import { UserProvider } from "@/components/userContext";
+import { UserProvider } from "@/components/context/userContext";
 import "../styles/global.css";
-import WebSocketProvider from "./websocket/WebSocketProvider";
+import { WebSocketProvider } from "@/components/context/wsContext";
 
 export default function Main({ children }) {
 
@@ -8,10 +8,11 @@ export default function Main({ children }) {
         <html lang="en">
             <body>
                 <UserProvider>
-                    <WebSocketProvider />
+                    <WebSocketProvider>
                         <div className="layout">
                             <main className="mainContent">{children}</main>
                         </div>
+                    </WebSocketProvider>
                 </UserProvider>
             </body>
         </html>
