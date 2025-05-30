@@ -4,15 +4,26 @@
     gap: 10px;
     padding: 10px;
 }
-.eventCreator, .eventDate{
+
+.eventCreator,
+.eventDate {
     font-size: 10px;
-    
+
+}
+.Notifications{
+    padding: 24px;
 }
 
-.eventData{
+.Notifications:hover {
+    background: linear-gradient(90.89deg, rgba(255, 255, 255, 0.06) 0.95%, rgba(255, 255, 255, 0) 100.41%);
+    cursor: pointer;
+}
+
+.eventData {
     gap: 12px;
 }
-.type{
+
+.type {
     font-size: 18px;
     background-color: #1a1a1aaf;
     width: 100%;

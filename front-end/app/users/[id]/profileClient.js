@@ -8,6 +8,7 @@ import Header from "@/components/header";
 import "../../../styles/global.css";
 import "../../profile/profile.css";
 import "../../home/home.css";
+import Divider from "@/components/divider";
 
 export default function ProfileClient({ session, searchParams }) {
     const [profileId, setProfileId] = useState(null);
@@ -88,7 +89,6 @@ export default function ProfileClient({ session, searchParams }) {
                         <h2>{personal_data[0].Nickname || personal_data[0].Firstname + " " + personal_data[0].Lastname}</h2>
                         <p>{personal_data[0].About || personal_data[0].Firstname + "'s Profile"}</p>
                     </div>
-                    <hr />
                 </div>
 
                 {profile_type === "private" && (

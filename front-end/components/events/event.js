@@ -10,7 +10,7 @@ export default function Events({ event  , index}) {
                         <img src="http://localhost:8080/uploads/dateOfBirth.svg" />
                         <p className="eventDate">{new Date(event.eventDate).toDateString()}</p>
                     </div>
-                    <hr />
+                    <hr/>
                     <div className="avatarAndName">
                         <img className="eventAvatar" src={`http://localhost:8080/${event.avatar}`} />
                         <p className="eventCreator">{event.firstName} {event.lastName}</p>

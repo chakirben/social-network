@@ -20,16 +20,18 @@ export default function HomeEvents() {
     }, [])
 
     return (
-        <div className="EventInHome">
-            <div className="type">Active Events</div>
-
-            {events?.map((eve, index) => (
-                <React.Fragment key={eve.id}>
-                    <Events event={eve} index={index} />
-                    <Divider />
-                </React.Fragment>
-            ))}
-        </div>
+        events && events.length > 0 && (
+            <div className="EventInHome">
+                <div className="type">Active Events</div>
+                {events.map((eve, index) => (
+                    <React.Fragment key={eve.id}>
+                        <Events event={eve} index={index} />
+                        <Divider />
+                    </React.Fragment>
+                ))}
+            </div>
+        )
     )
+
 
 }
