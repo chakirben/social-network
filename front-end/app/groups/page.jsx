@@ -78,13 +78,13 @@ export default function JustMyGroupsPage() {
         />
 
         {showCreateGroupForm && (
-          <CreateGroupForm
-            onCreate={handleCreateGroup}
-            onSkip={() => setShowCreateGroupForm(false)}
-          />
+    
+            <CreateGroupForm onCreate={handleCreateGroup} onSkip={() => setShowCreateGroupForm(false)} />
+        
         )}
 
         {renderGroupContent()}
+
       </div>
     </div>
   )

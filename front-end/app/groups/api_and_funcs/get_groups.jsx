@@ -9,21 +9,19 @@ export default function MyGroupsPage({ myGroups, notMyGroups, onJoin }) {
   }
 
   const [ActiveTab, setActiveTab] = useState("mygroups")
-  console.log("hiiiiiiiiiiiiiiiiggfgfg", ActiveTab);
-
-
-  const handler = (arg) => {
-    setActiveTab(arg)
-  }
 
   return (
     <>
       <div className='filterGroups'>
 
-        <span className="MyGroupsSpam" onClick={() => handler("mygroups")}>
+        <span className={`MyGroupsSpam ${ActiveTab === "mygroups" ? "activeGroups" : ""}`}  
+        onClick={() => setActiveTab("mygroups")
+        }>
           MyGroups
         </span>
-        <span className="GroupsNotJoinYetSpam" onClick={() =>  handler("NotJoinYet")}>
+        <span className={`GroupsNotJoinYetSpam ${ActiveTab === "NotJoinYet" ? "activeGroups" : ""}`} 
+        onClick={() =>  setActiveTab("NotJoinYet")
+        }>
           NotJoinYet
         </span>
 
