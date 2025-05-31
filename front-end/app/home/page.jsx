@@ -91,10 +91,11 @@ export default function Home() {
             </div>
             <div>
             <ProfileButton />
-            <div className="onlineUsers df cl gp1">
+            <div className="onlineUsers df cl">
+                <h4>Online users</h4>
                 {
                     onlineUsers.length === 0 ? (
-                        <div className="loading">Loading online users...</div>
+                        <div className="loading2">No active users</div>
                     ) : (
                         onlineUsers.map((usr) => (
                             <UserCard key={usr.id || usr._id} user={usr} onClick={() => router.push(`/chat/${usr.id}`)}  setOnlineUsers={setOnlineUsers}  />

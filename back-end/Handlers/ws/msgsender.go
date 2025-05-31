@@ -5,35 +5,46 @@ import (
 
 	dataB "socialN/dataBase"
 )
-
-func Sendmessage(msg Message) {
-	for _, conn := range Connections[msg.Resever] {
+func RedirectMessage(msg Message) error {
+	allowed := checkAuthorisation(msg)
+	if (! allowed) {
+		return fmt.Errorf("Not allowed to msg this user")
+	}
+	_, err := dataB.SocialDB.Exec(`
+		INSERT INTO Messages (senderId, receiverId, content)
+		VALUES (?, ?, ?)`, msg.Sender, msg.Receiver, msg.Content)
+	if err != nil {
+		return fmt.Errorf("error inserting message into database: %v", err)
+	}
+	for _, conn := range Connections[msg.Receiver] {
 		err := conn.WriteJSON(msg)
 		if err != nil {
 			fmt.Println("Error sending message:", err)
 		}
 	}
+	return nil
 }
 
-func MsgToDatabase(msg Message) error{
-	var follows bool
+func checkAuthorisation(msg Message) bool {
+	var isFollowing bool
 	err := dataB.SocialDB.QueryRow(`
 		SELECT EXISTS(
-			SELECT 1 FROM Follows 
-			WHERE (followerId = ? AND followingId = ?)
-			   OR (followerId = ? AND followingId = ?)
-		)`, msg.Sender, msg.Resever, msg.Resever, msg.Sender).Scan(&follows)
+			SELECT 1 FROM Followers 
+			WHERE (followerId = ? AND followedId = ?)
+			   OR (followerId = ? AND followedId = ?)
+		)
+	`, msg.Sender, msg.Receiver, msg.Receiver, msg.Sender).Scan(&isFollowing)
 	if err != nil {
-		return fmt.Errorf("error checking follow relationship: %v", err)
+		isFollowing = false
 	}
-	if !follows {
-		return fmt.Errorf("sender and receiver do not follow each other")
-	}
-	_, err = dataB.SocialDB.Exec(`
-		INSERT INTO Comments (senderId, receiverId, content)
-		VALUES (?, ?, ?)`, msg.Sender, msg.Resever, msg.Content)
+
+	var isPublic bool
+	err = dataB.SocialDB.QueryRow(`
+		SELECT accountType = 'public' FROM Users WHERE id = ?
+	`, msg.Receiver).Scan(&isPublic)
 	if err != nil {
-		return fmt.Errorf("error inserting message into database: %v", err)
+		isPublic = false
 	}
-	return nil
+
+	return isFollowing || isPublic
 }

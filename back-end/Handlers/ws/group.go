@@ -2,43 +2,58 @@ package ws
 
 import (
 	"fmt"
+	"log"
+
 	dataB "socialN/dataBase"
 )
 
-func GroupMsgToDatabase(msg goupmsg) {
-	_, err := dataB.SocialDB.Exec(`
+func RedirectGroupMessage(msg Message) error {
+	// Check if sender is a member of the group
+	var isMember bool
+	err := dataB.SocialDB.QueryRow(`
+		SELECT EXISTS (
+			SELECT 1 FROM GroupsMembers 
+			WHERE memberId = ? AND groupId = ?
+		)
+	`, msg.Sender, msg.GroupID).Scan(&isMember)
+	if err != nil {
+		return fmt.Errorf("error checking group membership: %v", err)
+	}
+	if !isMember {
+		return fmt.Errorf("sender is not a member of group %d", msg.GroupID)
+	}
+
+	// Save the group message
+	_, err = dataB.SocialDB.Exec(`
 		INSERT INTO GroupMessages (senderId, groupId, content)
 		VALUES (?, ?, ?)`, msg.Sender, msg.GroupID, msg.Content)
 	if err != nil {
-		fmt.Println("Error inserting message into database:", err)
+		return fmt.Errorf("error inserting message into database: %v", err)
 	}
-}
-func SendGroupMessage(msg goupmsg) {
+
+	// Get all members of the group (excluding sender)
 	rows, err := dataB.SocialDB.Query(`
-		SELECT memberId FROM GroupMembers WHERE groupId = ?`, msg.GroupID)
+		SELECT memberId FROM GroupsMembers 
+		WHERE groupId = ? AND memberId != ?
+	`, msg.GroupID, msg.Sender)
 	if err != nil {
-		fmt.Println("Error querying group members:", err)
-		return
+		return fmt.Errorf("error retrieving group members: %v", err)
 	}
 	defer rows.Close()
 
-	var memberIDs []int
+	// Send the message to all connected members
 	for rows.Next() {
-		var memberID int
-		if err := rows.Scan(&memberID); err != nil {
-			fmt.Println("Error scanning memberId:", err)
+		var memberId int
+		if err := rows.Scan(&memberId); err != nil {
+			log.Println("Error scanning group member ID:", err)
 			continue
 		}
-		memberIDs = append(memberIDs, memberID)
-	}
-	for _, memberID := range memberIDs {
-		if memberID != msg.Sender {
-			for _, conn := range Connections[memberID] {
-				if err := conn.WriteJSON(msg); err != nil {
-					fmt.Println("Error sending message to member:", err)
-				}
+		for _, conn := range Connections[memberId] {
+			if err := conn.WriteJSON(msg); err != nil {
+				log.Printf("Error sending group message to user %d: %v\n", memberId, err)
 			}
 		}
 	}
 
+	return nil
 }

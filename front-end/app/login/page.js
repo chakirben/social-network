@@ -1,12 +1,16 @@
 'use client'
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useRouter } from 'next/navigation';
+import { WebSocketContext } from '@/components/context/wsContext';
 import '../register/register.css';
+
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+
+  const { Connect } = useContext(WebSocketContext); 
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -28,9 +32,9 @@ export default function Login() {
       const resp = await response.text();
       setErrorMessage(resp || 'Login failed.');
     } else {
-      console.log("success");
-      router.push('/'); 
-      
+      console.log("Login success")
+      Connect()
+      router.push('/home'); 
     }
   }
 

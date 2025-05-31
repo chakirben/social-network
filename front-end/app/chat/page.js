@@ -1,7 +1,7 @@
 "use client";
 
 import SideBar from "@/components/sidebar";
-import { ws } from "../websocket/WebSocketProvider";
+import { ws } from "../../components/context/wsContext.js";
 
 export default function Chat() {
     const handleSendMessage = () => {

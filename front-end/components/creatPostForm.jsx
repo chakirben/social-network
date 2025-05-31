@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Divider from './divider';
 import UserData from "@/components/UserData";
 import { useUser } from './context/userContext';
-export default function CreatePost({newpost}) {
+export default function CreatePost({ newpost }) {
   const inputRef = useRef(null);
   const [imageSrc, setImageSrc] = useState(null);
   const [selectedOption, setSelectedOption] = useState('public');
@@ -12,7 +12,7 @@ export default function CreatePost({newpost}) {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [users, setUsers] = useState([]);
   const [collapsed, setCollapsed] = useState(false);
-  const [err , setErr]  =  useState("")
+  const [err, setErr] = useState("")
   const { user, setUser } = useUser();
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export default function CreatePost({newpost}) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (selectedOption === "only"  && !selectedUsers.length){
+    if (selectedOption === "only" && !selectedUsers.length) {
       setErr("please select at least 1 user")
       return
     }
@@ -90,8 +90,8 @@ export default function CreatePost({newpost}) {
         inputRef.current.value = null;
       }
 
-       const result = await res.json();
-       newpost(result);
+      const result = await res.json();
+      newpost(result);
 
     } catch (err) {
       console.error('Post failed:', err);
@@ -106,7 +106,11 @@ export default function CreatePost({newpost}) {
   return (
     <form className="creatPostForm">
       <div className="df center">
-        <img className="avatar" src={user ? `http://localhost:8080/${user.avatar}`: ""} />
+        <img
+          className="avatar"
+          src={user?.avatar ? `http://localhost:8080/${user.avatar}` : "/images/defaultAvatar.png"}
+          alt="User Avatar"
+        />
         <input
           className="searchInput"
           placeholder="What's happening ?"
@@ -118,9 +122,7 @@ export default function CreatePost({newpost}) {
       <div className="ImagePreviewBox">
         {imageSrc && <img src={imageSrc} alt="Preview" className="preview-img" />}
       </div>
-
       <Divider />
-
       <div className='spB pd8'>
         <div className='group'>
           <img
@@ -151,18 +153,18 @@ export default function CreatePost({newpost}) {
                     <img src='/images/close.svg' className='icn' alt="Close" onClick={(e) => { e.preventDefault(); setCollapsed(false); }} />
                   </div>
                   <div className='userList df cl gp12 start'>
-                    {!users? <div className='df gp12' >no follow</div> : 
-                    users.map((user) => (
-                      <div key={user.id} className='df gp12'>
-                        <input
-                          type="checkbox"
-                          checked={selectedUsers.includes(user.id)}
-                          onChange={() => toggleUser(user.id)}
-                          className="checkBox"
-                        />
-                        <UserData usr={user} />
-                      </div>
-                    )) }
+                    {!users ? <div className='df gp12' >no follow</div> :
+                      users.map((user) => (
+                        <div key={user.id} className='df gp12'>
+                          <input
+                            type="checkbox"
+                            checked={selectedUsers.includes(user.id)}
+                            onChange={() => toggleUser(user.id)}
+                            className="checkBox"
+                          />
+                          <UserData usr={user} />
+                        </div>
+                      ))}
                   </div>
                   <button onClick={(e) => { e.preventDefault(); setCollapsed(false); }}>Select</button>
                 </div>
@@ -170,14 +172,14 @@ export default function CreatePost({newpost}) {
             </>
           )}
         </div>
-          <button
-            type='submit'
-            onClick={handleSubmit}
-            disabled={!text.trim()}
-            className={!text.trim() ? 'button-disabled' : 'button-active'}
-          >
-            Post
-          </button>
+        <button
+          type='submit'
+          onClick={handleSubmit}
+          disabled={!text.trim()}
+          className={!text.trim() ? 'button-disabled' : 'button-active'}
+        >
+          Post
+        </button>
 
       </div>
       <div className='err'>{err}</div>
