@@ -34,16 +34,6 @@ export default function Home() {
     }, []);
 
     useEffect(() => {
-        const timeout = setTimeout(() => {
-            if (searchTerm.trim() !== "") {
-                FetchSearch(searchTerm);
-            }
-        }, 300);
-
-        return () => clearTimeout(timeout); 
-    }, [searchTerm]);
-
-    useEffect(() => {
     const fetchOnlineUsers = async () => {
         try {
             const response = await fetch("http://localhost:8080/api/online", {

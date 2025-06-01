@@ -124,32 +124,6 @@ func GetType(msg []byte) string {
 	return strings.Trim(str1[1], "\"")
 }
 
-func removeConnection(username string, conn *websocket.Conn) {
-	mutex.Lock()
-	defer mutex.Unlock()
-
-	conns := clients[username]
-	for i, c := range conns {
-		if c == conn {
-			c.Close()
-			conns = append(conns[:i], conns[i+1:]...)
-			break
-		}
-	}
-
-	if len(conns) == 0 {
-		delete(clients, username)
-		msg := StatusChangeMessage{
-			MessageType: "statusChange",
-			UserName:    username,
-			IsOnline:    false,
-		}
-		broadcastToAll(msg)
-	} else {
-		clients[username] = conns
-	}
-}
-
 func deleteActiveuser(userID int) {
 	fmt.Println("Deleting user:", userID)
 	for i, conn := range Connections[userID] {
