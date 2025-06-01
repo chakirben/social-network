@@ -5,7 +5,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* شفافية 50% */
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -17,7 +17,7 @@
     top: 33%;
     left: 55%;
     transform: translate(-50%, -50%);
-    background-color: rgb(73, 65, 65);
+   background-color: rgba(31, 29, 26, 0.747);
     padding-left: 20px;
     padding-right: 20px;
     padding-top: 20px;
@@ -64,7 +64,7 @@
 }
 
 .creatbtn{
-    background-color: green;
+    background-color: #007AFF;
     justify-content: center;
     width: 150px;
     height: 35px;
