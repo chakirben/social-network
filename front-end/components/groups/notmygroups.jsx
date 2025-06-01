@@ -1,7 +1,7 @@
 "use client"
 import { use, useState } from "react"
 import FetchJoinToGroup from "./../../app/groups/api_and_funcs/fetch_req_join_gp"
-export default function NoMyGroup({ group, onJoin }) {
+export default function NoMyGroup({ group }) {
     const [pending, setpending] = useState("")
     // For the button to JOIN group...
     const Jointogroup = (groupId) => {
@@ -21,7 +21,7 @@ export default function NoMyGroup({ group, onJoin }) {
                 </div>
             </div>
             <div className="buttonjoin">
-                {pending ? (
+                {group.Status == "pending" || pending ? (
                     <button>Pending</button>
                 ) : (
                     <button id="buttontoseegroup" onClick={() => Jointogroup(group.Id)}>Join</button>

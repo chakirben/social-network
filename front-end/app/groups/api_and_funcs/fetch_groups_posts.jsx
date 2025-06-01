@@ -2,7 +2,6 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState , useRef} from "react";
 import Post from "@/components/post";
-import CreatPostInGroup from "@/components/groups/creat_postgroup";
 import "../../../styles/global.css";
 import GroupEventsPage from '@/components/events/groupEventsPage';
 import Divider from '@/components/divider';
@@ -127,9 +126,9 @@ export default function GroupDetails({ groupId, title }) {
     return (
         <div className='postEventsInGroup'>
             <div className="GPTitle">
-                <div className="btnback">
-                    <img src="./../images/arrow-left.svg" />
-                    <button className="backbtn" onClick={() => router.push(`/groups`)}>back</button>
+                <div className="divbtnbackgroups">
+                    <img src="./../images/arrow-left.svg"  onClick={() => router.push(`/groups`)}/>
+                    <button className="backbtngroups" onClick={() => router.push(`/groups`)}>back</button>
                 </div>
                 <div className="titleandimg">
                     <img src="./../images/group.svg" />

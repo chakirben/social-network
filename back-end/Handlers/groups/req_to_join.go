@@ -49,10 +49,10 @@ func Req_To_Join_Groups(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query2 := `
-	   INSERT INTO Notifications (senderId, receiverId, type, notificationDate) VALUES (?,?,?,?)
+	   INSERT INTO Notifications (senderId, receiverId, type, notificationDate , groupTargetId) VALUES (?,?,?,?,?)
 	`
 
-	_, err = dataB.SocialDB.Exec(query2, userID, adminId, "group_join_request", time.Now())
+	_, err = dataB.SocialDB.Exec(query2, userID, adminId, "group_join_request", time.Now(), req.GroupID)
 	if err != nil {
 		fmt.Println(err)
 		log.Println("Error to select admin in db :(", err)

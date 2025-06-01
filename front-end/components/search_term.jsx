@@ -33,7 +33,6 @@ export default function SearchTerm(Search) {
         }
     }, [Search.search]);
 
-    console.log(searchdata);
 
     if (!searchdata ||(!searchdata.JoinedGroups && !searchdata.Notfollowed && !searchdata.UnJoinGroups)) {
         return <p>Loading or not search found...</p>;
