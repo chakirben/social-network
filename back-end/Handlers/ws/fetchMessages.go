@@ -2,6 +2,7 @@ package ws
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"sort"
 	"time"
@@ -39,19 +40,20 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 		query := `
 			SELECT 
 				m.content, 
-				m.sent_at,
-				m.sender_id,
-				m.receiver_id
+				m.sentAt,
+				m.senderId,
+				m.receiverId
 			FROM messages m
 			WHERE 
-				(m.sender_id = ? AND m.receiver_id = ?)
-				OR (m.sender_id = ? AND m.receiver_id = ?)
-			ORDER BY m.sent_at DESC
+				(m.senderId = ? AND m.receiverId = ?)
+				OR (m.senderId = ? AND m.receiverId = ?)
+			ORDER BY m.sentAt DESC
 			LIMIT 50;
 		`
 
 		rows, err := database.SocialDB.Query(query, userID, otherID, otherID, userID)
 		if err != nil {
+			fmt.Println(err)
 			http.Error(w, "Database error", http.StatusInternalServerError)
 			return
 		}
@@ -76,11 +78,11 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 		query := `
 			SELECT 
 				gm.content,
-				gm.sent_at,
+				gm.sentAt,
 				gm.senderId
 			FROM GroupMessages gm
 			WHERE gm.groupId = ?
-			ORDER BY gm.sent_at DESC
+			ORDER BY gm.sentAt DESC
 			LIMIT 50;
 		`
 

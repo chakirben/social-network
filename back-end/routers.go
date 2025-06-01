@@ -99,8 +99,13 @@ func SetupHandlers() {
 
 	// notifications
 	http.HandleFunc("/api/getNotifications", AccessMiddleware(notification.GetNotifications))
+	
+	//chat
 	http.HandleFunc("/api/ws", ws.OpenWsConn)
+	http.HandleFunc("/api/GetDiscussionList", AccessMiddleware(ws.GetAllDiscussionsHandler))
 	http.HandleFunc("/api/online", AccessMiddleware(ws.GetOnlineUsers))
+	http.HandleFunc("/api/fetchMessages", AccessMiddleware(ws.GetMessagesHandler))
+
 }
 
 func SessionMiddleware(fun http.HandlerFunc) http.HandlerFunc {
