@@ -4,6 +4,8 @@ import SideBar from "@/components/sidebar";
 import "../home/home.css"
 import { use, useState, useEffect } from "react";
 import AcceptFollow from "./acceptFollow"
+import UserNotifications from "@/components/notification";
+import React from "react";
 
 
 export default function NotifClient(session) {
@@ -54,10 +56,17 @@ export default function NotifClient(session) {
                             <p>No notifications</p>
                         ) : (
                             notif_data.map((notif, index) => (
-                                <li key={index} className="notification">
-                                    {new Date(notif.Date).toLocaleString()} : {notif.Sender} {notif.Type === "follow_request" && <span>Sends you a follow request</span>}
-                                    {notif.Status === "pending" && notif.Type === "follow_request" && <AcceptFollow followerID = { notif.SenderID } followedSession = { session } />}
-                                </li>
+                                <React.Fragment key={index}>
+                                    <ul>
+                                    <UserNotifications notification={notif} />
+                                    {notif.Status === "pending" && notif.Type === "follow_request" && (
+                                        <AcceptFollow
+                                            followerID={notif.SenderID}
+                                            followedSession={session}
+                                        />
+                                    )}
+                                    </ul>
+                                </React.Fragment>
                             ))
                         )}
                     </ul>
