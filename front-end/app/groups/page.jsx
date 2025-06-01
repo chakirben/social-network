@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Groupbar from "@/components/groups/groupbar";
 import SideBar from "@/components/sidebar";
 import CreateGroupForm from "@/components/groups/creatGroup";
 import fetchCreateGroup from "./api_and_funcs/fetch_creat_gp";
