@@ -22,7 +22,10 @@ export default function NoMyGroup({ group }) {
             </div>
             <div className="buttonjoin">
                 {group.Status == "pending" || pending ? (
-                    <button>Pending</button>
+                    <>
+                       <button>Pending</button>
+                       <div className="cancel">cancel</div>
+                    </>
                 ) : (
                     <button id="buttontoseegroup" onClick={() => Jointogroup(group.Id)}>Join</button>
                 )

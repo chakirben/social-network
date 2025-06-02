@@ -129,3 +129,14 @@
     background-color: #007AFF;
     border-radius: 999px;
 }
+
+
+
+.cancel{
+    background-color: none;
+    margin-left: 2px;
+    border-bottom:rgb(255, 35, 35) solid;
+
+    color: rgb(255, 35, 35);
+
+}
