@@ -12,16 +12,6 @@ export const UserProvider = ({ children }) => {
         if (savedUser) {
             setUser(JSON.parse(savedUser));
             setLoading(false);
-        } else {
-            fetch("http://localhost:8080/api/getUserData",{ credentials: "include" })
-                .then((response) => response.json())
-                .then((data) => {
-                    setUser(data);
-                    localStorage.setItem("user", JSON.stringify(data));
-                })
-                .finally(() => {
-                    setLoading(false);
-                });
         }
     }, []);
 
