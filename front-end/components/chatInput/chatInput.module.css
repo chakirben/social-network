@@ -1,0 +1,27 @@
+.container {
+   position: sticky;
+    bottom: 0px;
+    width: 100%;
+    padding: 16px 40px 16px 40px;
+    backdrop-filter: blur(64px);
+    background-color: #171717b9;
+    display: flex;
+    color: white;
+    gap: 16px;
+    border-top: rgba(255, 255, 255, 0.137) solid 1px;
+}
+
+.input {
+    flex: 1;
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+
+.input::placeholder {
+    color: #a0a0a0;
+    opacity: 0.6;
+}
+.button:hover {
+    background-color: #2563eb;
+}

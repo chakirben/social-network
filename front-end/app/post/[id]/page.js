@@ -7,7 +7,7 @@ import "../../../styles/global.css"
 import Post from "@/components/post";
 import "../../home/comments.css"
 import Comment from "@/components/comments";
-import Header from "@/components/header";
+import Header from "@/components/Header/header";
 import CommentInput from "@/components/commentInput";
 
 export default function PostPage({ params }) {

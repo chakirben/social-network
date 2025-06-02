@@ -1,0 +1,36 @@
+
+.date {
+    font-size: 12px;
+    opacity: 32%;
+}
+.MsgContent {
+  background-color: #ffffff11;
+  padding: 8px 12px;
+
+  border-radius: 16px;
+}
+
+.message {
+  align-self: flex-start;
+  max-width: 70%;
+  width: fit-content;
+}
+
+.message.me .MsgContent {
+  background: #0071E3;
+}
+.MsgContent {
+  width: fit-content;
+}
+.message.me {
+  align-self: flex-end;
+}
+.date {
+  font-size: smaller;
+}
+.date.hidden {
+  display: none;
+}
+.hidden {
+  display: none;
+}

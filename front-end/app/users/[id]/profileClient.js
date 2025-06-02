@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import FollowButton from './FollowButton';
 import SideBar from "@/components/sidebar";
 import Post from "@/components/post";
-import Header from "@/components/header";
+import Header from "@/components/Header/header";
 import "../../../styles/global.css";
 import "../../profile/profile.css";
 import "../../home/home.css";

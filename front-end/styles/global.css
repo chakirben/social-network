@@ -9,8 +9,19 @@ body {
 
 body::-webkit-scrollbar {
     display: none;
+
 }
 
+h5 ,  h4 ,h3 {
+    margin: 0px;
+}
+p {
+    margin: 0px;
+
+}
+.layout {
+    overflow: hidden;
+}
 input,
 textarea {
     background: transparent;

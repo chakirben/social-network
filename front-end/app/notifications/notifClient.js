@@ -1,5 +1,5 @@
 'use client'
-import Header from "@/components/header";
+import Header from "@/components/Header/header";
 import SideBar from "@/components/sidebar";
 import "../home/home.css"
 import { use, useState, useEffect } from "react";

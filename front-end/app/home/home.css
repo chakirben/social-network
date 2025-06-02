@@ -159,7 +159,10 @@ h5 {
 .loading {
     padding: 40px;
 }
-
+.loading2 {
+    padding: 16px;
+    opacity: 40%;
+}
 .icn {
 
     padding: 8px;
@@ -188,7 +191,9 @@ h5 {
     color: white;
     border: #ffffff4b 1px dashed;
 }
-
+.onlineUsers {
+    padding: 24px;
+}
 .Myselect option {
     background: none;
 }
@@ -259,15 +264,6 @@ h5 {
 .card :hover {
     background: linear-gradient(131.15deg, #ffffff23 0.6%, #ffffff 98.78%);
 
-}
-
-.header {
-    padding: 16px 40px;
-    position: sticky;
-    top: 0px;
-    gap: 16px;
-    backdrop-filter: blur(20px);
-    border-bottom: rgba(255, 255, 255, 0.137) solid 1px;
 }
 .closeImage {
     position: absolute;

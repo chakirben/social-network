@@ -99,8 +99,13 @@ func SetupHandlers() {
 
 	// notifications
 	http.HandleFunc("/api/getNotifications", AccessMiddleware(notification.GetNotifications))
+	
+	//chat
 	http.HandleFunc("/api/ws", ws.OpenWsConn)
-	http.HandleFunc("/api/online" , AccessMiddleware(ws.GetOnlineUsers))
+	http.HandleFunc("/api/GetDiscussionList", AccessMiddleware(ws.GetAllDiscussionsHandler))
+	http.HandleFunc("/api/online", AccessMiddleware(ws.GetOnlineUsers))
+	http.HandleFunc("/api/fetchMessages", AccessMiddleware(ws.GetMessagesHandler))
+
 }
 
 func SessionMiddleware(fun http.HandlerFunc) http.HandlerFunc {
@@ -120,7 +125,7 @@ func AccessMiddleware(fun http.HandlerFunc) http.HandlerFunc {
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Cookie")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
-		
+
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
 			return
