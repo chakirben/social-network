@@ -21,7 +21,7 @@ export const UserProvider = ({ children }) => {
                 })
                 .finally(() => {
                     setLoading(false);
-                });//GetCurrentUserData
+                });
         }
     }, []);
 
@@ -33,3 +33,5 @@ export const UserProvider = ({ children }) => {
 };
 
 export const useUser = () => useContext(UserContext);
+
+

@@ -1,16 +1,21 @@
 'use client'
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { WebSocketContext } from '@/components/context/wsContext';
+
+import { useUser } from '@/components/context/userContext'
+
 import '../register/register.css';
 
 export default function Login() {
+  const { setUser } = useUser(); 
+
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const { Connect } = useContext(WebSocketContext); 
+  const { Connect } = useContext(WebSocketContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -34,7 +39,26 @@ export default function Login() {
     } else {
       console.log("Login success")
       Connect()
-      router.push('/home'); 
+
+  
+        async function FirstTimeUser () {
+           try {
+             const rep = await fetch("http://localhost:8080/api/getUserData", {
+                credentials: "include" 
+               })
+               if (!rep.ok) {
+                   throw new Error(`HTTP error! Status: ${res.status}`);
+               }
+                let data = await rep.json()
+                localStorage.setItem("user", JSON.stringify(data));
+                setUser(data)
+           } catch (err) {
+             console.log('errrrror', err)
+           }
+        }
+        FirstTimeUser()
+
+      router.push('/home');
     }
   }
 
@@ -64,7 +88,7 @@ export default function Login() {
         </form>
 
         <p className="registerLink">
-          Don't have an account? <a onClick={()=> {router.push("/register")}}>Register</a>
+          Don't have an account? <a onClick={() => { router.push("/register") }}>Register</a>
         </p>
       </div>
     </div>
