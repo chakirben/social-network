@@ -247,10 +247,19 @@ small  {
 .send-button svg {
     margin-left: 2px; /* Slight offset to center the arrow */
 }
+
 .MessagesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
   flex-grow: 1;
+  padding: 24px;
+}
+.chatConta {
+  align-self: stretch;
 }
 .chatView {
+  flex-grow: 1  ;
   height: 100vh;
-  flex-grow: 1;
 }

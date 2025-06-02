@@ -265,15 +265,6 @@ h5 {
     background: linear-gradient(131.15deg, #ffffff23 0.6%, #ffffff 98.78%);
 
 }
-
-.header {
-    padding: 16px 40px;
-    position: sticky;
-    top: 0px;
-    gap: 16px;
-    backdrop-filter: blur(20px);
-    border-bottom: rgba(255, 255, 255, 0.137) solid 1px;
-}
 .closeImage {
     position: absolute;
     background: #171717de;

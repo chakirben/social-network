@@ -10,7 +10,7 @@ import MyGroupsPage from "./api_and_funcs/get_groups";
 import "./css/groups1.css";
 import "./css/creatgroup.css";
 import "./../home/home.css";
-import Header from "@/components/header";
+import Header from "@/components/Header/header";
 
 export default function JustMyGroupsPage() {
   const [showCreateGroupForm, setShowCreateGroupForm] = useState(false);

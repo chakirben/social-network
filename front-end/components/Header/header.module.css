@@ -1,0 +1,13 @@
+.header {
+    display: flex;
+    flex-direction: row;
+    padding: 16px 40px;
+    position: sticky;
+    top: 0px;
+    gap: 16px;
+    backdrop-filter: blur(20px);
+    border-bottom: rgba(255, 255, 255, 0.137) solid 1px;
+}
+.df {
+    display: flex;
+}

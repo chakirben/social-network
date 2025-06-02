@@ -8,6 +8,7 @@ export const WebSocketContext = createContext(null)
 export const WebSocketProvider = ({ children }) => {
   const [statuses, setStatuses] = useState({})
   const [discussionMap, setDiscussionMap] = useState({})
+  const [wsMessages, setwsMessages] = useState([])
   const [socket, setSocket] = useState(null)
 
   const connectedRef = useRef(false)
@@ -41,10 +42,8 @@ export const WebSocketProvider = ({ children }) => {
         console.log('Message from server:', data)
 
         switch (data.type) {
-          case 'Status':
-            // live status update with full user data
+          case 'Status': {
             const { userId, statusType, user } = data
-
             if (userId && statusType) {
               setStatuses((prev) => {
                 const updated = { ...prev }
@@ -64,11 +63,14 @@ export const WebSocketProvider = ({ children }) => {
                 return updated
               })
             }
-
             break
+          }
 
           case 'message':
-          case 'grpMessage':
+            setwsMessages((prev) => [...prev, data])
+            break
+
+          case 'grpMessage': {
             const discussionKey =
               data.scope === 'group'
                 ? 'group' + data.groupId
@@ -86,6 +88,7 @@ export const WebSocketProvider = ({ children }) => {
               ]
             }))
             break
+          }
 
           case 'notification':
             console.log('Notification:', data)
@@ -116,7 +119,9 @@ export const WebSocketProvider = ({ children }) => {
         discussionMap,
         setDiscussionMap,
         statuses,
-        setStatuses
+        setStatuses,
+        wsMessages,
+        setwsMessages
       }}
     >
       {children}

@@ -19,6 +19,9 @@ p {
     margin: 0px;
 
 }
+.layout {
+    overflow: hidden;
+}
 input,
 textarea {
     background: transparent;

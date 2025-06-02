@@ -71,11 +71,11 @@ export default function ChatLayout({ children }) {
                     {statuses && Object.entries(statuses).map(([userId, user]) => (
                         <div key={userId} className="online-user-avatar" title={`${user.firstName} ${user.lastName}`}>
                             <div className="avatar-wrapper">
-                                <img 
-                                    src={user.avatar || 'images/Avatars.png'} 
+                                <img
+                                    src={user.avatar || '/images/Avatars.png'}
                                     alt={`${user.firstName} ${user.lastName}`}
                                     className="online-avatar"
-                                    onError={(e) => { e.target.src = 'images/Avatars.png' }}
+
                                 />
                                 <div className="online-indicator"></div>
                             </div>
@@ -89,7 +89,7 @@ export default function ChatLayout({ children }) {
                 <h3 className="Msgs">Messages ({discussionMap ? Object.keys(discussionMap).length : 0})</h3>
                 <div className="discussionList df cl">
                     {discussionMap && Object.entries(discussionMap).map(([key, messages]) => {
-                          if (!Array.isArray(messages) || messages.length === 0) return null
+                        if (!Array.isArray(messages) || messages.length === 0) return null
                         const discussion = messages[0]
                         return <DiscussionCard key={key} discussion={discussion} />
                     })}
@@ -99,9 +99,9 @@ export default function ChatLayout({ children }) {
                 </div>
             </div>
 
-            <div style={{ flex: 1 }}>
-                {children}
-            </div>
+
+            {children}
+
         </div>
     )
 }

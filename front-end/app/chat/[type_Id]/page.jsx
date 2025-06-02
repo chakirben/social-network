@@ -1,22 +1,25 @@
 'use client'
-import { useContext, useEffect } from "react"
+
+import { useContext, useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
+import MessageInput from "@/components/chatInput/chatInput"
+import Message from "@/components/message/message"
+import Header from "@/components/Header/header"
 import { WebSocketContext } from "@/components/context/wsContext"
-import MessageInput from "@/components/chatInput"
+import { useUser } from "@/components/context/userContext"
 
 export default function ChatView() {
-  const { discussionMap, setDiscussionMap } = useContext(WebSocketContext)
   const pathname = usePathname()
-
+  const [messages, setMessages] = useState([])
+  const { wsMessages } = useContext(WebSocketContext)
+  const { myId } = useUser()
   const match = pathname.match(/^\/chat\/(user|group)(\d+)$/)
   const type = match?.[1]
   const id = match?.[2]
 
-  const discussionKey = type + id
-  console.log("Current discussionKey:", discussionKey)
-
+  // Fetch initial messages
   useEffect(() => {
-    if (!type || !id || discussionMap[discussionKey]) return
+    if (!type || !id) return
 
     const fetchMessages = async () => {
       try {
@@ -29,38 +32,54 @@ export default function ChatView() {
         const res = await fetch(baseUrl + queryParams, {
           credentials: "include",
         })
+
         if (!res.ok) throw new Error("Failed to fetch messages")
+
         const data = await res.json()
-        setDiscussionMap((prev) => ({
-          ...prev,
-          [discussionKey]: data,
-        }))
+        setMessages(data || [])
       } catch (err) {
         console.error("Error fetching messages:", err)
       }
     }
 
     fetchMessages()
-  }, [type, id, discussionKey, discussionMap, setDiscussionMap])
+  }, [type, id, pathname])
 
-  // Add this effect to log discussionMap whenever it changes
   useEffect(() => {
-    console.log("Updated discussionMap:", discussionMap)
-  }, [discussionMap])
+    if (wsMessages.length === 0) return;
+
+    const lastMsg = wsMessages[wsMessages.length - 1];
+
+    const isRelevant =
+      (type === "user" && (lastMsg.sender == id || lastMsg.receiver == id)) ||
+      (type === "group" && lastMsg.groupId == id);
+
+    if (isRelevant) {
+      // Convert lastMsg to fetched message format
+      const formattedMsg = {
+        content: lastMsg.content,
+        sent_at: lastMsg.sentAt || lastMsg.sent_at, // adjust if key differs
+        sender_id: lastMsg.sender,
+        receiver_id: lastMsg.receiver,
+        groupId: lastMsg.groupId, // if group message, keep groupId
+        id: lastMsg.id // if you have an id for deduplication
+      };
+
+      setMessages((prev) => {
+        return [...prev, formattedMsg];
+      });
+    }
+  }, [wsMessages, id, type]);
 
   return (
     <div className="chatView df cl">
+      <Header pageName={'private chat'} />
       <div className="MessagesContainer">
-        {(discussionMap[discussionKey]?.messages || []).map((msg, idx) => (
-          <div key={idx} className="message">
-            <strong>{msg.sender_id}</strong>: {msg.content}
-            <div className="timestamp">
-              {new Date(msg.sent_at).toLocaleString()}
-            </div>
-          </div>
+        {messages.map((msg, idx) => (
+          <Message msg={msg} key={idx} />
         ))}
       </div>
-      <MessageInput />
+      <MessageInput id={id} type={type} />
     </div>
   )
 }

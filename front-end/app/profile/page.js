@@ -5,7 +5,7 @@ import "../../styles/global.css"
 import "../profile/profile.css"
 import Post from "@/components/post";
 import "../home/home.css"
-import Header from "@/components/header";
+import Header from "@/components/Header/header";
 import { useRouter } from "next/navigation";
 
 

@@ -22,6 +22,13 @@ func RedirectMessage(msg Message) error {
 			fmt.Println("Error sending message:", err)
 		}
 	}
+	for _, conn := range Connections[msg.Sender] {
+		println("sent it to me")
+		err := conn.WriteJSON(msg)
+		if err != nil {
+			fmt.Println("Error sending message:", err)
+		}
+	}
 	return nil
 }
 
