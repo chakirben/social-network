@@ -13,10 +13,8 @@ import (
 )
 
 var upgrader = websocket.Upgrader{
-	// Important: check origin manually
 	CheckOrigin: func(r *http.Request) bool {
 		origin := r.Header.Get("Origin")
-		// Replace with your frontend origin
 		allowedOrigin := "http://localhost:3000"
 		return origin == allowedOrigin
 	},
@@ -30,7 +28,7 @@ type Message struct {
 	Sender  int    `json:"sender,omitempty"`
 
 	// For direct messages
-	Receiver int `json:"receiver,omitempty"`
+	Receiver int `json:"receiverId,omitempty"`
 
 	// For group messages
 	GroupID int `json:"groupID,omitempty"`
@@ -82,6 +80,7 @@ func OpenWsConn(resp http.ResponseWriter, req *http.Request) {
 				continue
 			}
 		case "groupmsg":
+			msg.Sender = userID
 			if err := RedirectGroupMessage(msg); err != nil {
 				log.Println(err)
 				continue

@@ -13,14 +13,15 @@ export default function ChatView() {
   const [messages, setMessages] = useState([])
   const { wsMessages } = useContext(WebSocketContext)
   const { myId } = useUser()
-  const match = pathname.match(/^\/chat\/(user|group)(\d+)$/)
+
+  const match = pathname.match(/^\/chat\/(user|group)(\d+)_([\w_]+)$/)
   const type = match?.[1]
   const id = match?.[2]
+  const rawName = match?.[3] || ''
+  const name = rawName.replace(/_/g, ' ')
 
-  // Fetch initial messages
   useEffect(() => {
     if (!type || !id) return
-
     const fetchMessages = async () => {
       try {
         const baseUrl = "http://localhost:8080/api/fetchMessages"
@@ -41,7 +42,6 @@ export default function ChatView() {
         console.error("Error fetching messages:", err)
       }
     }
-
     fetchMessages()
   }, [type, id, pathname])
 
@@ -49,31 +49,20 @@ export default function ChatView() {
     if (wsMessages.length === 0) return;
 
     const lastMsg = wsMessages[wsMessages.length - 1];
-
+    console.log("last msg is " ,lastMsg);
+    
     const isRelevant =
-      (type === "user" && (lastMsg.sender == id || lastMsg.receiver == id)) ||
+      (type === "user" && (lastMsg.receiver_id == id || lastMsg.sender_id == id)) ||
       (type === "group" && lastMsg.groupId == id);
 
     if (isRelevant) {
-      // Convert lastMsg to fetched message format
-      const formattedMsg = {
-        content: lastMsg.content,
-        sent_at: lastMsg.sentAt || lastMsg.sent_at, // adjust if key differs
-        sender_id: lastMsg.sender,
-        receiver_id: lastMsg.receiver,
-        groupId: lastMsg.groupId, // if group message, keep groupId
-        id: lastMsg.id // if you have an id for deduplication
-      };
-
-      setMessages((prev) => {
-        return [...prev, formattedMsg];
-      });
+      setMessages((prev) => [...prev, lastMsg]);
     }
   }, [wsMessages, id, type]);
 
   return (
     <div className="chatView df cl">
-      <Header pageName={'private chat'} />
+      <Header pageName={name || 'chat'} />
       <div className="MessagesContainer">
         {messages.map((msg, idx) => (
           <Message msg={msg} key={idx} />

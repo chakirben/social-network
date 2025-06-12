@@ -33,6 +33,7 @@ func RedirectMessage(msg Message) error {
 }
 
 func checkAuthorisation(msg Message) bool {
+	fmt.Println(msg.Sender , msg.Receiver)
 	var isFollowing bool
 	err := dataB.SocialDB.QueryRow(`
 		SELECT EXISTS(

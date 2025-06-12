@@ -182,6 +182,7 @@ button:hover {
 }
 .avatar {
     height: 24px;
+    width: 24px;
 }
 .cl {
     flex-direction: column;

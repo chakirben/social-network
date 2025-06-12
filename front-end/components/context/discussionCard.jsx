@@ -1,12 +1,20 @@
 import { timePassed } from "@/public/utils/timePassed";
+import { useRouter } from "next/navigation";
 export default function DiscussionCard({ discussion }) {
+  let router = useRouter()
   const avatarSrc =
     discussion.avatar && discussion.avatar.trim() !== ""
       ? discussion.avatar
       : "images/Avatars.png";
 
   return (
-    <div className="discussionCard df spB center gp6">
+    <div className="discussionCard df spB center gp6"
+      onClick={() => {
+        const type = discussion.isGroup ? 'group' : 'user';
+        const nameSlug = discussion.name.replace(/\s+/g, '_'); // replace spaces with _
+        router.push(`/chat/${type}${discussion.id}_${nameSlug}`);
+      }}
+    >
       <div className="df  gp6 center spB">
         <img
           src={avatarSrc}

@@ -9,6 +9,7 @@ import (
 
 func RedirectGroupMessage(msg Message) error {
 	// Check if sender is a member of the group
+	println(msg.Sender , msg.GroupID)
 	var isMember bool
 	err := dataB.SocialDB.QueryRow(`
 		SELECT EXISTS (
@@ -34,7 +35,7 @@ func RedirectGroupMessage(msg Message) error {
 	// Get all members of the group (excluding sender)
 	rows, err := dataB.SocialDB.Query(`
 		SELECT memberId FROM GroupsMembers 
-		WHERE groupId = ? AND memberId != ?
+		WHERE groupId = ?
 	`, msg.GroupID, msg.Sender)
 	if err != nil {
 		return fmt.Errorf("error retrieving group members: %v", err)
@@ -48,6 +49,7 @@ func RedirectGroupMessage(msg Message) error {
 			log.Println("Error scanning group member ID:", err)
 			continue
 		}
+		println(Connections,memberId)
 		for _, conn := range Connections[memberId] {
 			if err := conn.WriteJSON(msg); err != nil {
 				log.Printf("Error sending group message to user %d: %v\n", memberId, err)

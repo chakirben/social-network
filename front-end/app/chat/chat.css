@@ -249,9 +249,14 @@ small  {
 }
 
 .MessagesContainer {
+  scrollbar-width: none;
+    -ms-overflow-style: none;
+    overflow-y: auto;
+    overflow-y: scroll;
+    height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap:16px;
   overflow-y: auto;
   flex-grow: 1;
   padding: 24px;

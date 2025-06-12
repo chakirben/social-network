@@ -91,7 +91,7 @@ export default function ChatLayout({ children }) {
                     {discussionMap && Object.entries(discussionMap).map(([key, messages]) => {
                         if (!Array.isArray(messages) || messages.length === 0) return null
                         const discussion = messages[0]
-                        return <DiscussionCard key={key} discussion={discussion} />
+                        return <DiscussionCard key={key} discussion={discussion}  />
                     })}
                     {(!discussionMap || Object.keys(discussionMap).length === 0) && (
                         <div className="no-discussions">No discussions available</div>
