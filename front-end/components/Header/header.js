@@ -4,7 +4,7 @@ import styles from './header.module.css';
 export default function Header({ pageName, ele }) {
   const router = useRouter();
   return (
-    <div className={styles.header}>
+    <div className={styles.header +" center"} >
       <div className="df gp6">
         <img
           className={styles.icn1}

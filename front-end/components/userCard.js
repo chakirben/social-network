@@ -21,16 +21,9 @@ export default function UserCard({ user }) {
     }
     return (
         <div className="userCard" onClick={() => router.push(`/users/${user.id}`)}>
-            {user.avatar ? (
-                <img
-                    className="userAvatar"
-                    src={user.avatar}
-                    alt={`${user.firstName}'s avatar`}
-                />
-            ) : (
+           
                
-                <Avatar name={user.firstName + user.lastName} />
-            )}
+                <Avatar url={user.avatar} name={user.firstName} />
             <div className="userInfo">
                 <div className="userName">{user.firstName} {user.lastName}</div>
                 <div className="followerCount">{user.followerCount} followers</div>

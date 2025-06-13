@@ -14,7 +14,6 @@ import (
 )
 
 func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
-
 	offset := r.URL.Query().Get("offset")
 	if offset == "" {
 		offset = "0"
@@ -38,7 +37,8 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 				p.image,
 				p.content, 
 				u.firstName,
-				u.lastName, 
+				u.lastName,
+				u.avatar,
 				(SELECT COUNT(*) FROM postReactions WHERE postId = p.id AND reactionType = 1) AS likeCount,
 				(SELECT COUNT(*) FROM postReactions WHERE postId = p.id AND reactionType = -1) AS dislikeCount,
 				(SELECT reactionType FROM PostReactions WHERE postId = p.id AND userId = ?) AS userReaction,
@@ -80,12 +80,13 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 			content      string
 			firstName    string
 			lastName     string
+			avatar       string
 			likeCount    sql.NullInt32
 			dislikeCount sql.NullInt32
 			userReaction sql.NullInt32
 			createdAt    time.Time
 		)
-		err := rows.Scan(&id, &image, &content, &firstName, &lastName, &likeCount, &dislikeCount, &userReaction, &createdAt)
+		err := rows.Scan(&id, &image, &content, &firstName, &lastName, &avatar, &likeCount, &dislikeCount, &userReaction, &createdAt)
 		if err != nil {
 			fmt.Println(err)
 			log.Println("Error scanning row:", err)
@@ -96,6 +97,7 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 			"id":            id,
 			"image":         image.String,
 			"content":       content,
+			"avatar":        avatar,
 			"creator":       fmt.Sprintf("%s %s", firstName, lastName),
 			"like_count":    likeCount.Int32,
 			"dislike_count": dislikeCount.Int32,

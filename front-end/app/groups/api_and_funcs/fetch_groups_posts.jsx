@@ -1,15 +1,20 @@
 "use client"
 import { useRouter } from 'next/navigation';
-import { useEffect, useState , useRef} from "react";
+import { useEffect, useState, useRef, use } from "react";
 import Post from "@/components/post";
 import CreatPostInGroup from "@/components/groups/creat_postgroup";
 import "../../../styles/global.css";
 import GroupEventsPage from '@/components/events/groupEventsPage';
 import Divider from '@/components/divider';
 import CreateEvent from '@/components/createEventForm';
+import Avatar from '@/components/avatar/avatar';
+import { useUser } from '@/components/context/userContext';
+import Header from '@/components/Header/header';
+
 
 
 export default function GroupDetails({ groupId, title }) {
+    const { user } = useUser();
     const [PostsGroup, setPostsGroup] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [events, setEvents] = useState([])
@@ -19,7 +24,7 @@ export default function GroupDetails({ groupId, title }) {
     const [imageSrc, setImageSrc] = useState(null);
     const inputRef = useRef(null);
 
-    
+
 
     useEffect(() => {
         console.log("Updated events:", events);
@@ -126,17 +131,7 @@ export default function GroupDetails({ groupId, title }) {
 
     return (
         <div className='postEventsInGroup'>
-            <div className="GPTitle">
-                <div className="btnback">
-                    <img src="./../images/arrow-left.svg" />
-                    <button className="backbtn" onClick={() => router.push(`/groups`)}>back</button>
-                </div>
-                <div className="titleandimg">
-                    <img src="./../images/group.svg" />
-                    <p>{title}</p>
-                </div>
-            </div>
-
+            <Header pageName={title} />
             <div className='filterPostsAndEvents'>
                 <span
                     className={`postsSpan ${activeTab === "posts" ? "active" : ""}`}
@@ -157,8 +152,9 @@ export default function GroupDetails({ groupId, title }) {
             {!isLoading && activeTab === "posts" && (
                 <>
                     <form className="creatPostForm" onSubmit={handleSubmit}>
-                        <div className="searchBar">
-                            <img src="./../../../public/images/user-icon.png" />
+                        <div className="searchBar df gp12 center">
+                            <Avatar url={user.avatar} name={user.firstName} />
+
                             <input
                                 className="searchInput"
                                 placeholder="What’s happening ?"
@@ -175,8 +171,8 @@ export default function GroupDetails({ groupId, title }) {
 
                         <div className='spB'>
                             <div className='group'>
-                                <img
-                                    src="./images/image.svg"
+                                <img style={{width : "20px", height: "20px", cursor: "pointer" }}
+                                    src="../../images/image.svg"
                                     className="upload-icon"
                                     onClick={handleImageClick}
                                 />

@@ -1,49 +1,44 @@
 /*about creat groups*/
 .creatgroups {
     position: fixed;
-    top: 12%;
-    left: 60%;
+    display: flex;
+    flex-direction: column;
+    min-width: 300px;
+    gap: 10px;
+    z-index: 106;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgb(73, 65, 65);
+    background-color: #ffffff1a;
     padding: 20px;
     border-radius: 12px;
-    width: 260px;
-    height: 130px;
+    backdrop-filter: blur(10px);
     font-family: Arial, Helvetica, sans-serif;
     margin: auto;
 }
 .creatgroups  .inputToCreatGourp {
-    margin: auto;
-    padding-left: 20px;
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
 }
 
-.titelinp {
-    background-color: rgb(37, 37, 37);
-    color: white;
-    margin-bottom: 5px;
-}
-
-.discinp{
-    background-color: rgb(37, 37, 37);
-    color: white;
-    margin-bottom: 5px;
-}
 
 .divcreatbtn {
-    justify-content: center;
-    align-items: center;
-    margin: auto;
+    justify-content: flex-end;
+    gap: 10px;
     display: flex;
 }
 
 .creatbtn{
-    background-color: green;
+    flex-grow: 1;
+    background-color: #ffffff;
+    color: black;
     justify-content: center;
 }
 
 .skipbtn {
+    flex-grow: 1;
     background-color: rgb(87, 86, 86);
-    margin-left: 20px;
 }
 
 .skipbtn img {

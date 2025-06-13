@@ -194,13 +194,29 @@ button:hover {
     justify-content: space-between;
 }
 
-.avatar {
-    height: 24px;
-    width: 24px;
-}
 
 .cl {
     flex-direction: column;
+}
+
+.secondaryBtn {
+
+    padding: 12px 16px;
+    background: #222222;
+    border-radius: 12px;
+
+}
+
+.tertiary {
+    padding: 12px 16px;
+    background: #ffffff;
+    color: black;
+    border-radius: 12px;
+}
+.bigPic{
+    width: 50px;
+    height: 50px;
+
 }
 
 .button-disabled {

@@ -5,6 +5,7 @@ import Divider from '../divider';
 import UserData from "@/components/UserData";
 import { useUser } from '../context/userContext';
 import styles from './create.module.css';
+import Avatar from '../avatar/avatar';
 export default function CreatePost({ newpost }) {
   const inputRef = useRef(null);
   const [imageSrc, setImageSrc] = useState(null);
@@ -107,11 +108,8 @@ export default function CreatePost({ newpost }) {
   return (
     <form className="creatPostForm">
       <div className="df center">
-        <img
-          className="avatar"
-          src={user?.avatar ? user.avatar : "/images/defaultAvatar.png"}
-          alt="User Avatar"
-        />
+        <Avatar url={user.avatar} name={user.firstName} />
+
         <input
           className={styles.searchInput}
           placeholder="What's happening ?"

@@ -1,3 +1,4 @@
+import "../../styles/global.css"
 export default function ChatLanding() {
     return (
         <div style={{ padding: "2rem" }}>
@@ -5,4 +6,8 @@ export default function ChatLanding() {
             <p>Select a conversation to start chatting.</p>
         </div>
     )
+
+
+
+    
 }

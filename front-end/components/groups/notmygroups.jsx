@@ -24,7 +24,7 @@ export default function NoMyGroup({ group, onJoin }) {
                 {pending ? (
                     <button>Pending</button>
                 ) : (
-                    <button id="buttontoseegroup" onClick={() => Jointogroup(group.Id)}>Join</button>
+                    <button className="tertiary" onClick={() => Jointogroup(group.Id)}>Join</button>
                 )
                 }
             </div>

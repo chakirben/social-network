@@ -2,8 +2,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 50px;
-    height: 50px;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #ffffff44;
     background-color: rgba(255, 255, 255, 0.103);
     border-radius: 50%;
     font-size: 20px;
@@ -11,4 +12,15 @@
     color: #ebebeb;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     text-align: center; 
+}
+.avatar {
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+    border: 1px solid #ffffff44;
+}
+.bigPic{
+    width: 500px;
+    height: 50px;
+
 }

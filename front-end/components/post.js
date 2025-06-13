@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ReactionGroup from './reactionGroup';
 import { timePassed } from '@/public/utils/timePassed';
+import Avatar from './avatar/avatar';
 
 export default function Post({ pst }) {
     const router = useRouter();
@@ -23,7 +24,7 @@ export default function Post({ pst }) {
             <div className="post" onClick={() => router.push(`/post/${pst.id}`)}>
                 <div className="content df cl gp12">
                     <div className="userData">
-                        {pst?.avatar ? <img className="pic sm" src={pst?.avatar} /> : ""}
+                        <Avatar url={pst.avatar} name={pst.creator} />
                         <h4>{pst?.creator}</h4>
                         <h5>{"• " + timePassed(pst?.created_at)}</h5>
                     </div>
@@ -34,7 +35,7 @@ export default function Post({ pst }) {
                             className="pic nrml"
                             src={pst?.image}
                             onClick={(e) => {
-                                e.stopPropagation(); 
+                                e.stopPropagation();
                                 openImageModal(pst?.image);
                             }}
                             style={{ cursor: 'pointer' }}
@@ -47,7 +48,7 @@ export default function Post({ pst }) {
                     dislikeCount={pst.dislike_count}
                     itemType="post"
                     itemId={pst.id}
-                    userReaction={pst.user_reaction}/>
+                    userReaction={pst.user_reaction} />
             </div>
 
             {modalOpen && (

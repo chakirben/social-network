@@ -6,6 +6,7 @@ import { WebSocketContext } from "@/components/context/wsContext"
 import DiscussionCard from "@/components/context/discussionCard"
 import "./chat.css"
 import Avatar from "@/components/avatar/avatar"
+import "../../styles/global.css"
 
 export default function ChatLayout({ children }) {
     const { discussionMap, setDiscussionMap } = useContext(WebSocketContext)
@@ -103,26 +104,19 @@ export default function ChatLayout({ children }) {
                                     className="online-user-avatar"
                                     title={displayName}
                                 >
-                                   
-                                        {entity.avatar ? (
-                                            <img
-                                                src={entity.avatar}
-                                                alt={displayName}
-                                                className="online-avatar"
-                                            />
-                                        ) : (
-                                            <Avatar size={48} name={displayName} />
-                                        )}
-                                        <div
-                                            className={`online-indicator ${
-                                                isGroup
-                                                    ? "group-indicator"
-                                                    : isOnline
-                                                    ? "online"
-                                                    : "offline"
+
+                                    <Avatar url={entity.avatar} name={displayName} size={"bigPic"}/>
+
+
+                                    <div
+                                        className={`online-indicator ${isGroup
+                                            ? "group-indicator"
+                                            : isOnline
+                                                ? "online"
+                                                : "offline"
                                             }`}
-                                        ></div>
-                                    
+                                    ></div>
+
                                 </div>
                             )
                         })

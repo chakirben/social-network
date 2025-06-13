@@ -2,9 +2,11 @@
 
 import React, { useState } from 'react';
 import Divider from './divider';
-import { useUser } from './userContext';
+
 import "../styles/creatEvent.css"
 import { useParams } from 'next/navigation';
+import Avatar from './avatar/avatar';
+import { useUser } from './context/userContext';
 
 export default function CreateEvent({ setEvents, evnts }) {
   //  console.log("fffffff",evnts , setEvents);
@@ -69,7 +71,7 @@ export default function CreateEvent({ setEvents, evnts }) {
   return (
     <form className="creatPostForm">
       <div className="df center gp12">
-        <img className="avatar" src={user ? user.avatar : ''} />
+        <Avatar url={user.avatar} name={user.firstName}/>
         <input
           className="searchInput"
           placeholder="Event title"
@@ -93,7 +95,7 @@ export default function CreateEvent({ setEvents, evnts }) {
           <input
             type="date"
             value={eventDate}
-            onChange={(e) => setEventDate(e.target.value)}  
+            onChange={(e) => setEventDate(e.target.value)}
             placeholder="Select an event date"
           />
         </div>
