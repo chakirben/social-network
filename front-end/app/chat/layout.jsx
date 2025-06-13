@@ -1,14 +1,18 @@
 "use client"
 
 import SideBar from "@/components/sidebar"
-import { useContext, useEffect, useCallback } from "react"
-import { WebSocketContext } from "@/components/context/wsContext.js"
-import DiscussionCard from "@/components/context/discussionCard.jsx"
+import { useContext, useEffect, useCallback, useState } from "react"
+import { WebSocketContext } from "@/components/context/wsContext"
+import DiscussionCard from "@/components/context/discussionCard"
 import "./chat.css"
+import Avatar from "@/components/avatar/avatar"
 
 export default function ChatLayout({ children }) {
     const { discussionMap, setDiscussionMap } = useContext(WebSocketContext)
     const { statuses, setStatuses } = useContext(WebSocketContext)
+
+    const [friends, setFriends] = useState([])
+    const [groups, setGroups] = useState([])
 
     // Fetch discussions
     useEffect(() => {
@@ -62,36 +66,77 @@ export default function ChatLayout({ children }) {
         return () => clearInterval(interval)
     }, [fetchOnlineUsers])
 
+    const fetchFriendsAndGroups = useCallback(async () => {
+        try {
+            const response = await fetch("http://localhost:8080/api/friendsAndGroups", {
+                credentials: "include"
+            })
+            const data = await response.json()
+            setFriends(data.friends || [])
+            setGroups(data.groups || [])
+        } catch (error) {
+            console.error("Error fetching friends and groups:", error)
+        }
+    }, [])
+
+    useEffect(() => {
+        fetchFriendsAndGroups()
+    }, [fetchFriendsAndGroups])
+
     return (
         <div className="df">
             <SideBar />
             <div className="leftSection df cl">
-                <h3 className="Msgs">Online ({statuses ? Object.keys(statuses).length : 0})</h3>
+                <h3 className="Msgs">People & Groups</h3>
                 <div className="online-users-container">
-                    {statuses && Object.entries(statuses).map(([userId, user]) => (
-                        <div key={userId} className="online-user-avatar" title={`${user.firstName} ${user.lastName}`}>
-                            <div className="avatar-wrapper">
-                                <img
-                                    src={user.avatar || '/images/Avatars.png'}
-                                    alt={`${user.firstName} ${user.lastName}`}
-                                    className="online-avatar"
+                    {friends.concat(groups).length > 0 ? (
+                        friends.concat(groups).map(entity => {
+                            const isGroup = !!entity.name
+                            const isOnline = !isGroup && statuses[entity.id]?.isOnline
+                            const displayName = isGroup
+                                ? entity.name
+                                : `${entity.firstName} ${entity.lastName}`
 
-                                />
-                                <div className="online-indicator"></div>
-                            </div>
-                        </div>
-                    ))}
-                    {(!statuses || Object.keys(statuses).length === 0) && (
-                        <div className="no-online-users">No users online</div>
+                            return (
+                                <div
+                                    key={entity.id}
+                                    className="online-user-avatar"
+                                    title={displayName}
+                                >
+                                   
+                                        {entity.avatar ? (
+                                            <img
+                                                src={entity.avatar}
+                                                alt={displayName}
+                                                className="online-avatar"
+                                            />
+                                        ) : (
+                                            <Avatar size={48} name={displayName} />
+                                        )}
+                                        <div
+                                            className={`online-indicator ${
+                                                isGroup
+                                                    ? "group-indicator"
+                                                    : isOnline
+                                                    ? "online"
+                                                    : "offline"
+                                            }`}
+                                        ></div>
+                                    
+                                </div>
+                            )
+                        })
+                    ) : (
+                        <div className="no-online-users">No users or groups to show</div>
                     )}
                 </div>
 
-                <h3 className="Msgs">Messages ({discussionMap ? Object.keys(discussionMap).length : 0})</h3>
+                <h3 className="Msgs">Messages</h3>
                 <div className="discussionList df cl">
                     {discussionMap && Object.entries(discussionMap).map(([key, messages]) => {
                         if (!Array.isArray(messages) || messages.length === 0) return null
                         const discussion = messages[0]
-                        return <DiscussionCard key={key} discussion={discussion}  />
+                        return <DiscussionCard key={key} discussion={discussion} />
                     })}
                     {(!discussionMap || Object.keys(discussionMap).length === 0) && (
                         <div className="no-discussions">No discussions available</div>
@@ -99,9 +144,7 @@ export default function ChatLayout({ children }) {
                 </div>
             </div>
 
-
             {children}
-
         </div>
     )
 }

@@ -14,7 +14,7 @@ export default function Comment({ comment }) {
                     {avatar && (
                         <img
                             className="commentAvatar"
-                            src={`http://localhost:8080${avatar}`}
+                            src={avatar}
 
                         />
                     )}
@@ -31,7 +31,7 @@ export default function Comment({ comment }) {
                 {image && (
                     <img
                         className="commentImage"
-                        src={`http://localhost:8080/${image}`}
+                        src={image}
                         alt="Attached to comment"
                     />
                 )}

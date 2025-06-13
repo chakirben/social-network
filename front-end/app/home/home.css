@@ -112,27 +112,7 @@ h5 {
     border-bottom: rgba(255, 255, 255, 0.137) solid 1px;
 }
 
-.SearchBar {
-    align-self: stretch;
-    padding: 0px 40px;
-    position: sticky;
-    top: 0;
-    backdrop-filter: blur(20px);
-    display: flex;
-    gap: 16px;
-    border-bottom: rgba(255, 255, 255, 0.137) solid 1px;
-    justify-content: space-between;
-}
 
-.searchInput {
-    border: none;
-    height: 56px;
-}
-
-.searchInput:focus {
-    border: none;
-    outline: none;
-}
 
 .sc {
     scrollbar-width: none;
@@ -151,7 +131,7 @@ h5 {
     display: flex;
     flex-direction: column;
     padding: 16px 40px 16px 40px;
-
+    gap: 12px;
     background: linear-gradient(89.97deg, rgba(255, 255, 255, 0.03) 0.02%, rgba(255, 255, 255, 0) 99.97%);
     border-bottom: rgba(255, 255, 255, 0.137) solid 1px;
 }
@@ -336,6 +316,7 @@ h5 {
 }
 .userCard {
     display: flex;
+    gap: 16px;
     align-items: center;
     width: 600px;
     padding: 15px;

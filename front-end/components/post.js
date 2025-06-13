@@ -23,7 +23,7 @@ export default function Post({ pst }) {
             <div className="post" onClick={() => router.push(`/post/${pst.id}`)}>
                 <div className="content df cl gp12">
                     <div className="userData">
-                        {pst?.avatar ? <img className="pic sm" src={`http://localhost:8080/${pst?.avatar}`} /> : ""}
+                        {pst?.avatar ? <img className="pic sm" src={pst?.avatar} /> : ""}
                         <h4>{pst?.creator}</h4>
                         <h5>{"• " + timePassed(pst?.created_at)}</h5>
                     </div>
@@ -32,10 +32,10 @@ export default function Post({ pst }) {
                     {pst.image && (
                         <img
                             className="pic nrml"
-                            src={`http://localhost:8080/${pst?.image}`}
+                            src={pst?.image}
                             onClick={(e) => {
-                                e.stopPropagation(); // prevent post click navigation
-                                openImageModal(`http://localhost:8080/${pst?.image}`);
+                                e.stopPropagation(); 
+                                openImageModal(pst?.image);
                             }}
                             style={{ cursor: 'pointer' }}
                         />

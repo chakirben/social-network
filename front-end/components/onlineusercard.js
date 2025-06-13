@@ -8,7 +8,7 @@ export default function UserCard({ user }) {
             {user.avatar ? (
                 <img
                     className="avatar32"
-                    src={`http://localhost:8080/${user.avatar}`}
+                    src={user.avatar}
                     alt={`${user.firstName}'s avatar`}
                 />
             ) : (

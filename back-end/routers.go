@@ -105,6 +105,7 @@ func SetupHandlers() {
 	http.HandleFunc("/api/GetDiscussionList", AccessMiddleware(ws.GetAllDiscussionsHandler))
 	http.HandleFunc("/api/online", AccessMiddleware(ws.GetOnlineUsers))
 	http.HandleFunc("/api/fetchMessages", AccessMiddleware(ws.GetMessagesHandler))
+	http.HandleFunc("/api/friendsAndGroups", AccessMiddleware(ws.GetUserConnectionsHandler))
 
 }
 

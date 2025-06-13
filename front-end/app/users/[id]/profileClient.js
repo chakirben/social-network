@@ -76,7 +76,7 @@ export default function ProfileClient({ session, searchParams }) {
                     <img className="coverture" src={"http://localhost:8080/uploads/coverture.png"} alt="Coverture" />
                     <div className="userdata gp12">
                         <div className="imgAndFollow sb">
-                            <img className="userAvatar" src={"http://localhost:8080/" + personal_data[0].Avatar || "http://localhost:8080/default-avatar.png"} alt="Avatar" />
+                            <img className="userAvatar" src={ personal_data[0].Avatar || "http://localhost:8080/default-avatar.png"} alt="Avatar" />
                             <div className="follow">
                                 <p onClick={() => setShowFollowModal(true)}><strong className="followers-number">{followers_count}</strong> Followers</p>
                                 <p onClick={() => setShowFollowModal(true)}><strong className="following-number">{followed_count}</strong> Following</p>

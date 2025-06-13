@@ -69,7 +69,7 @@ export default function CreateEvent({ setEvents, evnts }) {
   return (
     <form className="creatPostForm">
       <div className="df center gp12">
-        <img className="avatar" src={user ? `http://localhost:8080/${user.avatar}` : ''} />
+        <img className="avatar" src={user ? user.avatar : ''} />
         <input
           className="searchInput"
           placeholder="Event title"
@@ -93,7 +93,7 @@ export default function CreateEvent({ setEvents, evnts }) {
           <input
             type="date"
             value={eventDate}
-            onChange={(e) => setEventDate(e.target.value)}  // Update the eventDate state
+            onChange={(e) => setEventDate(e.target.value)}  
             placeholder="Select an event date"
           />
         </div>

@@ -11,7 +11,7 @@ export default function Event({ event  , index}) {
                     </div>
                     <hr />
                     <div className="avatarAndName">
-                        <img className="eventAvatar" src={`http://localhost:8080/${event.avatar}`} />
+                        <img className="eventAvatar" src={event.avatar} />
                         <p className="eventCreator">{event.firstName} {event.lastName}</p>
                     </div>
                 </div>

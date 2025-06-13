@@ -1,6 +1,6 @@
 import { useState, useRef } from "react"
 
-export default function CommentInput({ id }) {
+export default function CommentInput({ id , setComments }) {
 
     const [cmnt, setcmnt] = useState('')
     const [image, setImage] = useState(null)
@@ -36,6 +36,7 @@ export default function CommentInput({ id }) {
             const result = await res.json()
             console.log('Response:', result)
             setcmnt('')
+            setComments(prevComments => [...prevComments, result])
             setImage(null)
         } catch (err) {
             console.error('Error submitting comment:', err)

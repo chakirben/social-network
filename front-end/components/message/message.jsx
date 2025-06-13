@@ -25,7 +25,7 @@ export default function Message({ msg }) {
             {!isSender && (
                 <img
                     className="avatar"
-                    src={`http://localhost:8080/${msg.avatar}`}
+                    src={msg.avatar}
                     onError={(e) => {
                         e.target.src = '/images/Avatars.png';
                     }}

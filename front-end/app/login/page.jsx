@@ -3,14 +3,14 @@ import { useState, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import { WebSocketContext } from '@/components/context/wsContext';
 import '../register/register.css';
-
+import styles from './login.module.css'
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const { Connect } = useContext(WebSocketContext); 
+  const { Connect } = useContext(WebSocketContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -34,16 +34,17 @@ export default function Login() {
     } else {
       console.log("Login success")
       Connect()
-      router.push('/home'); 
+      router.push('/home');
     }
   }
 
   return (
     <div className="container">
       <div className="formContainer">
-        <h1>Login</h1>
-        <p>Welcome back! Please login to your account.</p>
-
+        <div className={styles.header}>
+          <h1>Login</h1>
+          <p>Welcome back! Please login.</p>
+        </div>
         <form className="form flex col" onSubmit={handleLogin}>
           <input
             type="email"
@@ -64,7 +65,7 @@ export default function Login() {
         </form>
 
         <p className="registerLink">
-          Don't have an account? <a onClick={()=> {router.push("/register")}}>Register</a>
+          Don't have an account? <a onClick={() => { router.push("/register") }}>Register</a>
         </p>
       </div>
     </div>

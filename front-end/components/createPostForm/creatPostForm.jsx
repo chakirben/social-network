@@ -1,9 +1,10 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react';
-import Divider from './divider';
+import Divider from '../divider';
 import UserData from "@/components/UserData";
-import { useUser } from './context/userContext';
+import { useUser } from '../context/userContext';
+import styles from './create.module.css';
 export default function CreatePost({ newpost }) {
   const inputRef = useRef(null);
   const [imageSrc, setImageSrc] = useState(null);
@@ -108,11 +109,11 @@ export default function CreatePost({ newpost }) {
       <div className="df center">
         <img
           className="avatar"
-          src={user?.avatar ? `http://localhost:8080/${user.avatar}` : "/images/defaultAvatar.png"}
+          src={user?.avatar ? user.avatar : "/images/defaultAvatar.png"}
           alt="User Avatar"
         />
         <input
-          className="searchInput"
+          className={styles.searchInput}
           placeholder="What's happening ?"
           value={text}
           onChange={(e) => setText(e.target.value)}
