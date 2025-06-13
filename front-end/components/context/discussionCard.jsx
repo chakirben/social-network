@@ -1,5 +1,6 @@
 import { timePassed } from "@/public/utils/timePassed";
 import { useRouter } from "next/navigation";
+import Avatar from "../avatar/avatar";
 export default function DiscussionCard({ discussion }) {
   let router = useRouter()
   const avatarSrc =
@@ -16,12 +17,7 @@ export default function DiscussionCard({ discussion }) {
       }}
     >
       <div className="df  gp6 center spB">
-        <img
-          src={avatarSrc}
-          alt={`${discussion.name} avatar`}
-          className="avatar"
-          style={{ width: 40, height: 40, borderRadius: "50%", marginRight: 10 }}
-        />
+       <Avatar url={discussion.avatar} name={discussion.name}/>
         <div className="df cl gp6">
           <h4>{discussion.name}</h4>
           <p>{discussion.lastMessageContent || "No messages yet"}</p>

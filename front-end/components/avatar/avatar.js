@@ -19,14 +19,14 @@ export default function Avatar({ url, name, size }) {
     }, [url]);
 
     if (isValid === null) {
-        return <div className={styles.letterAvatar +` ${size}`}><span>{name[0]}</span></div>;
+        return <div className={styles.letterAvatar +` ${size}`}><span>{name? name[0]  :0}</span></div>;
     }
 
     return isValid ? (
         <img className={styles.avatar+` ${size}`} src={url}/>
     ) : (
         <div className={styles.letterAvatar+` ${size}`}>
-            <span>{name[0]}</span>
+            <span>{name? name[0]  :0}</span>
         </div>
     );
 }

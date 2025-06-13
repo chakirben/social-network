@@ -3,6 +3,7 @@ import { useState } from "react";
 import { timePassed } from "@/public/utils/timePassed";
 import { useUser } from "../context/userContext";
 import styles from './message.module.css';
+import Avatar from "../avatar/avatar";
 
 export default function Message({ msg }) {
     const { user } = useUser();
@@ -23,14 +24,7 @@ export default function Message({ msg }) {
     return (
         <div className={messageContainerClass}>
             {!isSender && (
-                <img
-                    className="avatar"
-                    src={msg.avatar}
-                    onError={(e) => {
-                        e.target.src = '/images/Avatars.png';
-                    }}
-                    alt=""
-                />
+               <Avatar name={msg.first_name} url={msg.avatar}/>
             )}
 
             <div onClick={handleClick} className={messageClass}>
