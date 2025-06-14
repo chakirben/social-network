@@ -2,11 +2,8 @@ import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import EventsList from "./eventList"
 
-export default function GroupEventsPage(id , events , setEvents) {
-    //const { id } = useParams()
+export default function GroupEventsPage({id, events, setEvents})  {
     
-    console.log("-----------", events);
-
     const handleRespond = async (eventId, isGoing, groupId) => {
         const res = await fetch("http://localhost:8080/api/SetAttendance", {
             method: "POST",

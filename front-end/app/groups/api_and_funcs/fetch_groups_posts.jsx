@@ -54,8 +54,8 @@ export default function GroupDetails({ groupId, title }) {
             });
             const data = await res.json();
             setEvents(data || []);
- 
-            
+
+
         } catch (error) {
             console.error("Error fetching events:", error);
         }
@@ -197,8 +197,15 @@ export default function GroupDetails({ groupId, title }) {
 
             {!isLoading && activeTab === "events" && (
                 <>
-                    <CreateEvent setEvents={setEvents} evnts={events} />
-                    <GroupEventsPage id={groupId} events={events} setEvents={setEvents} />
+                    <CreateEvent setEvents={setEvents} events={events} />
+                    {events.length > 0 ? (
+                        <GroupEventsPage id={groupId} events={events} setEvents={setEvents} />
+                    ) : (
+                        <div className="noEvents">
+                            <img className="noContent" src="/images/noContent.svg" alt="No content" />
+                            No events created, be the first
+                        </div>
+                    )}
                 </>
             )}
         </div>
