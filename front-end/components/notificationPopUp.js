@@ -1,7 +1,5 @@
 import "../styles/notifPopUp.css"
 export default function NotifPopUp({ senserUsername = 'userName', message = 'flan invite you to join (...) ', notifType }) {
-    console.log("NotifPopUp rendered with type:", notifType);
-    
     return (
         <div className="NotifPopUp">
             <div className="userName_avatar_message">

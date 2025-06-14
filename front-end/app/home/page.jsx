@@ -18,6 +18,7 @@ import { WebSocketContext } from "@/components/context/wsContext"
 import EventsList from "@/components/events/eventList";
 import Divider from "@/components/divider";
 import NotifPopUp from "@/components/notificationPopUp"
+import { PopupProvider, usePopup } from "@/components/context/popUp"
 
 export default function Home() {
     const router = useRouter()
@@ -86,11 +87,11 @@ export default function Home() {
     const handleNewPost = (newPost) => {
         setPosts(prev => [newPost, ...prev])
     }
+  
 
     return (
         <div className="home">
             <SideBar />
-            {/* <NotifPopUp /> */}
             <div className="homeP">
                 <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
                 {searchTerm.trim() === "" ? (

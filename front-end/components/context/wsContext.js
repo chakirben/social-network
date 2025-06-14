@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { createContext, useEffect, useRef, useState } from 'react';
+import { usePopup } from './popUp';
 
 export const WebSocketContext = createContext(null);
 
@@ -10,7 +11,7 @@ export const WebSocketProvider = ({ children }) => {
   const [discussionMap, setDiscussionMap] = useState({});
   const [wsMessages, setwsMessages] = useState([]);
   const [socket, setSocket] = useState(null);
-
+  const { showPopup } = usePopup();
   const connectedRef = useRef(false);
   const pathname = usePathname();
 
@@ -48,7 +49,7 @@ export const WebSocketProvider = ({ children }) => {
               setStatuses((prev) => {
                 const updated = { ...prev };
                 if (statusType === 'online' && user) {
-                    updated[userId] = {
+                  updated[userId] = {
                     firstName: user.firstName,
                     lastName: user.lastName,
                     avatar: user.avatar
@@ -91,8 +92,8 @@ export const WebSocketProvider = ({ children }) => {
             break;
           }
 
-          case 'notification':
-            console.log('Notification:', data);
+          case 'Notification':
+           showPopup({data})
             break;
 
           default:

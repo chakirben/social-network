@@ -12,7 +12,7 @@ export default function DiscussionCard({ discussion }) {
     <div className="discussionCard df spB center gp6"
       onClick={() => {
         const type = discussion.isGroup ? 'group' : 'user';
-        const nameSlug = discussion.name.replace(/\s+/g, '_'); // replace spaces with _
+        const nameSlug = discussion.name.replace(/\s+/g, '_');
         router.push(`/chat/${type}${discussion.id}_${nameSlug}`);
       }}
     >
