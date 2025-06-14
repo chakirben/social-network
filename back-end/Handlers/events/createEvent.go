@@ -137,33 +137,39 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("Error fetching group members:", err)
 	}
-
+	fmt.Println("Group members fetched successfully")
 	for rowss.Next() {
-		var memberId int
-		if err != nil {
-		}
+    var memberId int
+    if err := rowss.Scan(&memberId); err != nil {
+        fmt.Println("Error scanning memberId:", err)
+        continue
+    }
 
-		exis := ws.Connections[memberId]
-		for _, conn := range exis {
-			if conn != nil {
-				avatarStr := ""
-				if createdEvent.Avatar != nil {
-					avatarStr = *createdEvent.Avatar
-				}
+    ws.ConnMu.Lock()
+    conns := ws.Connections[memberId]
+    ws.ConnMu.Unlock()
 
-				SendMessage(conn, EventNotification{
-					Type:             "Notification",
-					NotificationType: "event",
-					Title:            createdEvent.Title,
-					Description:      createdEvent.Description,
-					EventDate:        createdEvent.EventDate.String(),
-					FirstName:        createdEvent.FirstName,
-					LastName:         createdEvent.LastName,
-					Avatar:           avatarStr,
-				})
-			}
-		}
-	}
+    for _, conn := range conns {
+        if conn != nil {
+            avatarStr := ""
+            if createdEvent.Avatar != nil {
+                avatarStr = *createdEvent.Avatar
+            }
+
+            SendMessage(conn, EventNotification{
+                Type:             "Notification",
+                NotificationType: "event",
+                Title:            createdEvent.Title,
+                Description:      createdEvent.Description,
+                EventDate:        createdEvent.EventDate.String(),
+                FirstName:        createdEvent.FirstName,
+                LastName:         createdEvent.LastName,
+                Avatar:           avatarStr,
+            })
+        }
+    }
+}
+
 
 	if err := rowss.Err(); err != nil {
 		fmt.Println("Error reading group members:", err)
@@ -187,9 +193,14 @@ type EventNotification struct {
 }
 
 func SendMessage(conn *websocket.Conn, msg EventNotification) {
+	fmt.Println("Sending message to client:", msg)
 	message, err := json.Marshal(msg)
 	if err != nil {
 		return
 	}
-	conn.WriteMessage(websocket.TextMessage, message)
+	err = conn.WriteMessage(websocket.TextMessage, message)
+	if err != nil {
+		fmt.Println("Error sending message:", err)
+		return
+	}
 }

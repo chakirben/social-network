@@ -1,4 +1,5 @@
 import "../../styles/eventInGroup.css"
+import Avatar from "../avatar/avatar";
 import Divider from "../divider"
 
 export default function EventsList({ events, onRespond }) {
@@ -26,7 +27,7 @@ export default function EventsList({ events, onRespond }) {
                                 </div>
                                 <hr />
                                 <div className="avatarAndName">
-                                    <img className="eventAvatar" src={event.avatar} alt="avatar" />
+                                   <Avatar url={event.avatar} name={event.title} />
                                     <p className="eventCreator">{event.firstName} {event.lastName}</p>
                                 </div>
                             </div>

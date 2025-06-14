@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import styles from './avatar.module.css';
 
-
 export default function Avatar({ url, name, size }) {
     const [isValid, setIsValid] = useState(null);
 
@@ -18,15 +17,16 @@ export default function Avatar({ url, name, size }) {
         img.onerror = () => setIsValid(false);
     }, [url]);
 
-    if (isValid === null) {
-        return <div className={styles.letterAvatar +` ${size}`}><span>{name? name[0]  :0}</span></div>;
+    const initial = name ? name[0].toUpperCase() : '?';
+    const classNames = `${styles.letterAvatar} ${size || ''}`;
+
+    if (isValid === true && url) {
+        return <img className={`${styles.avatar} ${size || ''}`} src={url} alt={name || 'avatar'} />;
     }
 
-    return isValid ? (
-        <img className={styles.avatar+` ${size}`} src={url}/>
-    ) : (
-        <div className={styles.letterAvatar+` ${size}`}>
-            <span>{name? name[0]  :0}</span>
+    return (
+        <div className={classNames}>
+            <span>{initial}</span>
         </div>
     );
 }

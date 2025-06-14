@@ -35,7 +35,7 @@ type Message struct {
 
 var (
 	Connections = make(map[int][]*websocket.Conn)
-	connMu      sync.Mutex
+	ConnMu      sync.Mutex
 )
 
 func OpenWsConn(resp http.ResponseWriter, req *http.Request) {
@@ -51,11 +51,11 @@ func OpenWsConn(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	connMu.Lock()
+	ConnMu.Lock()
 
 	Connections[userID] = append(Connections[userID], conn)
 
-	connMu.Unlock()
+	ConnMu.Unlock()
 
 	fmt.Println("Connection upgraded successfully")
 	notifyStatusChange("online", userID)
