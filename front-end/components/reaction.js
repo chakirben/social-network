@@ -1,6 +1,6 @@
 export default function Reaction({
   reactionType,
-  count,
+  count=0,
   isReacted,
   onClick,
 }) {

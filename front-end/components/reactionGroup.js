@@ -4,14 +4,13 @@ import { useState } from 'react';
 import Reaction from './reaction';
 import fetchReaction from '../public/utils/fetchReaction';
 
-export default function ReactionGroup({ itemId, itemType, userReaction, likeCount, dislikeCount }) {
+export default function ReactionGroup({ itemId, itemType, userReaction, likeCount = 0, dislikeCount = 0 }) {
 
     const [reaction, setReaction] = useState(userReaction);
     const [likes, setLikes] = useState(likeCount);
     const [dislikes, setDislikes] = useState(dislikeCount);
 
     const handleReaction = async (newReaction) => {
-        console.log("sdmls");
         const current = reaction;
         const next = current === newReaction ? 0 : newReaction;
 

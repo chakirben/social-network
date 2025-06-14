@@ -97,7 +97,6 @@ export default function Home() {
                 {searchTerm.trim() === "" ? (
                     <div className="sc">
                         <CreatePost newpost={handleNewPost} />
-                        <HomeEvents />
                         <div className="posts">
                             {posts.length === 0 ? (
                                 <div className="loading">Loading posts...</div>
@@ -132,10 +131,9 @@ export default function Home() {
                         ))
                     )}
                 </div>
-            </div>
             <div className="rightProfileBtnAndEventsList ">
-
                 <HomeEvents />
+            </div>
             </div>
 
         </div>
