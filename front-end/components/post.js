@@ -5,6 +5,8 @@ import { timePassed } from '@/public/utils/timePassed';
 import Avatar from './avatar/avatar';
 
 export default function Post({ pst }) {
+    console.log("---------",pst);
+    
     const router = useRouter();
     const [modalOpen, setModalOpen] = useState(false);
     const [modalImageSrc, setModalImageSrc] = useState('');

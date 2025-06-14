@@ -14,13 +14,14 @@ import (
 )
 
 type CommentResponse struct {
-	Id         int       `json:"id"`
-	Avatar    string    `json:"avatar"`
-	First_name string    `json:"firstName"`
-	Last_name  string    `json:"lastName"`
-	CreatedAt  time.Time `json:"createdAt"`
-	Content    string    `json:"content"`
-	Image      string    `json:"image"`
+	Id           int       `json:"id"`
+	Avatar       string    `json:"avatar"`
+	First_name   string    `json:"firstName"`
+	Last_name    string    `json:"lastName"`
+	CreatedAt    time.Time `json:"createdAt"`
+	Content      string    `json:"content"`
+	Image        string    `json:"image"`
+	MineReaction int       `json:"userReaction"`
 }
 
 type CommentRequest struct {
@@ -36,7 +37,6 @@ func SetCommentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	userID, err := auth.ValidateSession(r, dataB.SocialDB)
 	if err != nil {
-		fmt.Println("---------------------bilalallalalal")
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
@@ -86,6 +86,8 @@ func SetCommentHandler(w http.ResponseWriter, r *http.Request) {
 		WHERE Comments.id = ?`, lastID)
 
 	var commentResponse CommentResponse
+	commentResponse.MineReaction = 0
+
 	err = row.Scan(&commentResponse.Id, &commentResponse.Avatar, &commentResponse.First_name, &commentResponse.Last_name, &commentResponse.CreatedAt, &commentResponse.Content, &commentResponse.Image)
 	if err != nil {
 		fmt.Println(err)
