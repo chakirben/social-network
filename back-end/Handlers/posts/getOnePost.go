@@ -32,7 +32,7 @@ func GetPostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var id int
-	var content, firstName, lastName string
+	var content, firstName, lastName, avatar string
 	var image sql.NullString
 	var likeCount, dislikeCount, userReaction sql.NullInt32
 	var createdAt time.Time
@@ -44,6 +44,7 @@ func GetPostHandler(w http.ResponseWriter, r *http.Request) {
 					p.content, 
 					u.firstName,
 					u.lastName, 
+					u.avatar, 
 					(SELECT COUNT(*) FROM postReactions WHERE postId = p.id AND reactionType = 1) AS likeCount,
 					(SELECT COUNT(*) FROM postReactions WHERE postId = p.id AND reactionType = -1) AS dislikeCount,
 					(SELECT reactionType FROM postReactions WHERE postId = p.id AND userId = ?) AS userReaction,
@@ -53,7 +54,7 @@ func GetPostHandler(w http.ResponseWriter, r *http.Request) {
 				WHERE p.id = ?
 				GROUP BY p.id`, userID, postID)
 
-	err = row.Scan(&id, &image, &content, &firstName, &lastName, &likeCount, &dislikeCount, &userReaction, &createdAt)
+	err = row.Scan(&id, &image, &content, &firstName, &lastName, &avatar, &likeCount, &dislikeCount, &userReaction, &createdAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Post not found", http.StatusNotFound)
@@ -70,6 +71,7 @@ func GetPostHandler(w http.ResponseWriter, r *http.Request) {
 		"content":       content,
 		"image":         image.String,
 		"creator":       fmt.Sprintf("%s %s", firstName, lastName),
+		"avatar":        avatar,
 		"like_count":    likeCount.Int32,
 		"dislike_count": dislikeCount.Int32,
 		"user_reaction": userReaction.Int32,
