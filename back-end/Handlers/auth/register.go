@@ -162,7 +162,7 @@ func handleAvatarUpload(r *http.Request, w http.ResponseWriter) (string, error) 
 }
 
 func checkUserExistence(nickname, email string) error {
-	fmt.Println(nickname , email)
+	fmt.Println(nickname, email)
 	if nickname != "" {
 		var existingNickname string
 		err := db.SocialDB.QueryRow("SELECT nickname FROM Users WHERE nickname = ?", nickname).Scan(&existingNickname)

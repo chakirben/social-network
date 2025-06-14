@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"socialN/Handlers/auth"
 	database "socialN/dataBase"
 )
 
@@ -23,7 +24,11 @@ type GetEvents struct {
 }
 
 func GetHomeEventsHandler(w http.ResponseWriter, r *http.Request) {
-	userID := 3 // Replace with dynamic session-based user ID in production
+	userID, err := auth.ValidateSession(r, database.SocialDB)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 
 	query := `
 	SELECT 
@@ -31,11 +36,11 @@ func GetHomeEventsHandler(w http.ResponseWriter, r *http.Request) {
 		u.firstName, u.lastName, u.avatar,
 		e.groupId,
 		(SELECT COUNT(*) FROM EventsAttendance ea WHERE ea.eventId = e.id AND ea.isGoing = true) AS goingMembers,
-		(SELECT ea.isGoing FROM EventsAttendance ea WHERE ea.eventId = e.id AND ea.memberId = ? LIMIT 1) AS isUserGoing
+		ea.isGoing AS isUserGoing
 	FROM Events e
 	JOIN Users u ON e.creatorId = u.id
-	JOIN GroupsMembers gm ON gm.groupId = e.groupId
-	WHERE gm.memberId = ?
+	JOIN GroupsMembers gm ON gm.groupId = e.groupId AND gm.memberId = ?
+	JOIN EventsAttendance ea ON ea.eventId = e.id AND ea.memberId = ? AND ea.isGoing = true
 	ORDER BY e.eventDate ASC
 	`
 

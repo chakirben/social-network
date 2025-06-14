@@ -1,4 +1,4 @@
-import "../../styles/events.css"
+import "../../styles/eventInGroup.css"
 import Divider from "../divider"
 // import Event from "./event"
 
@@ -18,6 +18,7 @@ export default function EventsList({ events, onRespond }) {
                                     <p className="eventDate">{new Date(event.eventDate).toDateString()}</p>
                                 </div>
                                 <hr />
+
                                 <div className="avatarAndName">
                                     <img className="eventAvatar" src={event.avatar} alt="avatar" />
                                     <p className="eventCreator">{event.firstName} {event.lastName}</p>

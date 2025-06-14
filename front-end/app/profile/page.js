@@ -7,6 +7,7 @@ import Post from "@/components/post";
 import "../home/home.css"
 import Header from "@/components/Header/header";
 import { useRouter } from "next/navigation";
+import Divider from "@/components/divider";
 
 
 export default function Profile() {
@@ -138,7 +139,7 @@ export default function Profile() {
 
                         </div>
                     </div>
-                    <hr></hr>
+                    <Divider />
                 </div>
 
                 {profileData && profileData.map((p, i) => (

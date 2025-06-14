@@ -11,11 +11,13 @@ import SearchTerm from "@/components/search_term"
 import HomeEvents from "@/components/events/homeEvents"
 import ProfileButton from "@/components/profileButton"
 import UserCard from "@/components/onlineusercard"
-
 import "./home.css"
 import "../../styles/global.css"
 import "../groups/css/groups1.css"
 import { WebSocketContext } from "@/components/context/wsContext"
+import { useRouter } from "next/navigation";
+import EventsList from "@/components/events/eventList";
+import Divider from "@/components/divider";
 
 export default function Home() {
     const router = useRouter()
@@ -94,6 +96,7 @@ export default function Home() {
                     <div className="sc">
                         <CreatePost newpost={handleNewPost} />
                         <HomeEvents />
+                        <CreatePost newpost={handlernewpost} />
                         <div className="posts">
                             {posts.length === 0 ? (
                                 <div className="loading">Loading posts...</div>
@@ -128,6 +131,12 @@ export default function Home() {
                     )}
                 </div>
             </div>
+            <div className="rightProfileBtnAndEventsList ">
+
+                <ProfileButton />
+                <HomeEvents />
+            </div>
+
         </div>
     )
 }

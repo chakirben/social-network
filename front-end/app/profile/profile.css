@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 .profileContainer {
-    padding: 30px 0 0 50px;
     display: flex;
 }
 
@@ -65,12 +64,6 @@ p {
     align-items: center;
 }
 
-hr {
-    width: 100%;
-    border: none;
-    height: 1px;
-    background-color: #ffffff1f;
-}
 
 .options.hidden {
     display: none;

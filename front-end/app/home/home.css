@@ -10,20 +10,29 @@
 .layout {
     height: 100vh;
     display: flex;
-    flex-direction: column; 
-    overflow: hidden; 
+    flex-direction: column;
+    overflow: hidden;
 }
+
 .homeC {
     align-self: stretch;
-   
+
 }
+
+.rightProfileBtnAndEventsList {
+    display: flex;
+    flex-direction: column;
+}
+
+
 .homeP {
-   max-width: 600px;
-   min-width: 600px;
-   display: flex;
-   flex-direction: column;
-   overflow: hidden;
+    max-width: 600px;
+    min-width: 600px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
+
 .pic.sm {
     width: 24px;
     height: 24px;
@@ -71,11 +80,13 @@ h5 {
 .ImagePreviewBox {
     width: 600px;
 }
+
 .imagePreview {
     border-radius: 8px;
     max-width: 100px;
     max-height: 100px;
 }
+
 .preview-img {
     max-width: 100%;
     max-height: 300px;
@@ -92,17 +103,20 @@ h5 {
     font-size: 16px;
     line-height: 15px;
     display: flex;
-    
+
     color: #FFFFFF;
-   
+
 }
+
 .postContent {
     flex-direction: column;
-    flex-grow: 1; 
+    flex-grow: 1;
     height: 400px;
     overflow-y: auto;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
 }
 
 .post {
@@ -121,11 +135,13 @@ h5 {
     overflow-y: scroll;
     height: 100vh;
 }
+
 .post {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
+
 .creatPostForm {
     align-self: stretch;
     display: flex;
@@ -231,10 +247,12 @@ h5 {
 .userList::-webkit-scrollbar {
     display: none;
 }
-.sc :-webkit-scrollbar  {
+
+.sc :-webkit-scrollbar {
     display: none;
-    
+
 }
+
 .content::-webkit-scrollbar {
 
     display: none;
@@ -245,6 +263,16 @@ h5 {
     background: linear-gradient(131.15deg, #ffffff23 0.6%, #ffffff 98.78%);
 
 }
+
+.header {
+    padding: 16px 40px;
+    position: sticky;
+    top: 0px;
+    gap: 16px;
+    backdrop-filter: blur(20px);
+    border-bottom: rgba(255, 255, 255, 0.137) solid 1px;
+}
+
 .closeImage {
     position: absolute;
     background: #171717de;
@@ -253,10 +281,12 @@ h5 {
     right: 4px;
     top: 4px;
 }
+
 .imagePrvC {
     position: relative;
     width: fit-content;
 }
+
 .icn1 {
     height: 20px;
 }
@@ -275,6 +305,7 @@ h5 {
     gap: 16px;
     border-top: rgba(255, 255, 255, 0.137) solid 1px;
 }
+
 .reacted {
     background: #77B5F8;
     color: #007AFF;
@@ -298,9 +329,11 @@ h5 {
     padding: 0px;
     gap: 7px;
 }
+
 .reaction.dislike svg {
     transform: scaleY(-1);
-  }
+}
+
 .reaction,
 .comntBtn img {
     display: flex;
@@ -314,6 +347,7 @@ h5 {
     background: rgba(255, 255, 255, 0.08);
     border-radius: 20.0816px;
 }
+
 .userCard {
     display: flex;
     gap: 16px;
@@ -325,13 +359,16 @@ h5 {
     margin-bottom: 10px;
     cursor: pointer;
 }
+
 .userCard:hover {
     background-color: #121212;
 }
+
 .usersList {
     display: flex;
     flex-direction: column;
 }
+
 .image-modal {
     position: fixed;
     top: 0;
@@ -344,6 +381,7 @@ h5 {
     justify-content: center;
     align-items: center;
 }
+
 .modal-img {
     max-width: 80%;
     max-height: 80%;
@@ -407,16 +445,32 @@ h5 {
 .followedBtn:hover {
     background-color: #e2e2e2;
 }
-.profileInfo {
+
+/* .EventsInHome{
+    display: flex;
+    flex-direction: column;
+} */
+/* .profileInfo {
     padding: 24px;
-}
+} */
+
 .profileButton {
-    flex-grow: 1;
+    height: fit-content;
+    width: fit-content;
 }
-.profileInfo:hover {
+
+.avatarAndEmail{
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatarAndEmail:hover {
     background: linear-gradient(90.89deg, rgba(255, 255, 255, 0.06) 0.95%, rgba(255, 255, 255, 0) 100.41%);
     cursor: pointer;
 }
+
 .mainContent {
     width: 100%;
     max-width: 1200px;
