@@ -55,6 +55,7 @@ export default function CreateEvent({ setEvents, evnts }) {
         setEventDate('');
         setErr('');
         const newEvent = await res.json()
+        console.log("New event created:", evnts, newEvent);
 
 
         setEvents(prevEvents => [newEvent, ...prevEvents])
@@ -71,7 +72,7 @@ export default function CreateEvent({ setEvents, evnts }) {
   return (
     <form className="creatPostForm">
       <div className="df center gp12">
-        <Avatar url={user.avatar} name={user.firstName}/>
+        <Avatar url={user.avatar} name={user.firstName} />
         <input
           className="searchInput"
           placeholder="Event title"

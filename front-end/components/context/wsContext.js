@@ -65,6 +65,7 @@ export const WebSocketProvider = ({ children }) => {
             const formattedMsg = {
               content: data.content,
               sender_id: data.sender,
+              first_name: data.firstName,
               receiver_id: data.receiverId,
               sent_at: data.sentAt || data.sent_at,
               type: 'private',

@@ -7,6 +7,7 @@ import DiscussionCard from "@/components/context/discussionCard"
 import "./chat.css"
 import Avatar from "@/components/avatar/avatar"
 import "../../styles/global.css"
+import { useRouter } from "next/navigation"
 
 export default function ChatLayout({ children }) {
     const { discussionMap, setDiscussionMap } = useContext(WebSocketContext)
@@ -14,6 +15,7 @@ export default function ChatLayout({ children }) {
 
     const [friends, setFriends] = useState([])
     const [groups, setGroups] = useState([])
+    const router = useRouter()
 
     // Fetch discussions
     useEffect(() => {
@@ -24,7 +26,7 @@ export default function ChatLayout({ children }) {
                 })
                 const data = await response.json()
                 const map = {}
-                data.forEach((discussion) => {
+                data?.forEach((discussion) => {
                     const key = discussion.isGroup ? `group${discussion.id}` : `user${discussion.id}`
                     map[key] = [discussion]
                 })
@@ -104,10 +106,18 @@ export default function ChatLayout({ children }) {
                                     className="online-user-avatar"
                                     title={displayName}
                                 >
+                                    <div
+                                        onClick={() => {
+                                            const type = isGroup ? 'group' : 'user';
 
-                                    <Avatar url={entity.avatar} name={displayName} size={"bigPic"}/>
+                                            const nameSlug = !isGroup ? (entity.firstName + " " + entity.lastName).replace(/\s+/g, '_') : entity.name.replace(/\s+/g, '_');
+                                            router.push(`/chat/${type}${entity.id}_${nameSlug}`);
 
-
+                                        }}
+                                    >
+                                        <Avatar url={entity.avatar} name={displayName} size={"bigPic"} />
+                                        <div />
+                                    </div>
                                     <div
                                         className={`online-indicator ${isGroup
                                             ? "group-indicator"

@@ -11,7 +11,7 @@ export default function Login() {
   const [errorMessage, setErrorMessage] = useState('');
 
   const { Connect } = useContext(WebSocketContext);
-
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!email || !password) {

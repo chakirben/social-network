@@ -15,9 +15,9 @@ import "./home.css"
 import "../../styles/global.css"
 import "../groups/css/groups1.css"
 import { WebSocketContext } from "@/components/context/wsContext"
-import { useRouter } from "next/navigation";
 import EventsList from "@/components/events/eventList";
 import Divider from "@/components/divider";
+import NotifPopUp from "@/components/notificationPopUp"
 
 export default function Home() {
     const router = useRouter()
@@ -90,13 +90,13 @@ export default function Home() {
     return (
         <div className="home">
             <SideBar />
+            {/* <NotifPopUp /> */}
             <div className="homeP">
                 <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
                 {searchTerm.trim() === "" ? (
                     <div className="sc">
                         <CreatePost newpost={handleNewPost} />
                         <HomeEvents />
-                        <CreatePost newpost={handlernewpost} />
                         <div className="posts">
                             {posts.length === 0 ? (
                                 <div className="loading">Loading posts...</div>
@@ -112,6 +112,7 @@ export default function Home() {
                 )}
             </div>
             <div>
+
                 <ProfileButton />
                 <div className="onlineUsers df cl">
                     <h4>Online users</h4>
@@ -133,7 +134,6 @@ export default function Home() {
             </div>
             <div className="rightProfileBtnAndEventsList ">
 
-                <ProfileButton />
                 <HomeEvents />
             </div>
 

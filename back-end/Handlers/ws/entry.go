@@ -21,21 +21,16 @@ var upgrader = websocket.Upgrader{
 }
 
 type Message struct {
-	Type string `json:"type"`
-
-	// Common fields
-	Content string `json:"content,omitempty"`
-	Sender  int    `json:"sender,omitempty"`
-
-	// For direct messages
-	Receiver int `json:"receiverId,omitempty"`
-
-	// For group messages
-	GroupID int `json:"groupID,omitempty"`
-
-	// For status updates
+	Type       string `json:"type"`
+	Content    string `json:"content,omitempty"`
+	Sender     int    `json:"sender,omitempty"`
+	Receiver   int    `json:"receiverId,omitempty"`
+	GroupID    int    `json:"groupID,omitempty"`
 	StatusType string `json:"statusType,omitempty"`
 	UserId     int    `json:"userId,omitempty"`
+	FirstName  string `json:"firstName,omitempty"`
+	LastName   string `json:"lastName,omitempty"`
+	Avatar     string `json:"avatar,omitempty"`
 }
 
 var (
@@ -74,6 +69,7 @@ func OpenWsConn(resp http.ResponseWriter, req *http.Request) {
 		fmt.Println("message : ", msg, Connections)
 		switch msg.Type {
 		case "message":
+			fmt.Println("message type is message")
 			msg.Sender = userID
 			if err := RedirectMessage(msg); err != nil {
 				log.Println(err)

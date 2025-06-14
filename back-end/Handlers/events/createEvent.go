@@ -3,11 +3,15 @@ package events
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
 	sess "socialN/Handlers/auth"
+	"socialN/Handlers/ws"
 	database "socialN/dataBase"
+
+	"github.com/gorilla/websocket"
 )
 
 type Event struct {
@@ -20,7 +24,6 @@ type Event struct {
 	CreatedAt   time.Time `json:"created_at"`
 }
 
-// A separate input struct to decode raw ISO date string
 type EventInput struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
@@ -52,7 +55,6 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Parse ISO 8601 date from frontend
 	parsedDate, err := time.Parse(time.RFC3339, input.EventDate)
 	if err != nil {
 		http.Error(w, "Invalid date format: "+err.Error(), http.StatusBadRequest)
@@ -105,7 +107,7 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 
 	var createdEvent GetEvents
 	query := `
-		SELECT e.id, e.title, e.description, e.eventDate, e.creatorId,
+		SELECT e.id, e.title, e.description, e.eventDate,
 		       u.firstName, u.lastName, u.avatar, e.groupId,
 		       (SELECT COUNT(*) FROM EventsAttendance ea WHERE ea.eventId = e.id AND ea.isGoing = true) AS goingMembers,
 		       IFNULL((SELECT ea.isGoing FROM EventsAttendance ea WHERE ea.eventId = e.id AND ea.memberId = ? LIMIT 1), false) AS isUserGoing
@@ -119,7 +121,6 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 		&createdEvent.Title,
 		&createdEvent.Description,
 		&createdEvent.EventDate,
-		&createdEvent.CreatorId,
 		&createdEvent.FirstName,
 		&createdEvent.LastName,
 		&createdEvent.Avatar,
@@ -132,7 +133,63 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	rowss, err := database.SocialDB.Query("SELECT memberId FROM GroupsMembers WHERE groupId = ?", newEvent.GroupId)
+	if err != nil {
+		fmt.Println("Error fetching group members:", err)
+	}
+
+	for rowss.Next() {
+		var memberId int
+		if err != nil {
+		}
+
+		exis := ws.Connections[memberId]
+		for _, conn := range exis {
+			if conn != nil {
+				avatarStr := ""
+				if createdEvent.Avatar != nil {
+					avatarStr = *createdEvent.Avatar
+				}
+
+				SendMessage(conn, EventNotification{
+					Type:             "Notification",
+					NotificationType: "event",
+					Title:            createdEvent.Title,
+					Description:      createdEvent.Description,
+					EventDate:        createdEvent.EventDate.String(),
+					FirstName:        createdEvent.FirstName,
+					LastName:         createdEvent.LastName,
+					Avatar:           avatarStr,
+				})
+			}
+		}
+	}
+
+	if err := rowss.Err(); err != nil {
+		fmt.Println("Error reading group members:", err)
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(createdEvent)
+}
+
+type EventNotification struct {
+	Type             string `json:"type"`
+	NotificationType string `json:"notificationType"`
+	ItemId           int    `json:"itemId"`
+	Title            string `json:"title"`
+	Description      string `json:"description"`
+	EventDate        string `json:"eventDate"`
+	FirstName        string `json:"firstName"`
+	LastName         string `json:"lastName"`
+	Avatar           string `json:"avatar"`
+}
+
+func SendMessage(conn *websocket.Conn, msg EventNotification) {
+	message, err := json.Marshal(msg)
+	if err != nil {
+		return
+	}
+	conn.WriteMessage(websocket.TextMessage, message)
 }

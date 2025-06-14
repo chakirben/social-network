@@ -69,7 +69,7 @@ export default function CreatePost({ newpost }) {
     const formData = new FormData();
     formData.append('content', text);
     formData.append('privacy', "inGroup");
-    selectedUsers.forEach(id => {
+    selectedUsers?.forEach(id => {
       formData.append('selectedUsers', id);
     });
     if (file) {
@@ -90,10 +90,10 @@ export default function CreatePost({ newpost }) {
         setSelectedOption('public');
         setImageSrc(null);
         inputRef.current.value = null;
+        const result = await res.json();
+        newpost(result);
       }
 
-      const result = await res.json();
-      newpost(result);
 
     } catch (err) {
       console.error('Post failed:', err);
@@ -108,7 +108,7 @@ export default function CreatePost({ newpost }) {
   return (
     <form className="creatPostForm">
       <div className="df center">
-        <Avatar url={user.avatar} name={user.firstName} />
+        <Avatar url={user?.avatar} name={user?.firstName} />
 
         <input
           className={styles.searchInput}
@@ -157,7 +157,7 @@ export default function CreatePost({ newpost }) {
                         <div key={user.id} className='df gp12'>
                           <input
                             type="checkbox"
-                            checked={selectedUsers.includes(user.id)}
+                            checked={selectedUsers?.includes(user.id)}
                             onChange={() => toggleUser(user.id)}
                             className="checkBox"
                           />

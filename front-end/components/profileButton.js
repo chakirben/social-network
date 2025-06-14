@@ -7,6 +7,7 @@ export default function ProfileButton() {
     console.log(user);
     return (
         <div className="profileButton">
+
             {user ? (
                 <div className="profileInfo df gp12 center" >
                     <div
@@ -16,17 +17,11 @@ export default function ProfileButton() {
                         }}
                     ><img src="./images/notifications.svg"></img>
                     </div>
-
-
                     <div
                         className="avatarAndEmail"
                         onClick={() => router.push("/profile")}>
-                            
-                        <img
-                            className="avatar"
-                            src={`http://localhost:8080/${user.avatar}`}
-                            alt="Avatar"
-                        />
+
+                        <Avatar url={user.avatar} name={user.firstName} />
                         <div className="profileDetails df col gp6">
                             <h4>{user.firstName}</h4>
                             <p>{user.email}</p>

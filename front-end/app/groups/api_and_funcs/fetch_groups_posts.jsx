@@ -54,6 +54,8 @@ export default function GroupDetails({ groupId, title }) {
             });
             const data = await res.json();
             setEvents(data || []);
+ 
+            
         } catch (error) {
             console.error("Error fetching events:", error);
         }
@@ -171,7 +173,7 @@ export default function GroupDetails({ groupId, title }) {
 
                         <div className='spB'>
                             <div className='group'>
-                                <img style={{width : "20px", height: "20px", cursor: "pointer" }}
+                                <img style={{ width: "20px", height: "20px", cursor: "pointer" }}
                                     src="../../images/image.svg"
                                     className="upload-icon"
                                     onClick={handleImageClick}
@@ -196,7 +198,7 @@ export default function GroupDetails({ groupId, title }) {
             {!isLoading && activeTab === "events" && (
                 <>
                     <CreateEvent setEvents={setEvents} evnts={events} />
-                    <GroupEventsPage id={groupId} events={events} />
+                    <GroupEventsPage id={groupId} events={events} setEvents={setEvents} />
                 </>
             )}
         </div>
