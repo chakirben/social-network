@@ -1,6 +1,5 @@
 import { useRouter } from 'next/navigation';
 export default function MyGroup({ group }) {
-    console.log(group.Id);
     const router = useRouter();
 
     return (

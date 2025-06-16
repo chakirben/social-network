@@ -42,18 +42,6 @@ export default function Home() {
 
         fetchPosts()
     }, [])
-
-    // Debounced search
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            if (searchTerm.trim() !== "") {
-                FetchSearch(searchTerm)
-            }
-        }, 300)
-
-        return () => clearTimeout(timeout)
-    }, [searchTerm])
-
     // Fetch online users and set their full info in statuses
     useEffect(() => {
         const fetchOnlineUsers = async () => {

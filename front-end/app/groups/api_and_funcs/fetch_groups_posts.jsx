@@ -2,7 +2,6 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef, use } from "react";
 import Post from "@/components/post";
-import CreatPostInGroup from "@/components/groups/creat_postgroup";
 import "../../../styles/global.css";
 import GroupEventsPage from '@/components/events/groupEventsPage';
 import Divider from '@/components/divider';

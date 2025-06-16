@@ -9,6 +9,7 @@ import "../../../styles/global.css";
 import "../../profile/profile.css";
 import "../../home/home.css";
 import Divider from "@/components/divider";
+import FollowersCard from "@/components/followersCard";
 
 export default function ProfileClient({ session, searchParams }) {
     const [profileId, setProfileId] = useState(null);
@@ -78,6 +79,12 @@ export default function ProfileClient({ session, searchParams }) {
                     <div className="userdata gp12">
                         <div className="imgAndFollow sb">
                             <img className="userAvatar" src={ personal_data[0].Avatar || "http://localhost:8080/default-avatar.png"} alt="Avatar" />
+                            {personal_data[0].Avatar && <img className="userAvatar" src={"http://localhost:8080/" + personal_data[0].Avatar} alt="Avatar" />}
+                            {!personal_data[0].Avatar && (
+                                <div className="letterAvatar">
+                                    <span>{personal_data[0].Firstname[0].toUpperCase()}{personal_data[0].Lastname[0].toUpperCase()}</span>
+                                </div>
+                            )}
                             <div className="follow">
                                 <p onClick={() => setShowFollowModal(true)}><strong className="followers-number">{followers_count}</strong> Followers</p>
                                 <p onClick={() => setShowFollowModal(true)}><strong className="following-number">{followed_count}</strong> Following</p>
@@ -123,39 +130,27 @@ export default function ProfileClient({ session, searchParams }) {
                     <div
                         onClick={(e) => e.stopPropagation()}
                         style={{
-                            backgroundColor: 'white',
+                            backgroundColor: 'black',
                             padding: '20px',
                             borderRadius: '8px',
                             maxHeight: '80vh',
                             overflowY: 'auto',
-                            width: '400px'
+                            width: '650px',
                         }}
                     >
                         <div className="followers_modal">
-                            <h2 style={{ color: 'black', }}>Followers users</h2>
-                            <ul>
-                                {followers_data && followers_data.map((user) => (
-                                    <li key={user.ID} style={{ cursor: 'pointer' }}>
-                                        <a href={`/users/${user.ID}`}>
-                                            {user.Firstname} {user.Lastname}
-                                        </a>
-                                    </li>
-                                ))}
-                                {!followers_data && <div style={{ color: 'black', }}>There is no followers</div>}
-                            </ul>
+                            <h2>Followers users</h2>
+                            {followers_data && followers_data.map((user) => (
+                                <FollowersCard key={user.ID} user={user} />
+                            ))}
+                            {!followers_data && <div>There is no followers</div>}
                         </div>
                         <div className="followeds_modal">
-                            <h2 style={{ color: 'black', }}>Following users</h2>
-                            <ul>
-                                {followeds_data && followeds_data.map((user) => (
-                                    <li key={user.ID} style={{ cursor: 'pointer' }}>
-                                        <a href={`/users/${user.ID}`}>
-                                            {user.Firstname} {user.Lastname}
-                                        </a>
-                                    </li>
-                                ))}
-                                {!followeds_data && <div style={{ color: 'black', }}>There is no following</div>}
-                            </ul>
+                            <h2>Following users</h2>
+                            {followeds_data && followeds_data.map((user) => (
+                                <FollowersCard key={user.ID} user={user} />
+                            ))}
+                            {!followeds_data && <div>There is no following</div>}
                         </div>
                         <button onClick={() => setShowFollowModal(false)} style={{ marginTop: '10px' }}>
                             Close

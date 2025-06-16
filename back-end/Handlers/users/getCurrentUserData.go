@@ -34,8 +34,8 @@ func GetCurrentUserData(w http.ResponseWriter, r *http.Request) {
 	var u user
 	err = dataB.SocialDB.QueryRow(
 		`SELECT id, nickname, email, firstName, lastName, dateOfBirth, avatar, about, accountType,
-		(SELECT COUNT(*) FROM Followers WHERE followerId =?) AS followersCount,
-		(SELECT COUNT(*) FROM Followers WHERE followedId =?) AS followingCount
+		(SELECT COUNT(*) FROM Followers WHERE followedId =?) AS followersCount,
+		(SELECT COUNT(*) FROM Followers WHERE followerId =?) AS followingCount
 		FROM Users WHERE id = ?`, userID, userID, userID).Scan(
 		&u.ID, &u.Nickname, &u.Email, &u.FirstName, &u.LastName,
 		&u.DateOfBirth, &u.Avatar, &u.About, &u.AccountType, &u.FollowersCount, &u.FollowingCount)

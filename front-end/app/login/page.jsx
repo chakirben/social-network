@@ -1,10 +1,15 @@
 'use client'
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { WebSocketContext } from '@/components/context/wsContext';
+
+import { useUser } from '@/components/context/userContext'
+
 import '../register/register.css';
 import styles from './login.module.css'
 export default function Login() {
+  const { setUser } = useUser(); 
+
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -34,6 +39,25 @@ export default function Login() {
     } else {
       console.log("Login success")
       Connect()
+
+  
+        async function FirstTimeUser () {
+           try {
+             const rep = await fetch("http://localhost:8080/api/getUserData", {
+                credentials: "include" 
+               })
+               if (!rep.ok) {
+                   throw new Error(`HTTP error! Status: ${res.status}`);
+               }
+                let data = await rep.json()
+                localStorage.setItem("user", JSON.stringify(data));
+                setUser(data)
+           } catch (err) {
+             console.log('errrrror', err)
+           }
+        }
+        FirstTimeUser()
+
       router.push('/home');
     }
   }

@@ -14,7 +14,8 @@ type NotMyGroups struct {
 	Title        string
 	Description  string
 	MembersCount int
-	PostCont int
+	Status       string
+	PostCont     int
 }
 
 // Get all groups that the user has not joined yet...
@@ -59,7 +60,24 @@ func GetGroupsUserNotJoined(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "error to get groups", http.StatusInternalServerError)
 			return
 		}
+
+		var exists bool
+		checkQuery := `SELECT EXISTS(SELECT 1 FROM Notifications WHERE groupTargetId = ?  AND  type = "group_join_request"  LIMIT 1);`
+		err := dataB.SocialDB.QueryRow(checkQuery, g.Id).Scan(&exists)
+		if err != nil {
+			fmt.Println("error checking notification for group:", err)
+			http.Error(w, "error checking notification", http.StatusInternalServerError)
+			return
+		}
+
+		if exists {
+			g.Status = "pending"
+		} else {
+			g.Status = "Join"
+		}
+
 		groups = append(groups, g)
+
 	}
 
 	w.Header().Set("Content-Type", "application/json")

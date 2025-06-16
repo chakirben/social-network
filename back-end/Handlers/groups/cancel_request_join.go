@@ -5,17 +5,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
-
 	"socialN/Handlers/auth"
 	dataB "socialN/dataBase"
 )
 
-type ReqJoinGroup struct {
+type CancelReqJoin struct {
 	GroupID int `json:"groupId"`
 }
 
-func Req_To_Join_Groups(w http.ResponseWriter, r *http.Request) {
+func CancelRequestToJoinGroups(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid Method", http.StatusMethodNotAllowed)
 		return
@@ -26,7 +24,7 @@ func Req_To_Join_Groups(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req ReqJoinGroup
+	var req CancelReqJoin
 	err = json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		http.Error(w, "Invalid JSON :(", http.StatusBadRequest)
@@ -38,21 +36,11 @@ func Req_To_Join_Groups(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var adminId int
-	query := `SELECT adminId FROM Groups WHERE id = ?`
-	err = dataB.SocialDB.QueryRow(query, req.GroupID).Scan(&adminId)
-	if err != nil {
-		fmt.Println(err)
-		log.Println("Error to select admin in db :(", err)
-		http.Error(w, "Failed to join group. Please try again later. :(", http.StatusInternalServerError)
-		return
-	}
-
 	query2 := `
-	   INSERT INTO Notifications (senderId, receiverId, type, notificationDate , groupTargetId) VALUES (?,?,?,?,?)
-	`
+       DELETE FROM Notifications WHERE senderId = ? AND  groupTargetId = ?
+    `
 
-	_, err = dataB.SocialDB.Exec(query2, userID, adminId, "group_join_request", time.Now(), req.GroupID)
+	_, err = dataB.SocialDB.Exec(query2, userID, req.GroupID)
 	if err != nil {
 		fmt.Println(err)
 		log.Println("Error to select admin in db :(", err)
@@ -61,4 +49,5 @@ func Req_To_Join_Groups(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusAccepted)
+
 }

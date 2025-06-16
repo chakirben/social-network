@@ -1,12 +1,18 @@
 "use client"
 import { use, useState } from "react"
 import FetchJoinToGroup from "./../../app/groups/api_and_funcs/fetch_req_join_gp"
-export default function NoMyGroup({ group, onJoin }) {
+import FetchCancelToJoingroup from "./../../app/groups/api_and_funcs/fetch_cancel_join"
+export default function NoMyGroup({ group }) {
     const [pending, setpending] = useState("")
+
     // For the button to JOIN group...
     const Jointogroup = (groupId) => {
         const pd = FetchJoinToGroup(groupId)
         setpending(pd)
+    }
+    const CancelToJoingroup = (groupId) => {
+        const pd = FetchCancelToJoingroup(groupId)
+        setpending("")
     }
     return (
         <div className="groupc">
@@ -21,8 +27,11 @@ export default function NoMyGroup({ group, onJoin }) {
                 </div>
             </div>
             <div className="buttonjoin">
-                {pending ? (
-                    <button>Pending</button>
+                { pending ? (
+                    <>
+                       <button>Pending</button>
+                       <div className="cancel" onClick={() => CancelToJoingroup(group.Id)}>cancel</div>
+                    </>
                 ) : (
                     <button className="tertiary" onClick={() => Jointogroup(group.Id)}>Join</button>
                 )

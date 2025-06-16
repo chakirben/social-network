@@ -58,6 +58,7 @@ func SetupHandlers() {
 	http.HandleFunc("/api/NotMyGroups", AccessMiddleware(SessionMiddleware(Group.GetGroupsUserNotJoined)))
 	http.HandleFunc("/api/PostsGroups", AccessMiddleware(SessionMiddleware(Group.GetPostGroups)))
 	http.HandleFunc("/api/RequestToJoinGroups", AccessMiddleware(SessionMiddleware(Group.Req_To_Join_Groups)))
+	http.HandleFunc("/api/CancelRequestToJoinGroups", AccessMiddleware(SessionMiddleware(Group.CancelRequestToJoinGroups)))
 
 	// SearchData
 	http.HandleFunc("/api/SearchData", AccessMiddleware(SessionMiddleware(Search.SearchData)))

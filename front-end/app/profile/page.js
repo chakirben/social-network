@@ -47,7 +47,8 @@ export default function Profile() {
         })
             .then((res) => {
                 if (res.ok) {
-                    console.log("logout");
+                    console.log("logout")
+                    localStorage.removeItem("user")
                     router.push('/login')
 
                 } else {
