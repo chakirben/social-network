@@ -100,6 +100,7 @@ func SetupHandlers() {
 
 	// notifications
 	http.HandleFunc("/api/getNotifications", AccessMiddleware(notification.GetNotifications))
+	http.HandleFunc("/api/respondToNotification", AccessMiddleware(notification.RespondtoNotification))
 	
 	//chat
 	http.HandleFunc("/api/ws", ws.OpenWsConn)

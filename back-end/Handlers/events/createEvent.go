@@ -98,13 +98,28 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to insert event: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	eventID, err := result.LastInsertId()
 	if err != nil {
 		http.Error(w, "Failed to retrieve event ID: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+	resultNotif, err := database.SocialDB.Exec(`
+	INSERT INTO Notifications (type, senderId, receiverId, groupId, eventId, status)
+	SELECT 'new_event', ?, memberId, ?, ?, 'pending'
+	FROM GroupsMembers
+	WHERE groupId = ? AND memberId != ?`, 
+		userID, newEvent.GroupId, eventID, newEvent.GroupId, userID,
+	)
+	if err != nil {
+		http.Error(w, "Failed to insert notification: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
+	notificationId, err := resultNotif.LastInsertId()
+	if err != nil {
+		http.Error(w, "Failed to retrieve notification ID: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 	var createdEvent GetEvents
 	query := `
 		SELECT e.id, e.title, e.description, e.eventDate,
@@ -139,37 +154,37 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("Group members fetched successfully")
 	for rowss.Next() {
-    var memberId int
-    if err := rowss.Scan(&memberId); err != nil {
-        fmt.Println("Error scanning memberId:", err)
-        continue
-    }
+		var memberId int
+		if err := rowss.Scan(&memberId); err != nil {
+			fmt.Println("Error scanning memberId:", err)
+			continue
+		}
 
-    ws.ConnMu.Lock()
-    conns := ws.Connections[memberId]
-    ws.ConnMu.Unlock()
+		ws.ConnMu.Lock()
+		conns := ws.Connections[memberId]
+		ws.ConnMu.Unlock()
 
-    for _, conn := range conns {
-        if conn != nil {
-            avatarStr := ""
-            if createdEvent.Avatar != nil {
-                avatarStr = *createdEvent.Avatar
-            }
+		for _, conn := range conns {
+			if conn != nil {
+				avatarStr := ""
+				if createdEvent.Avatar != nil {
+					avatarStr = *createdEvent.Avatar
+				}
 
-            SendMessage(conn, EventNotification{
-                Type:             "Notification",
-                NotificationType: "event",
-                Title:            createdEvent.Title,
-                Description:      createdEvent.Description,
-                EventDate:        createdEvent.EventDate.String(),
-                FirstName:        createdEvent.FirstName,
-                LastName:         createdEvent.LastName,
-                Avatar:           avatarStr,
-            })
-        }
-    }
-}
-
+				SendMessage(conn, EventNotification{
+					Id:               notificationId,
+					Type:             "Notification",
+					NotificationType: "event",
+					Title:            createdEvent.Title,
+					Description:      createdEvent.Description,
+					EventDate:        createdEvent.EventDate.String(),
+					FirstName:        createdEvent.FirstName,
+					LastName:         createdEvent.LastName,
+					Avatar:           avatarStr,
+				})
+			}
+		}
+	}
 
 	if err := rowss.Err(); err != nil {
 		fmt.Println("Error reading group members:", err)
@@ -181,6 +196,7 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 type EventNotification struct {
+	Id               int64    `json:"id"`
 	Type             string `json:"type"`
 	NotificationType string `json:"notificationType"`
 	ItemId           int    `json:"itemId"`

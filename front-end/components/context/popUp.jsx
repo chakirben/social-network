@@ -14,6 +14,7 @@ export function usePopup() {
 
 export function PopupProvider({ children }) {
     const [popup, setPopup] = useState(null);
+    const [response, setResponse] = useState(null); // "accepted" or "declined"
     const router = useRouter();
 
     useEffect(() => {
@@ -21,15 +22,15 @@ export function PopupProvider({ children }) {
         if (popup) {
             timer = setTimeout(() => {
                 setPopup(null);
-            }, 240000);
+                setResponse(null); // Reset on next popup
+            }, 60000);
         }
         return () => clearTimeout(timer);
     }, [popup]);
 
     const showPopup = (notification) => {
-        console.log(notification.data);
-
         setPopup(notification.data);
+        setResponse(null);
     };
 
     const handleClick = () => {
@@ -48,20 +49,19 @@ export function PopupProvider({ children }) {
             case "follow":
                 return (
                     <p>
-                        <span className={styles.user}>{name}</span> Requested To follow you
+                        <span className={styles.user}>{name}</span> Requested to follow you
                     </p>
                 );
             case "groupInvite":
                 return (
                     <p>
-                        <span className={styles.user}>{name}</span> {"Invited you to Join Group" + notif.title}
+                        <span className={styles.user}>{name}</span> {"Invited you to Join Group " + notif.title}
                     </p>
                 );
             case "groupJoinRequest":
                 return (
                     <p>
-                        <span className={styles.user}>{name}</span> Requested to enter your
-                        Group {notif.title}
+                        <span className={styles.user}>{name}</span> Requested to enter your Group {notif.title}
                     </p>
                 );
             default:
@@ -69,19 +69,57 @@ export function PopupProvider({ children }) {
         }
     };
 
+    const handleResponse = async (action) => {
+        try {
+            
+            const res = await fetch(
+                `http://localhost:8080/api/respondToNotification?notificationId=${popup.id}&actionType=${action}`,
+                {
+                    method: "POST",
+                    credentials: "include",
+                }
+            );
+            if (res.ok) {
+                setResponse(action); // Show "Accepted" or "Declined"
+            } else {
+                console.error("Failed to respond to notification");
+            }
+        } catch (err) {
+            console.error("Error:", err);
+        }
+    };
+
     return (
         <PopupContext.Provider value={{ showPopup }}>
             {children}
             {popup && (
-                <div className={styles.popupContainer} onClick={handleClick}>
+                <div className={styles.popupContainer}>
                     <div className={styles.popup}>
-                        <div className={styles.info}>
+                        <div className={styles.info} onClick={handleClick}>
                             <Avatar url={popup.avatar} name={popup.firstName} size="small" />
                             <div className={styles.text}>{getMessage(popup)}</div>
                         </div>
+
                         <div className={styles.buttons}>
-                            <span className={styles.accept}>Accept</span>
-                            <span className={styles.decline}>Decline</span>
+                            {response === "accepted" && <span className={styles.accept}>Accepted</span>}
+                            {response === "declined" && <span className={styles.decline}>Declined</span>}
+
+                            {!response && (
+                                <>
+                                    <span
+                                        className={styles.accept}
+                                        onClick={() => handleResponse("accept")}
+                                    >
+                                        Accept
+                                    </span>
+                                    <span
+                                        className={styles.decline}
+                                        onClick={() => handleResponse("decline")}
+                                    >
+                                        Decline
+                                    </span>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>

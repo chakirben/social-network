@@ -1,5 +1,5 @@
 'use client'
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import { WebSocketContext } from '@/components/context/wsContext';
 
@@ -8,7 +8,7 @@ import { useUser } from '@/components/context/userContext'
 import '../register/register.css';
 import styles from './login.module.css'
 export default function Login() {
-  const { setUser } = useUser(); 
+  const { setUser } = useUser();
 
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -16,52 +16,57 @@ export default function Login() {
   const [errorMessage, setErrorMessage] = useState('');
 
   const { Connect } = useContext(WebSocketContext);
-  
+
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!email || !password) {
       setErrorMessage('Please fill in all fields.');
       return;
     }
+    try {
+      const response = await fetch(`http://localhost:8080/api/login`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const response = await fetch(`http://localhost:8080/api/login`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
+      if (!response.ok) {
+        const resp = await response.text();
+        setErrorMessage(resp || 'Login failed.');
+        return;
+      }
 
-    if (!response.ok) {
-      const resp = await response.text();
-      setErrorMessage(resp || 'Login failed.');
-    } else {
-      console.log("Login success")
-      Connect()
+      if (Connect) {
+        Connect();
+      }
 
-  
-        async function FirstTimeUser () {
-           try {
-             const rep = await fetch("http://localhost:8080/api/getUserData", {
-                credentials: "include" 
-               })
-               if (!rep.ok) {
-                   throw new Error(`HTTP error! Status: ${res.status}`);
-               }
-                let data = await rep.json()
-                localStorage.setItem("user", JSON.stringify(data));
-                setUser(data)
-           } catch (err) {
-             console.log('errrrror', err)
-           }
+      async function FirstTimeUser() {
+        try {
+          const rep = await fetch("http://localhost:8080/api/getUserData", {
+            credentials: "include"
+          });
+          if (!rep.ok) {
+            throw new Error(`HTTP error! Status: ${rep.status}`);
+          }
+          let data = await rep.json();
+          localStorage.setItem("user", JSON.stringify(data));
+          setUser(data);
+        } catch (err) {
+          console.log('errrrror', err);
         }
-        FirstTimeUser()
+      }
 
+      await FirstTimeUser();
       router.push('/home');
-    }
-  }
 
+    } catch (err) {
+      console.error("Login fetch failed", err);
+      setErrorMessage("Network error. Please try again.");
+    }
+  };
   return (
     <div className="container">
       <div className="formContainer">

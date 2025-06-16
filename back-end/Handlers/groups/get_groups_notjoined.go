@@ -62,7 +62,7 @@ func GetGroupsUserNotJoined(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var exists bool
-		checkQuery := `SELECT EXISTS(SELECT 1 FROM Notifications WHERE groupTargetId = ?  AND  type = "group_join_request"  LIMIT 1);`
+		checkQuery := `SELECT EXISTS(SELECT 1 FROM Notifications WHERE groupId = ?  AND  type = "group_join_request"  LIMIT 1);`
 		err := dataB.SocialDB.QueryRow(checkQuery, g.Id).Scan(&exists)
 		if err != nil {
 			fmt.Println("error checking notification for group:", err)
