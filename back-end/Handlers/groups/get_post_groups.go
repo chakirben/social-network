@@ -48,6 +48,18 @@ func GetPostGroups(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request :(", http.StatusBadRequest)
 		return
 	}
+	var exists bool
+	err = dataB.SocialDB.QueryRow("SELECT EXISTS(SELECT 1 FROM groups WHERE id = ?)", idInt).Scan(&exists)
+	if err != nil {
+		http.Error(w, "Database error", http.StatusInternalServerError)
+		return
+	}
+
+	if !exists {
+		http.Error(w, "Group not found", http.StatusNotFound)
+		return
+	}
+
 	query := `SELECT 
 	      P.id,
 		  P.content,
