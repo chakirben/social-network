@@ -3,14 +3,14 @@ import "../styles/global.css";
 import { WebSocketProvider } from "@/components/context/wsContext";
 import { PopupProvider } from "@/components/context/popUp";
 
-export default function Main({ children }) {
-
+export default function Layout({ children }) {
+    console.log("Main layout rendered");
     return (
         <html lang="en">
             <body>
                 <UserProvider>
                     <PopupProvider>
-                        <WebSocketProvider >
+                        <WebSocketProvider>
                             <div className="layout">
                                 <main className="mainContent">{children}</main>
                             </div>

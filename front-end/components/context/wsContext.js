@@ -7,6 +7,8 @@ import { usePopup } from './popUp';
 export const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
+  console.log('WebSocketProvider rendered');
+  
   const [statuses, setStatuses] = useState({});
   const [discussionMap, setDiscussionMap] = useState({});
   const [wsMessages, setwsMessages] = useState([]);

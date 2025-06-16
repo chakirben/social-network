@@ -10,7 +10,6 @@ import (
 )
 
 func CheckAuth(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("here")
 	id, err := ValidateSession(r, dataB.SocialDB)
 	fmt.Println(id, err)
 	if err != nil {
@@ -26,6 +25,7 @@ func ValidateSession(r *http.Request, db *sql.DB) (int, error) {
 	cookie, err := r.Cookie("sessionId")
 	if err != nil {
 		if err == http.ErrNoCookie {
+			fmt.Println("ysf", err)
 			return 0, fmt.Errorf("no session cookie")
 		}
 		return 0, fmt.Errorf("error reading session cookie: %v", err)

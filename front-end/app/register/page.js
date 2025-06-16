@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import '../../styles/global.css';
 import "./register.css"
 //import '../public/styles/register.css';
@@ -7,7 +7,17 @@ import { useRouter } from 'next/navigation';
 import AvatarUpload from '@/public/components/avatar';
 import { validateForm } from '@/public/utils/formValidation';
 
+import { WebSocketContext } from '@/components/context/wsContext';
+
+import { useUser } from '@/components/context/userContext'
+
+
 export default function Register() {
+
+  const { Connect } = useContext(WebSocketContext);
+
+  const { setUser } = useUser();
+
   const router = useRouter();
   const [avatar, setAvatar] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
@@ -42,6 +52,7 @@ export default function Register() {
       formData.append('avatar', avatarFile);
     }
 
+    try {
     const response = await fetch(`http://localhost:8080/api/register`, {
       method: 'POST',
       credentials: 'include',
@@ -50,10 +61,41 @@ export default function Register() {
 
     if (!response.ok) {
       let resp = await response.text();
-      setErrorMessage(resp);
-    } else {
-      router.push('/home');
+      setErrorMessage(resp || 'Registration failed.');
+      return;
     }
+
+
+
+      if (Connect) {
+        Connect();
+      }
+
+      async function FirstTimeUser() {
+        try {
+          const rep = await fetch("http://localhost:8080/api/getUserData", {
+            credentials: "include"
+          });
+          if (!rep.ok) {
+            throw new Error(`HTTP error! Status: ${rep.status}`);
+          }
+          let data = await rep.json();
+          localStorage.setItem("user", JSON.stringify(data));
+          setUser(data);
+        } catch (err) {
+          console.log('errrrror', err);
+        }
+      }
+
+      await FirstTimeUser();
+      router.push('/home');
+
+    } catch (err) {
+      console.error("Login fetch failed", err);
+      setErrorMessage("Network error. Please try again.");
+    }
+
+
   }
 
   return (

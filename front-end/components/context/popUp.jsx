@@ -13,6 +13,8 @@ export function usePopup() {
 }
 
 export function PopupProvider({ children }) {
+    console.log("PopupProvider rendered");
+    
     const [popup, setPopup] = useState(null);
     const [response, setResponse] = useState(null); // "accepted" or "declined"
     const router = useRouter();
