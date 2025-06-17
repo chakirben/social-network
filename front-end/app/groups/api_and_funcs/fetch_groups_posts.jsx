@@ -12,7 +12,7 @@ import Header from '@/components/Header/header';
 
 
 
-export default function GroupDetails({ groupId, title }) {
+export default function GroupDetails({ groupId }) {
     const { user } = useUser();
     const [PostsGroup, setPostsGroup] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -23,6 +23,8 @@ export default function GroupDetails({ groupId, title }) {
     const [imageSrc, setImageSrc] = useState(null);
     const inputRef = useRef(null);
 
+
+    const [error, setError] = useState("")
 
 
     useEffect(() => {
@@ -37,7 +39,15 @@ export default function GroupDetails({ groupId, title }) {
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
             });
+            if (rep.status === 404) {
+                router.push('/404')
+            }
+            if (rep.status === 403) {
+                setError('You are not allowed to access this group.')
+            }
             const PostsGroupData = await rep.json();
+            console.log(PostsGroupData);
+            
             setPostsGroup(PostsGroupData || []);
         } catch (error) {
             console.error("Error fetching posts:", error);
@@ -132,81 +142,95 @@ export default function GroupDetails({ groupId, title }) {
 
     return (
         <div className='postEventsInGroup'>
-            <Header pageName={title} />
-            <div className='filterPostsAndEvents'>
-                <span
-                    className={`postsSpan ${activeTab === "posts" ? "active" : ""}`}
-                    onClick={() => setActiveTab("posts")}
-                >
-                    Posts
-                </span>
-                <span
-                    className={`eventsSpan ${activeTab === "events" ? "active" : ""}`}
-                    onClick={() => setActiveTab("events")}
-                >
-                    Events
-                </span>
-            </div>
-            <Divider />
-            {isLoading && <div>Loading...</div>}
 
-            {!isLoading && activeTab === "posts" && (
+            {error != "" ? (
+                <>{error}</>
+            ) : (
                 <>
-                    <form className="creatPostForm" onSubmit={handleSubmit}>
-                        <div className="searchBar df gp12 center">
-                            <Avatar url={user.avatar} name={user.firstName} />
+                    <Header pageName={PostsGroup.GPTitle} />
+                    <div className='filterPostsAndEvents'>
+                        <span
+                            className={`postsSpan ${activeTab === "posts" ? "active" : ""}`}
+                            onClick={() => setActiveTab("posts")}
+                        >
+                            Posts
+                        </span>
+                        <span
+                            className={`eventsSpan ${activeTab === "events" ? "active" : ""}`}
+                            onClick={() => setActiveTab("events")}
+                        >
+                            Events
+                        </span>
+                    </div>
+                    <Divider />
+                    {isLoading && <div>Loading...</div>}
 
-                            <input
-                                className="searchInput"
-                                placeholder="What’s happening ?"
-                                value={text}
-                                onChange={(e) => setText(e.target.value)}
-                            />
-                        </div>
 
-                        <div className="ImagePreviewBox">
-                            {imageSrc && <img src={imageSrc} alt="Preview" className="preview-img" />}
-                        </div>
+                    {!isLoading && activeTab === "posts" && (
+                        <>
+                            <form className="creatPostForm" onSubmit={handleSubmit}>
+                                <div className="searchBar df gp12 center">
+                                    <Avatar url={user.avatar} name={user.firstName} />
 
-                        <Divider />
+                                    <input
+                                        className="searchInput"
+                                        placeholder="What’s happening ?"
+                                        value={text}
+                                        onChange={(e) => setText(e.target.value)}
+                                    />
+                                </div>
 
-                        <div className='spB'>
-                            <div className='group'>
-                                <img style={{ width: "20px", height: "20px", cursor: "pointer" }}
-                                    src="../../images/image.svg"
-                                    className="upload-icon"
-                                    onClick={handleImageClick}
-                                />
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    ref={inputRef}
-                                    onChange={handleFileChange}
-                                    style={{ display: 'none' }}
-                                />
-                            </div>
-                            <button type='submit'>post</button>
-                        </div>
-                    </form>
-                    {PostsGroup.map((pst) => (
-                        <Post key={pst.id} pst={pst} />
-                    ))}
-                </>
-            )}
+                                <div className="ImagePreviewBox">
+                                    {imageSrc && <img src={imageSrc} alt="Preview" className="preview-img" />}
+                                </div>
 
-            {!isLoading && activeTab === "events" && (
-                <>
-                    <CreateEvent setEvents={setEvents} events={events} />
-                    {events.length > 0 ? (
-                        <GroupEventsPage id={groupId} events={events} setEvents={setEvents} />
-                    ) : (
-                        <div className="noEvents">
-                            <img className="noContent" src="/images/noContent.svg" alt="No content" />
-                            No events created, be the first
-                        </div>
+                                <Divider />
+
+                                <div className='spB'>
+                                    <div className='group'>
+                                        <img style={{ width: "20px", height: "20px", cursor: "pointer" }}
+                                            src="../../images/image.svg"
+                                            className="upload-icon"
+                                            onClick={handleImageClick}
+                                        />
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            ref={inputRef}
+                                            onChange={handleFileChange}
+                                            style={{ display: 'none' }}
+                                        />
+                                    </div>
+                                    <button type='submit'>post</button>
+                                </div>
+                            </form>
+                            {Array.isArray(PostsGroup.allposts) && PostsGroup.allposts.length > 0 ?
+                                PostsGroup.allposts.map((pst) => (
+                                    <Post key={pst.id} pst={pst} />
+                                )) : (
+                                    <>{`No posts yet in this group creat a one.. (:`}</>
+                                )}
+
+                            {!isLoading && activeTab === "events" && (
+                                <>
+                                    <CreateEvent setEvents={setEvents} events={events} />
+                                    {events.length > 0 ? (
+                                        <GroupEventsPage id={groupId} events={events} setEvents={setEvents} />
+                                    ) : (
+                                        <div className="noEvents">
+                                            <img className="noContent" src="/images/noContent.svg" alt="No content" />
+                                            No events created, be the first
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                        </>
                     )}
+
+
                 </>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 }
