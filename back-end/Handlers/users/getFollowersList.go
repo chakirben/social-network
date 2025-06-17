@@ -2,6 +2,7 @@ package users
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -22,12 +23,13 @@ func GetFollowersListHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
-	rows, err := dataB.SocialDB.Query(`
-	SELECT  u.id, u.firstName, u.lastName, u.avatar
-	FROM Followers f
-	JOIN Users u ON f.followerId = u.id
-	WHERE f.followedId = ?
-	`, userID)
+	query := `
+		SELECT u.id, u.firstName, u.lastName, u.avatar
+		FROM Followers f
+		JOIN Users u ON f.followedId = u.id
+		WHERE f.followerId = ?
+	`
+	rows, err := dataB.SocialDB.Query(query, userID)
 	if err != nil {
 		log.Println("DB query error:", err)
 		http.Error(w, "Server error", http.StatusInternalServerError)
@@ -47,4 +49,5 @@ func GetFollowersListHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users)
+	fmt.Println("hhhhh", users)
 }

@@ -2,7 +2,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Avatar from './avatar/avatar';
 
-export default function UserCard({ user }) {
+export default function UserCard({ user , invite }) {
     const router = useRouter();
 
     const [hasRequested, setHasRequested] = useState(user.hasRequested);
@@ -43,6 +43,10 @@ export default function UserCard({ user }) {
         }
     };
 
+    const handlerToInvite = () => {
+        
+    }
+
     return (
         <div className="userCard" onClick={() => router.push(`/users/${user.id}`)}>
             <Avatar url={user.avatar} name={user.firstName} />
@@ -50,7 +54,11 @@ export default function UserCard({ user }) {
                 <div className="userName">{user.firstName} {user.lastName}</div>
                 <div className="followerCount">{user.followerCount} followers</div>
             </div>
-            <button
+            {invite ? (
+                <button onClick={()=>handlerToInvite} > {invite} </button>
+            ) : (
+                <>
+                      <button
                 className={
                     btnText === "unfollow" || btnText === "cancel_request"
                         ? "followedBtn"
@@ -63,6 +71,9 @@ export default function UserCard({ user }) {
             >
                 {btnText}
             </button>
+                </>
+            )}
+           
         </div>
     );
 }

@@ -9,7 +9,7 @@ import CreateEvent from '@/components/createEventForm';
 import Avatar from '@/components/avatar/avatar';
 import { useUser } from '@/components/context/userContext';
 import Header from '@/components/Header/header';
-
+import InviteToGroups from "@/components/groups/invite_to_groups"
 
 
 export default function GroupDetails({ groupId }) {
@@ -18,6 +18,10 @@ export default function GroupDetails({ groupId }) {
     const [isLoading, setIsLoading] = useState(true);
     const [events, setEvents] = useState([])
     const [activeTab, setActiveTab] = useState("posts");
+
+
+    const [showInviteForm, setShowInviteForm] = useState(false);
+
 
     const [text, setText] = useState('');
     const [imageSrc, setImageSrc] = useState(null);
@@ -46,11 +50,9 @@ export default function GroupDetails({ groupId }) {
                 setError('You are not allowed to access this group.')
             }
             const PostsGroupData = await rep.json();
-            console.log(PostsGroupData);
-            
             setPostsGroup(PostsGroupData || []);
         } catch (error) {
-            console.error("Error fetching posts:", error);
+            console.error("Error fhomeetching posts:", error);
         } finally {
             setIsLoading(false);
         }
@@ -100,7 +102,7 @@ export default function GroupDetails({ groupId }) {
         } else {
 
             try {
-                const res = await fetch('http://localhost:8080/api/CreatePost', {
+                const res = await homefetch('http://localhost:8080/api/CreatePost', {
                     method: 'POST',
                     body: formData,
                     credentials: 'include',
@@ -115,7 +117,7 @@ export default function GroupDetails({ groupId }) {
             } catch (err) {
                 console.error('Post failed:', err);
             }
-        }
+        } home
     };
 
 
@@ -138,6 +140,9 @@ export default function GroupDetails({ groupId }) {
         return <div>Loading posts of the group...</div>;
     }
 
+    const handlInviteClick = () => {
+        setShowInviteForm(true)
+    }
 
 
     return (
@@ -147,7 +152,13 @@ export default function GroupDetails({ groupId }) {
                 <>{error}</>
             ) : (
                 <>
-                    <Header pageName={PostsGroup.GPTitle} />
+                    <Header pageName={PostsGroup.GPTitle}
+                        ele={
+                            <button onClick={handlInviteClick} className="create-group-btn">
+                                + INVITE
+                            </button>
+                        }
+                    />
                     <div className='filterPostsAndEvents'>
                         <span
                             className={`postsSpan ${activeTab === "posts" ? "active" : ""}`}
@@ -223,6 +234,10 @@ export default function GroupDetails({ groupId }) {
                                         </div>
                                     )}
                                 </>
+                            )}
+
+                            {showInviteForm && (
+                                <InviteToGroups onSkip={() => setShowInviteForm(false)} />
                             )}
                         </>
                     )}
