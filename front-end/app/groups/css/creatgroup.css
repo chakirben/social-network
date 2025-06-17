@@ -14,66 +14,49 @@
 
 .creatgroups {
     position: fixed;
-    top: 33%;
-    left: 55%;
+    display: flex;
+    flex-direction: column;
+    min-width: 300px;
+    gap: 10px;
+    z-index: 106;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
-   background-color: rgba(31, 29, 26, 0.747);
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 20px;
-    padding-bottom: 20px;
+    background-color: #ffffff1a;
+    padding: 20px;
     border-radius: 12px;
-    width: 400px;
-    height: 200px;
+    backdrop-filter: blur(10px);
     font-family: Arial, Helvetica, sans-serif;
     margin: auto;
     z-index: 1000; 
 }
-.inputToCreatGourp {
-    width: 95%;
-    height: 70%;
-    padding: 10px 10px;
-    justify-content: center;
-    align-items: center;
+.creatgroups  .inputToCreatGourp {
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
 }
 
-.titelinp {
-    background-color: rgb(37, 37, 37);
-    color: white;
-    width: 95%;
-    height: 25%;
-    margin-bottom: 5px;
-}
-
-.discinp{
-    background-color: rgb(37, 37, 37);
-    color: white;
-    width: 95%;
-    margin-bottom: 5px;
-    height: 25%;
-
-}
 
 .divcreatbtn {
-    justify-content: space-between;
-    align-items: center;
-    margin: auto;
+    justify-content: flex-end;
+    gap: 10px;
     display: flex;
     width: 95%;
     height: 30%;
 }
 
 .creatbtn{
-    background-color: #007AFF;
+    flex-grow: 1;
+    background-color: #ffffff;
+    color: black;
     justify-content: center;
     width: 150px;
     height: 35px;
 }
 
 .skipbtn {
+    flex-grow: 1;
     background-color: rgb(87, 86, 86);
-    width: 150px;
-    height: 35px;
 }
 
 .skipbtn img {

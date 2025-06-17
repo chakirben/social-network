@@ -81,7 +81,7 @@ func SetupHandlers() {
 	fmt.Println(followers.GetFollowedUsers(2))
 
 	// follows
-	http.HandleFunc("/api/follow", AccessMiddleware(followers.HandleFollow))
+	http.HandleFunc("/api/follow", AccessMiddleware(followers.FollowHandler))
 	http.HandleFunc("/api/acceptFollowRequest", AccessMiddleware(followers.AcceptFollowRequest))
 	http.HandleFunc("/api/declineFollowRequest", AccessMiddleware(followers.DeclineFollowRequest))
 
@@ -100,12 +100,14 @@ func SetupHandlers() {
 
 	// notifications
 	http.HandleFunc("/api/getNotifications", AccessMiddleware(notification.GetNotifications))
+	http.HandleFunc("/api/respondToNotification", AccessMiddleware(notification.RespondtoNotification))
 	
 	//chat
 	http.HandleFunc("/api/ws", ws.OpenWsConn)
 	http.HandleFunc("/api/GetDiscussionList", AccessMiddleware(ws.GetAllDiscussionsHandler))
 	http.HandleFunc("/api/online", AccessMiddleware(ws.GetOnlineUsers))
 	http.HandleFunc("/api/fetchMessages", AccessMiddleware(ws.GetMessagesHandler))
+	http.HandleFunc("/api/friendsAndGroups", AccessMiddleware(ws.GetUserConnectionsHandler))
 
 }
 

@@ -1,9 +1,11 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react';
-import Divider from './divider';
+import Divider from '../divider';
 import UserData from "@/components/UserData";
-import { useUser } from './context/userContext';
+import { useUser } from '../context/userContext';
+import styles from './create.module.css';
+import Avatar from '../avatar/avatar';
 export default function CreatePost({ newpost }) {
   const inputRef = useRef(null);
   const [imageSrc, setImageSrc] = useState(null);
@@ -67,7 +69,7 @@ export default function CreatePost({ newpost }) {
     const formData = new FormData();
     formData.append('content', text);
     formData.append('privacy', "inGroup");
-    selectedUsers.forEach(id => {
+    selectedUsers?.forEach(id => {
       formData.append('selectedUsers', id);
     });
     if (file) {
@@ -88,10 +90,10 @@ export default function CreatePost({ newpost }) {
         setSelectedOption('public');
         setImageSrc(null);
         inputRef.current.value = null;
+        const result = await res.json();
+        newpost(result);
       }
 
-      const result = await res.json();
-      newpost(result);
 
     } catch (err) {
       console.error('Post failed:', err);
@@ -106,13 +108,10 @@ export default function CreatePost({ newpost }) {
   return (
     <form className="creatPostForm">
       <div className="df center">
-        <img
-          className="avatar"
-          src={user?.avatar ? `http://localhost:8080/${user.avatar}` : "/images/defaultAvatar.png"}
-          alt="User Avatar"
-        />
+        <Avatar url={user?.avatar} name={user?.firstName} />
+
         <input
-          className="searchInput"
+          className={styles.searchInput}
           placeholder="What's happening ?"
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -158,7 +157,7 @@ export default function CreatePost({ newpost }) {
                         <div key={user.id} className='df gp12'>
                           <input
                             type="checkbox"
-                            checked={selectedUsers.includes(user.id)}
+                            checked={selectedUsers?.includes(user.id)}
                             onChange={() => toggleUser(user.id)}
                             className="checkBox"
                           />

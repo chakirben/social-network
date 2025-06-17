@@ -10,6 +10,9 @@
 .formContainer {
     text-align: center;
     width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .avatarContainer {
@@ -79,7 +82,7 @@ button:hover {
 
 .registerLink {
     margin-top: 10px;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .registerLink a {

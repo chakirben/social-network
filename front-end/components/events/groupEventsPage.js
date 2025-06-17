@@ -2,23 +2,8 @@ import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import EventsList from "./eventList"
 
-export default function GroupEventsPage() {
-    const { id } = useParams()
-    console.log(id);
+export default function GroupEventsPage({id, events, setEvents})  {
     
-    const [events, setEvents] = useState([])
-
-    useEffect(() => {
-        const fetchEvents = async () => {
-            const res = await fetch(`http://localhost:8080/api/GetGroupEvents?id=${id}`, {
-                credentials: "include",
-            })
-            const data = await res.json()
-            setEvents(data)
-        }
-        fetchEvents()
-    }, [id])
-
     const handleRespond = async (eventId, isGoing, groupId) => {
         const res = await fetch("http://localhost:8080/api/SetAttendance", {
             method: "POST",

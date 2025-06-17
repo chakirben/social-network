@@ -14,13 +14,14 @@ import (
 )
 
 type CommentResponse struct {
-	Id         int       `json:"id"`
-	Username   string    `json:"username"`
-	First_name string    `json:"first_name"`
-	Last_name  string    `json:"last_name"`
-	CreatedAt  time.Time `json:"created_at"`
-	Content    string    `json:"content"`
-	Image      string    `json:"image"`
+	Id           int       `json:"id"`
+	Avatar       string    `json:"avatar"`
+	First_name   string    `json:"firstName"`
+	Last_name    string    `json:"lastName"`
+	CreatedAt    time.Time `json:"createdAt"`
+	Content      string    `json:"content"`
+	Image        string    `json:"image"`
+	MineReaction int       `json:"userReaction"`
 }
 
 type CommentRequest struct {
@@ -34,11 +35,11 @@ func SetCommentHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	// err := r.ParseMultipartForm(10 << 20)
-	// if err != nil {
-	// 	http.Error(w, "Error parsing form", http.StatusBadRequest)
-	// 	return
-	// }
+	userID, err := auth.ValidateSession(r, dataB.SocialDB)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 
 	content := r.FormValue("content")
 	if content == "" {
@@ -61,13 +62,6 @@ func SetCommentHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	userID, err := auth.ValidateSession(r, dataB.SocialDB)
-	if err != nil {
-		fmt.Println("---------------------bilalallalalal")
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
-	fmt.Println(postID, content, imagePath)
 	result, err := dataB.SocialDB.Exec(`
 		INSERT INTO Comments (postId, userId, content, image)
 		VALUES (?, ?, ?, ?)`,
@@ -86,13 +80,15 @@ func SetCommentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	row := dataB.SocialDB.QueryRow(`
-		SELECT Comments.id, Users.nickName, Users.firstName, Users.lastName, Comments.createdAt, Comments.content, Comments.image
+		SELECT Comments.id, Users.avatar, Users.firstName, Users.lastName, Comments.createdAt, Comments.content, Comments.image
 		FROM Comments
 		JOIN Users ON Comments.userId = Users.id
 		WHERE Comments.id = ?`, lastID)
 
 	var commentResponse CommentResponse
-	err = row.Scan(&commentResponse.Id, &commentResponse.Username, &commentResponse.First_name, &commentResponse.Last_name, &commentResponse.CreatedAt, &commentResponse.Content, &commentResponse.Image)
+	commentResponse.MineReaction = 0
+
+	err = row.Scan(&commentResponse.Id, &commentResponse.Avatar, &commentResponse.First_name, &commentResponse.Last_name, &commentResponse.CreatedAt, &commentResponse.Content, &commentResponse.Image)
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "Failed to retrieve created comment", http.StatusInternalServerError)
@@ -105,18 +101,16 @@ func SetCommentHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SaveAvatar(file io.Reader) (string, error) {
-	// Save the uploaded image file to the server
 	timestamp := time.Now().UnixNano()
 	filename := fmt.Sprintf("%d_avatar.jpg", timestamp)
-	avatarPath := filepath.Join("uploads", filename)
-
-	// Create upload folder if it doesn't exist
-	if _, err := os.Stat("uploads"); os.IsNotExist(err) {
-		os.Mkdir("uploads", 0o755)
+	uploadDir := "uploads"
+	if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
+		if err := os.Mkdir(uploadDir, 0o755); err != nil {
+			return "", err
+		}
 	}
-
-	// Save the file
-	dst, err := os.Create(avatarPath)
+	localPath := filepath.Join(uploadDir, filename)
+	dst, err := os.Create(localPath)
 	if err != nil {
 		return "", err
 	}
@@ -126,6 +120,6 @@ func SaveAvatar(file io.Reader) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
-	return avatarPath, nil
+	publicURL := fmt.Sprintf("http://localhost:8080/uploads/%s", filename)
+	return publicURL, nil
 }

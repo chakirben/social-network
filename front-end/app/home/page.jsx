@@ -5,17 +5,20 @@ import { useRouter } from "next/navigation"
 
 import SideBar from "@/components/sidebar"
 import Post from "@/components/post"
-import SearchBar from "@/components/searchBar"
-import CreatePost from "@/components/creatPostForm"
+import SearchBar from "@/components/searchBar/searchBar"
+import CreatePost from "@/components/createPostForm/creatPostForm"
 import SearchTerm from "@/components/search_term"
 import HomeEvents from "@/components/events/homeEvents"
 import ProfileButton from "@/components/profileButton"
 import UserCard from "@/components/onlineusercard"
-
 import "./home.css"
 import "../../styles/global.css"
 import "../groups/css/groups1.css"
 import { WebSocketContext } from "@/components/context/wsContext"
+import EventsList from "@/components/events/eventList";
+import Divider from "@/components/divider";
+import NotifPopUp from "@/components/notificationPopUp"
+import { PopupProvider, usePopup } from "@/components/context/popUp"
 
 export default function Home() {
     const router = useRouter()
@@ -72,6 +75,7 @@ export default function Home() {
     const handleNewPost = (newPost) => {
         setPosts(prev => [newPost, ...prev])
     }
+  
 
     return (
         <div className="home">
@@ -81,7 +85,6 @@ export default function Home() {
                 {searchTerm.trim() === "" ? (
                     <div className="sc">
                         <CreatePost newpost={handleNewPost} />
-                        <HomeEvents />
                         <div className="posts">
                             {posts.length === 0 ? (
                                 <div className="loading">Loading posts...</div>
@@ -97,6 +100,7 @@ export default function Home() {
                 )}
             </div>
             <div>
+
                 <ProfileButton />
                 <div className="onlineUsers df cl">
                     <h4>Online users</h4>
@@ -115,7 +119,11 @@ export default function Home() {
                         ))
                     )}
                 </div>
+            <div className="rightProfileBtnAndEventsList ">
+                <HomeEvents />
             </div>
+            </div>
+
         </div>
     )
 }

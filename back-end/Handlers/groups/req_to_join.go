@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
 	"socialN/Handlers/auth"
 	dataB "socialN/dataBase"
@@ -49,10 +48,10 @@ func Req_To_Join_Groups(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query2 := `
-	   INSERT INTO Notifications (senderId, receiverId, type, notificationDate , groupTargetId) VALUES (?,?,?,?,?)
+	   INSERT INTO Notifications (senderId, receiverId, type , groupId) VALUES (?,?,?,?)
 	`
 
-	_, err = dataB.SocialDB.Exec(query2, userID, adminId, "group_join_request", time.Now(), req.GroupID)
+	_, err = dataB.SocialDB.Exec(query2, userID, adminId, "group_join_request", req.GroupID)
 	if err != nil {
 		fmt.Println(err)
 		log.Println("Error to select admin in db :(", err)

@@ -3,163 +3,183 @@ package followers
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
-	"time"
 
 	"socialN/Handlers/auth"
+	"socialN/Handlers/ws"
 	dataB "socialN/dataBase"
+
+	"github.com/gorilla/websocket"
 )
 
-// there is two function: one function if someone follow auther it handle if the profile is public or private
-// and auther function handle if the followed accept follow request of follower
 type FollowInfo struct {
 	Follower_session string `json:"follower_session"`
 	Followed_id      string `json:"followed_id"`
 }
 
-func HandleFollow(w http.ResponseWriter, r *http.Request) {
-	var followInfo FollowInfo
-
-	var followerid int
-	err := json.NewDecoder(r.Body).Decode(&followInfo)
+func FollowHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("FollowHandler called")
+	userID, err := auth.ValidateSession(r, dataB.SocialDB)
 	if err != nil {
-		/*fmt.Println("Invalid Json:", err)
-		return*/
-		receiverIdStr := r.URL.Query().Get("id")
-		if receiverIdStr == "" {
-			http.Error(w, "Invalid receiver id", http.StatusBadRequest)
-			return
-		}
-
-		senderId, err := auth.ValidateSession(r, dataB.SocialDB)
-		if err != nil {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
-			return
-		}
-
-		followInfo.Followed_id = receiverIdStr
-		followerid = senderId
-	}
-
-	followedid, err := strconv.Atoi(followInfo.Followed_id)
-	//var followerid int
-	var followedtype string
-	errq := dataB.SocialDB.QueryRow(`SELECT accountType FROM Users WHERE id=?`, followedid).Scan(&followedtype)
-	if errq != nil || err != nil {
-		fmt.Println("Error get ID:", errq)
+		fmt.Println("Unauthorized access:", err, userID)
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
-	if followInfo.Follower_session != "" {
-		row2, errq2 := dataB.SocialDB.Query(`SELECT userId FROM Sessions WHERE id=?`, followInfo.Follower_session)
-		if errq2 != nil {
-			fmt.Println("Error get ID:", errq2)
+	targetIDStr := r.URL.Query().Get("id")
+	action := r.URL.Query().Get("action")
+
+	targetID, err := strconv.Atoi(targetIDStr)
+	if err != nil || (action != "follow" && action != "unfollow" && action != "cancel_request") {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	if targetID == userID {
+		http.Error(w, "You cannot follow yourself", http.StatusBadRequest)
+		return
+	}
+
+	db := dataB.SocialDB
+	var accountType string
+	err = db.QueryRow("SELECT accountType FROM Users WHERE id = ?", targetID).Scan(&accountType)
+	if err != nil {
+		http.Error(w, "Target user not found", http.StatusNotFound)
+		return
+	}
+
+	switch action {
+	case "follow":
+		if accountType == "private" {
+			var exists bool
+			err = db.QueryRow(`
+        SELECT EXISTS (
+            SELECT 1 FROM Notifications
+            WHERE senderId = ? AND receiverId = ? AND type = 'follow_request' AND status = 'pending'
+        )
+    `, userID, targetID).Scan(&exists)
+			if err != nil {
+				http.Error(w, "DB error", http.StatusInternalServerError)
+				return
+			}
+
+			if !exists {
+				// Insert notification
+				res, err := db.Exec(`
+            INSERT INTO Notifications (senderId, receiverId, type, status)
+            VALUES (?, ?, 'follow_request', 'pending')
+        `, userID, targetID)
+				if err != nil {
+					http.Error(w, "Couldn't send follow request", http.StatusInternalServerError)
+					return
+				}
+
+				notificationId, _ := res.LastInsertId()
+
+				// Fetch sender info for the WebSocket message
+				var firstName, lastName, avatar string
+				err = db.QueryRow("SELECT firstName, lastName, COALESCE(avatar, '') FROM Users WHERE id = ?", userID).
+					Scan(&firstName, &lastName, &avatar)
+				if err == nil {
+					// Send WS notification to target user
+					ws.ConnMu.Lock()
+					conns := ws.Connections[targetID]
+					ws.ConnMu.Unlock()
+
+					for _, conn := range conns {
+						if conn != nil {
+							SendMsg(conn, NotificationMessage{
+								ID:               notificationId,
+								Type:             "Notification",
+								NotificationType: "follow_request",
+								FirstName:           firstName,
+								LastName:      lastName ,
+								Avatar:           avatar,
+							})
+						}
+					}
+				}
+			}
+
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("cancel_request"))
+			return
+		} else {
+			// public: insert into Followers
+			_, err := db.Exec(`
+                INSERT OR IGNORE INTO Followers (followerId, followedId)
+                VALUES (?, ?)
+            `, userID, targetID)
+			if err != nil {
+				http.Error(w, "Couldn't follow user", http.StatusInternalServerError)
+				return
+			}
+
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("unfollow"))
 			return
 		}
-		defer row2.Close()
-		for row2.Next() {
-			errs2 := row2.Scan(&followerid)
-			if errs2 != nil {
-				fmt.Println("Error Scan:", errs2)
-				return
-			}
-		}
-	}
-	
 
-	var response map[string]interface{}
-
-	if followedtype == "public" {
-		var followed bool
-		var followedText string
-		if !checkAlreadyFollow(followerid, followedid) {
-			_, exec_err := dataB.SocialDB.Exec(`INSERT INTO Followers (followerId, followedId) VALUES (?,?)`, followerid, followedid)
-			if exec_err != nil {
-				fmt.Println("Error Insert into db:", exec_err)
-				return
-			}
-			followed = true
-			followedText = "Unfollow"
-		} else {
-			_, exec_err := dataB.SocialDB.Exec(`DELETE FROM Followers WHERE followerId=? AND followedId=?`, followerid, followedid)
-			if exec_err != nil {
-				fmt.Println("Error delete in db:", exec_err)
-				return
-			}
-			followed = false
-			followedText = "Follow"
-		}
-
-		var followers_count int
-		err = dataB.SocialDB.QueryRow("SELECT COUNT(*) FROM Followers WHERE followedId=?", followedid).Scan(&followers_count)
+	case "cancel_request":
+		_, err := db.Exec(`
+            DELETE FROM Notifications
+            WHERE senderId = ? AND receiverId = ? AND type = 'follow_request' AND status = 'pending'
+        `, userID, targetID)
 		if err != nil {
-			followers_count = 0
+			http.Error(w, "Couldn't cancel follow request", http.StatusInternalServerError)
+			return
 		}
 
-		response = map[string]interface{}{
-			"status":          followedText,
-			"followed":        followed,
-			"followers_count": followers_count,
-		}
-	} else if followedtype == "private" {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("follow"))
+		return
 
-		var followedText = "waiting for followed accept"
-		if checkAlreadyFollow(followerid, followedid) {
-			_, exec_err := dataB.SocialDB.Exec(`DELETE FROM Followers WHERE followerId=? AND followedId=?`, followerid, followedid)
-			if exec_err != nil {
-				fmt.Println("Error delete in db:", exec_err)
-				return
-			}
-			followedText = "Follow"
-		} else {
-			//insert into notifications table
-			_, err = dataB.SocialDB.Exec(`
-				INSERT INTO Notifications (senderId, receiverId, type, status, notificationDate)
-				VALUES (?, ?, 'follow_request', 'pending', ?)
-			`, followerid, followedid, time.Now().Format("2006-01-02 15:04:05"))
-			if err != nil {
-				log.Println("Error inserting notification:", err)
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-				return
-			}
-		}
-		
-		
-		var followers_count int
-		err = dataB.SocialDB.QueryRow("SELECT COUNT(*) FROM Followers WHERE followedId=?", followedid).Scan(&followers_count)
+	case "unfollow":
+		_, err := db.Exec(`
+            DELETE FROM Followers
+            WHERE followerId = ? AND followedId = ?
+        `, userID, targetID)
 		if err != nil {
-			followers_count = 0
+			http.Error(w, "Couldn't unfollow user", http.StatusInternalServerError)
+			return
 		}
-		
 
-		response = map[string]interface{}{
-			"status":          followedText,
-			"followed":        followedid,
-			"follower":        followerid,
-			"followers_count": followers_count,
-		}
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("follow"))
+		return
 	}
 
-	json.NewEncoder(w).Encode(response)
+	// fallback
+	http.Error(w, "Unknown error", http.StatusInternalServerError)
 }
 
-func checkAlreadyFollow(followerID, followedID int) bool {
-	rows, err := dataB.SocialDB.Query(`SELECT 1 FROM Followers WHERE followerId = ? AND followedId = ?`, followerID, followedID)
+type NotificationMessage struct {
+	ID               int64  `json:"id"`
+	Type             string `json:"type"`             // always "Notification"
+	NotificationType string `json:"notificationType"` // e.g. "follow_request"
+	FirstName        string `json:"firstName"`
+	LastName         string `json:"lastName"`
+	Avatar           string `json:"avatar"`
+}
+
+func SendMsg(conn *websocket.Conn, msg NotificationMessage) {
+	message, err := json.Marshal(msg)
 	if err != nil {
-		return false
+		fmt.Println("Error marshaling notification:", err)
+		return
 	}
-	defer rows.Close()
-	return rows.Next()
-}
 
+	err = conn.WriteMessage(websocket.TextMessage, message)
+	if err != nil {
+		fmt.Println("Error sending notification:", err)
+	}
+}
 
 type acceptFollow struct {
-	FollowerID int `json:"follower_id"`
+	FollowerID      int    `json:"follower_id"`
 	FollowedSession string `json:"followed_session"`
 }
-
 
 func AcceptFollowRequest(w http.ResponseWriter, r *http.Request) {
 	var followInfo acceptFollow
@@ -185,27 +205,23 @@ func AcceptFollowRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
-	
 	stmt, err := dataB.SocialDB.Prepare("UPDATE Notifications SET status = ? WHERE senderId = ? AND receiverId = ?")
-    if err != nil {
-        fmt.Println("Error change elem in db:", err)
+	if err != nil {
+		fmt.Println("Error change elem in db:", err)
 		return
-    }
-    defer stmt.Close()
+	}
+	defer stmt.Close()
 	_, err = stmt.Exec("accepted", followerid, followedid)
-    if err != nil {
-        fmt.Println("Error change elem in db:", err)
+	if err != nil {
+		fmt.Println("Error change elem in db:", err)
 		return
-    }
-
+	}
 
 	response := map[string]interface{}{
 		"status": "follow accepted successfuly",
 	}
 	json.NewEncoder(w).Encode(response)
 }
-
 
 func DeclineFollowRequest(w http.ResponseWriter, r *http.Request) {
 	var followInfo acceptFollow
@@ -225,20 +241,17 @@ func DeclineFollowRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
-	
 	stmt, err := dataB.SocialDB.Prepare("UPDATE Notifications SET status = ? WHERE senderId = ? AND receiverId = ?")
-    if err != nil {
-        fmt.Println("Error change elem in db:", err)
+	if err != nil {
+		fmt.Println("Error change elem in db:", err)
 		return
-    }
-    defer stmt.Close()
+	}
+	defer stmt.Close()
 	_, err = stmt.Exec("refused", followerid, followedid)
-    if err != nil {
-        fmt.Println("Error change elem in db:", err)
+	if err != nil {
+		fmt.Println("Error change elem in db:", err)
 		return
-    }
-
+	}
 
 	response := map[string]interface{}{
 		"status": "follow declined successfuly",

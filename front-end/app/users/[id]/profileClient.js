@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import FollowButton from './FollowButton';
@@ -9,24 +9,24 @@ import "../../../styles/global.css";
 import "../../profile/profile.css";
 import "../../home/home.css";
 import FollowersCard from "@/components/followersCard";
+import Avatar from "@/components/avatar/avatar";
 
 export default function ProfileClient({ session, searchParams }) {
     const [profileId, setProfileId] = useState(null);
     const [profileData, setProfileData] = useState(null);
     const [showFollowModal, setShowFollowModal] = useState(false);
-
+    const [errorMessage, setErrorMessage] = useState(null); 
     const { id } = useParams() || searchParams;
 
-    // Set profile ID
     useEffect(() => {
         setProfileId(id);
     }, [id]);
 
-    // Fetch profile data
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await fetch('http://localhost:8080/api/profile', {
+                     credentials: 'include',
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -36,23 +36,42 @@ export default function ProfileClient({ session, searchParams }) {
 
                 if (!response.ok) {
                     const errorText = await response.text();
-                    console.error('Error fetching data:', errorText);
+                    setErrorMessage(errorText || "Failed to load profile");
+                    setProfileData(null);
+                    console.error("Server error:", errorText);
                 } else {
                     const data = await response.json();
-                    setProfileData(data); // <-- Save it to state
-                    console.log("success data :", data);
+                    setProfileData(data);
+                    setErrorMessage(null); // clear error
+                    console.log("Success data:", data);
                 }
             } catch (error) {
-                console.error('Network error:', error);
+                console.error("Network error:", error);
+                setErrorMessage("Unable to connect to server");
+                setProfileData(null);
             }
         };
 
         if (id) fetchData();
     }, [id]);
 
-    // Show loading state if data not loaded yet
+    // Show error or loading state
     if (!profileData) {
-        return <div>Loading profile...</div>;
+        return (
+            <div className="profileContainer">
+                <SideBar />
+                <div className="classname df cl">
+                    <Header />
+                    <div className="userProfile" style={{ padding: "2rem", textAlign: "center" }}>
+                        {errorMessage ? (
+                            <div style={{ color: "gray", fontSize: "1.1rem" }}>⚠️ {errorMessage}</div>
+                        ) : (
+                            <div>Loading profile...</div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     const {
@@ -68,6 +87,10 @@ export default function ProfileClient({ session, searchParams }) {
     } = profileData;
 
 
+    //follow
+    //cancel_request
+    //unfollow
+
     return (
         <div className="profileContainer">
             <SideBar />
@@ -77,12 +100,10 @@ export default function ProfileClient({ session, searchParams }) {
                     <img className="coverture" src={"http://localhost:8080/uploads/coverture.png"} alt="Coverture" />
                     <div className="userdata gp12">
                         <div className="imgAndFollow sb">
-                            {personal_data[0].Avatar && <img className="userAvatar" src={"http://localhost:8080/" + personal_data[0].Avatar} alt="Avatar" />}
-                            {!personal_data[0].Avatar && (
-                                <div className="letterAvatar">
-                                    <span>{personal_data[0].Firstname[0].toUpperCase()}{personal_data[0].Lastname[0].toUpperCase()}</span>
-                                </div>
-                            )}
+                           
+                            <Avatar name={ personal_data[0].Firstname} url={personal_data[0].Avatar}/>
+
+                            
                             <div className="follow">
                                 <p onClick={() => setShowFollowModal(true)}><strong className="followers-number">{followers_count}</strong> Followers</p>
                                 <p onClick={() => setShowFollowModal(true)}><strong className="following-number">{followed_count}</strong> Following</p>
@@ -91,10 +112,10 @@ export default function ProfileClient({ session, searchParams }) {
                                 )}
                             </div>
                         </div>
+
                         <h2>{personal_data[0].Nickname || personal_data[0].Firstname + " " + personal_data[0].Lastname}</h2>
                         <p>{personal_data[0].About || personal_data[0].Firstname + "'s Profile"}</p>
                     </div>
-                    <hr />
                 </div>
 
                 {profile_type === "private" && (
@@ -104,15 +125,12 @@ export default function ProfileClient({ session, searchParams }) {
                     </div>
                 )}
 
-
                 {posts && posts.map((p, i) => (
                     <Post key={i} pst={p} />
                 ))}
             </div>
 
-
-
-
+            {/* Followers/Following Modal */}
             {showFollowModal && (
                 <div className="modal-backdrop" onClick={() => setShowFollowModal(false)} style={{
                     position: 'fixed',
@@ -139,17 +157,23 @@ export default function ProfileClient({ session, searchParams }) {
                     >
                         <div className="followers_modal">
                             <h2>Followers users</h2>
-                            {followers_data && followers_data.map((user) => (
-                                <FollowersCard key={user.ID} user={user} />
-                            ))}
-                            {!followers_data && <div>There is no followers</div>}
+                            {followers_data && followers_data.length > 0 ? (
+                                followers_data.map((user) => (
+                                    <FollowersCard key={user.ID} user={user} />
+                                ))
+                            ) : (
+                                <div>There is no followers</div>
+                            )}
                         </div>
                         <div className="followeds_modal">
                             <h2>Following users</h2>
-                            {followeds_data && followeds_data.map((user) => (
-                                <FollowersCard key={user.ID} user={user} />
-                            ))}
-                            {!followeds_data && <div>There is no following</div>}
+                            {followeds_data && followeds_data.length > 0 ? (
+                                followeds_data.map((user) => (
+                                    <FollowersCard key={user.ID} user={user} />
+                                ))
+                            ) : (
+                                <div>There is no following</div>
+                            )}
                         </div>
                         <button onClick={() => setShowFollowModal(false)} style={{ marginTop: '10px' }}>
                             Close

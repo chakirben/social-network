@@ -1,12 +1,20 @@
-import "../../styles/events.css"
+import "../../styles/eventInGroup.css"
+import Avatar from "../avatar/avatar";
 import Divider from "../divider"
-// import Event from "./event"
 
 export default function EventsList({ events, onRespond }) {
+    if (!Array.isArray(events) || events.length === 0) {
+        return (
+            <div className="noEvents">
+                <img className="noContent" src="/images/noContent.svg" alt="No content" />
+                No events created, be the first
+            </div>
+        );
+    }
 
     return (
         <>
-            {events ? events.map((event, index) => (
+            {events.map((event, index) => (
                 <div key={index}>
                     <div className="event">
                         <div className="eventData">
@@ -19,7 +27,7 @@ export default function EventsList({ events, onRespond }) {
                                 </div>
                                 <hr />
                                 <div className="avatarAndName">
-                                    <img className="eventAvatar" src={`http://localhost:8080/${event.avatar}`} alt="avatar" />
+                                   <Avatar url={event.avatar} name={event.title} />
                                     <p className="eventCreator">{event.firstName} {event.lastName}</p>
                                 </div>
                             </div>
@@ -41,9 +49,7 @@ export default function EventsList({ events, onRespond }) {
                     </div>
                     <Divider />
                 </div>
-            )) : <div className="noEvents">
-                <img className="noContent" src="/images/noContent.svg"></img>
-                 No events created, be the first</div>}
+            ))}
         </>
-    )
+    );
 }

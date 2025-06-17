@@ -2,8 +2,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ReactionGroup from './reactionGroup';
 import { timePassed } from '@/public/utils/timePassed';
+import Avatar from './avatar/avatar';
 
 export default function Post({ pst }) {
+    console.log("---------",pst);
+    
     const router = useRouter();
     const [modalOpen, setModalOpen] = useState(false);
     const [modalImageSrc, setModalImageSrc] = useState('');
@@ -23,7 +26,7 @@ export default function Post({ pst }) {
             <div className="post" onClick={() => router.push(`/post/${pst.id}`)}>
                 <div className="content df cl gp12">
                     <div className="userData">
-                        {pst?.avatar ? <img className="pic sm" src={`http://localhost:8080/${pst?.avatar}`} /> : ""}
+                        <Avatar url={pst.avatar} name={pst.creator} />
                         <h4>{pst?.creator}</h4>
                         <h5>{"• " + timePassed(pst?.created_at)}</h5>
                     </div>
@@ -32,10 +35,10 @@ export default function Post({ pst }) {
                     {pst.image && (
                         <img
                             className="pic nrml"
-                            src={`http://localhost:8080/${pst?.image}`}
+                            src={pst?.image}
                             onClick={(e) => {
-                                e.stopPropagation(); // prevent post click navigation
-                                openImageModal(`http://localhost:8080/${pst?.image}`);
+                                e.stopPropagation();
+                                openImageModal(pst?.image);
                             }}
                             style={{ cursor: 'pointer' }}
                         />
@@ -47,7 +50,7 @@ export default function Post({ pst }) {
                     dislikeCount={pst.dislike_count}
                     itemType="post"
                     itemId={pst.id}
-                    userReaction={pst.user_reaction}/>
+                    userReaction={pst.user_reaction} />
             </div>
 
             {modalOpen && (

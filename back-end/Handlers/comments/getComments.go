@@ -14,7 +14,7 @@ type Comment struct {
 	ID           int     `json:"id"`
 	Content      string  `json:"content"`
 	Image        *string `json:"image"`
-	FirstName    string  `json:"firstName"`
+	FirstName    string  `json:"firstName"` 
 	LastName     string  `json:"lastName"`
 	Avatar       *string `json:"avatar"`
 	CreatedAt    string  `json:"createdAt"`

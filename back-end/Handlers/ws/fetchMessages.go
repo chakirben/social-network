@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"sort"
+	"strconv"
 	"time"
 
 	"socialN/Handlers/auth"
@@ -16,6 +17,9 @@ type Message2 struct {
 	SentAt     time.Time `json:"sent_at"`
 	SenderID   int       `json:"sender_id"`
 	ReceiverID int       `json:"receiver_id,omitempty"`
+	FirstName  string    `json:"first_name"`
+	LastName   string    `json:"last_name"`
+	Avatar     string    `json:"avatar"`
 }
 
 func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
@@ -26,85 +30,108 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	msgType := r.URL.Query().Get("type")
-
-	var messages []Message2
-
 	switch msgType {
 	case "private":
-		otherID := r.URL.Query().Get("other_id")
-		if otherID == "" {
-			http.Error(w, "Missing 'other_id' parameter", http.StatusBadRequest)
-			return
-		}
-
-		query := `
-			SELECT 
-				m.content, 
-				m.sentAt,
-				m.senderId,
-				m.receiverId
-			FROM messages m
-			WHERE 
-				(m.senderId = ? AND m.receiverId = ?)
-				OR (m.senderId = ? AND m.receiverId = ?)
-			ORDER BY m.sentAt DESC
-			LIMIT 50;
-		`
-
-		rows, err := database.SocialDB.Query(query, userID, otherID, otherID, userID)
-		if err != nil {
-			fmt.Println(err)
-			http.Error(w, "Database error", http.StatusInternalServerError)
-			return
-		}
-		defer rows.Close()
-
-		for rows.Next() {
-			var msg Message2
-			err := rows.Scan(&msg.Content, &msg.SentAt, &msg.SenderID, &msg.ReceiverID)
-			if err != nil {
-				continue
-			}
-			messages = append(messages, msg)
-		}
-
+		handlePrivateMessages(w, r, userID)
 	case "group":
-		groupID := r.URL.Query().Get("group_id")
-		if groupID == "" {
-			http.Error(w, "Missing 'group_id' parameter", http.StatusBadRequest)
-			return
-		}
-
-		query := `
-			SELECT 
-				gm.content,
-				gm.sentAt,
-				gm.senderId
-			FROM GroupMessages gm
-			WHERE gm.groupId = ?
-			ORDER BY gm.sentAt DESC
-			LIMIT 50;
-		`
-
-		rows, err := database.SocialDB.Query(query, groupID)
-		if err != nil {
-			http.Error(w, "Database error", http.StatusInternalServerError)
-			return
-		}
-		defer rows.Close()
-
-		for rows.Next() {
-			var msg Message2
-			err := rows.Scan(&msg.Content, &msg.SentAt, &msg.SenderID)
-			if err != nil {
-				continue
-			}
-			messages = append(messages, msg)
-		}
-
+		handleGroupMessages(w, r)
 	default:
 		http.Error(w, "Invalid or missing 'type' parameter. Use 'private' or 'group'", http.StatusBadRequest)
+	}
+}
+
+func handlePrivateMessages(w http.ResponseWriter, r *http.Request, userID int) {
+	otherIDStr := r.URL.Query().Get("other_id")
+	if otherIDStr == "" {
+		http.Error(w, "Missing 'other_id' parameter", http.StatusBadRequest)
 		return
+	}
+
+	otherID, err := strconv.Atoi(otherIDStr)
+	if err != nil {
+		http.Error(w, "Invalid 'other_id' parameter", http.StatusBadRequest)
+		return
+	}
+
+	query := `
+		SELECT 
+			m.content, 
+			m.sentAt,
+			m.senderId,
+			m.receiverId,
+			u.firstName,
+			u.lastName,
+			u.avatar
+		FROM messages m
+		JOIN users u ON u.id = m.senderId
+		WHERE 
+			(m.senderId = ? AND m.receiverId = ?)
+			OR (m.senderId = ? AND m.receiverId = ?)
+		ORDER BY m.sentAt DESC
+		LIMIT 50;
+	`
+
+	rows, err := database.SocialDB.Query(query, userID, otherID, otherID, userID)
+	if err != nil {
+		fmt.Println("DB error:", err)
+		http.Error(w, "Error fetching messages", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	var messages []Message2
+	for rows.Next() {
+		var msg Message2
+		if err := rows.Scan(&msg.Content, &msg.SentAt, &msg.SenderID, &msg.ReceiverID, &msg.FirstName, &msg.LastName, &msg.Avatar); err == nil {
+			messages = append(messages, msg)
+		}
+	}
+
+	sort.Slice(messages, func(i, j int) bool {
+		return messages[i].SentAt.Before(messages[j].SentAt)
+	})
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(messages)
+}
+
+func handleGroupMessages(w http.ResponseWriter, r *http.Request) {
+	groupID := r.URL.Query().Get("group_id")
+	if groupID == "" {
+		http.Error(w, "Missing 'group_id' parameter", http.StatusBadRequest)
+		return
+	}
+
+	query := `
+		SELECT 
+			m.content, 
+			m.sentAt,
+			m.senderId,
+			0 as receiverId,
+			u.firstName,
+			u.lastName,
+			u.avatar
+		FROM GroupMessages m
+		JOIN users u ON u.id = m.senderId
+		WHERE m.groupId = ?
+		ORDER BY m.sentAt DESC
+		LIMIT 50;
+	`
+
+	rows, err := database.SocialDB.Query(query, groupID)
+	if err != nil {
+		fmt.Println("DB error:", err)
+		http.Error(w, "Error fetching group messages", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	var messages []Message2
+	for rows.Next() {
+		var msg Message2
+		if err := rows.Scan(&msg.Content, &msg.SentAt, &msg.SenderID, &msg.ReceiverID, &msg.FirstName, &msg.LastName, &msg.Avatar); err == nil {
+			messages = append(messages, msg)
+		}
 	}
 
 	sort.Slice(messages, func(i, j int) bool {

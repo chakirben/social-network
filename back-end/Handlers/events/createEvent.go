@@ -3,11 +3,15 @@ package events
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
 	sess "socialN/Handlers/auth"
+	"socialN/Handlers/ws"
 	database "socialN/dataBase"
+
+	"github.com/gorilla/websocket"
 )
 
 type Event struct {
@@ -20,7 +24,6 @@ type Event struct {
 	CreatedAt   time.Time `json:"created_at"`
 }
 
-// A separate input struct to decode raw ISO date string
 type EventInput struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
@@ -52,7 +55,6 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Parse ISO 8601 date from frontend
 	parsedDate, err := time.Parse(time.RFC3339, input.EventDate)
 	if err != nil {
 		http.Error(w, "Invalid date format: "+err.Error(), http.StatusBadRequest)
@@ -96,16 +98,31 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to insert event: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	eventID, err := result.LastInsertId()
 	if err != nil {
 		http.Error(w, "Failed to retrieve event ID: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+	resultNotif, err := database.SocialDB.Exec(`
+	INSERT INTO Notifications (type, senderId, receiverId, groupId, eventId, status)
+	SELECT 'new_event', ?, memberId, ?, ?, 'pending'
+	FROM GroupsMembers
+	WHERE groupId = ? AND memberId != ?`, 
+		userID, newEvent.GroupId, eventID, newEvent.GroupId, userID,
+	)
+	if err != nil {
+		http.Error(w, "Failed to insert notification: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
+	notificationId, err := resultNotif.LastInsertId()
+	if err != nil {
+		http.Error(w, "Failed to retrieve notification ID: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 	var createdEvent GetEvents
 	query := `
-		SELECT e.id, e.title, e.description, e.eventDate, e.creatorId,
+		SELECT e.id, e.title, e.description, e.eventDate,
 		       u.firstName, u.lastName, u.avatar, e.groupId,
 		       (SELECT COUNT(*) FROM EventsAttendance ea WHERE ea.eventId = e.id AND ea.isGoing = true) AS goingMembers,
 		       IFNULL((SELECT ea.isGoing FROM EventsAttendance ea WHERE ea.eventId = e.id AND ea.memberId = ? LIMIT 1), false) AS isUserGoing
@@ -119,7 +136,6 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 		&createdEvent.Title,
 		&createdEvent.Description,
 		&createdEvent.EventDate,
-		&createdEvent.CreatorId,
 		&createdEvent.FirstName,
 		&createdEvent.LastName,
 		&createdEvent.Avatar,
@@ -132,7 +148,75 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	rowss, err := database.SocialDB.Query("SELECT memberId FROM GroupsMembers WHERE groupId = ?", newEvent.GroupId)
+	if err != nil {
+		fmt.Println("Error fetching group members:", err)
+	}
+	fmt.Println("Group members fetched successfully")
+	for rowss.Next() {
+		var memberId int
+		if err := rowss.Scan(&memberId); err != nil {
+			fmt.Println("Error scanning memberId:", err)
+			continue
+		}
+
+		ws.ConnMu.Lock()
+		conns := ws.Connections[memberId]
+		ws.ConnMu.Unlock()
+
+		for _, conn := range conns {
+			if conn != nil {
+				avatarStr := ""
+				if createdEvent.Avatar != nil {
+					avatarStr = *createdEvent.Avatar
+				}
+
+				SendMessage(conn, EventNotification{
+					Id:               notificationId,
+					Type:             "Notification",
+					NotificationType: "event",
+					Title:            createdEvent.Title,
+					Description:      createdEvent.Description,
+					EventDate:        createdEvent.EventDate.String(),
+					FirstName:        createdEvent.FirstName,
+					LastName:         createdEvent.LastName,
+					Avatar:           avatarStr,
+				})
+			}
+		}
+	}
+
+	if err := rowss.Err(); err != nil {
+		fmt.Println("Error reading group members:", err)
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(createdEvent)
+}
+
+type EventNotification struct {
+	Id               int64    `json:"id"`
+	Type             string `json:"type"`
+	NotificationType string `json:"notificationType"`
+	ItemId           int    `json:"itemId"`
+	Title            string `json:"title"`
+	Description      string `json:"description"`
+	EventDate        string `json:"eventDate"`
+	FirstName        string `json:"firstName"`
+	LastName         string `json:"lastName"`
+	Avatar           string `json:"avatar"`
+}
+
+func SendMessage(conn *websocket.Conn, msg EventNotification) {
+	fmt.Println("Sending message to client:", msg)
+	message, err := json.Marshal(msg)
+	if err != nil {
+		return
+	}
+	err = conn.WriteMessage(websocket.TextMessage, message)
+	if err != nil {
+		fmt.Println("Error sending message:", err)
+		return
+	}
 }

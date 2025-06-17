@@ -1,6 +1,7 @@
 package profile
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -12,7 +13,7 @@ import (
 )
 
 type ProfileOwner struct {
-	ID string `json:"id"`
+	ID      string `json:"id"`
 	Session string `json:"session"`
 }
 
@@ -27,51 +28,63 @@ type FollowData struct {
 
 func GetData(w http.ResponseWriter, r *http.Request) {
 	var profile_owner ProfileOwner
-	//decode the request into the struct
 	err := json.NewDecoder(r.Body).Decode(&profile_owner)
 	if err != nil {
-		fmt.Println("Invalid Json:", err)
+		http.Error(w, "Invalid JSON body", http.StatusBadRequest)
+		log.Println("Invalid JSON decode:", err)
 		return
 	}
 
-	//get account type of the user
 	var accountType interface{}
 	err = dataB.SocialDB.QueryRow("SELECT accountType FROM Users WHERE id=?", profile_owner.ID).Scan(&accountType)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		log.Println("Error fetching account type:", err)
+		if err == sql.ErrNoRows {
+			http.Error(w, "Account not found", http.StatusNotFound)
+		} else {
+			http.Error(w, "Internal server error while fetching account type", http.StatusInternalServerError)
+		}
 		return
 	}
 
-	//get the user id from the username
 	user_id, _ := strconv.Atoi(profile_owner.ID)
 
-	//get the user if of the loggedin
 	var logged_user_id int
 	err = dataB.SocialDB.QueryRow("SELECT userId FROM Sessions WHERE id=?", profile_owner.Session).Scan(&logged_user_id)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		log.Println("Error fetching session:", err)
+		if err == sql.ErrNoRows {
+			http.Error(w, "Session not found", http.StatusNotFound)
+		} else {
+			http.Error(w, "Internal server error while checking session", http.StatusInternalServerError)
+		}
 		return
 	}
 
-	//get personal data of profile owner
 	var personal_data []interface{}
 	var data FollowData
 	err = dataB.SocialDB.QueryRow("SELECT nickname, firstName, lastName, avatar, about FROM Users WHERE id=?", user_id).Scan(&data.Nickname, &data.Firstname, &data.Lastname, &data.Avatar, &data.About)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		log.Println("Error fetching personal data:", err)
+		if err == sql.ErrNoRows {
+			http.Error(w, "User not found", http.StatusNotFound)
+		} else {
+			http.Error(w, "Internal server error while fetching personal data", http.StatusInternalServerError)
+		}
 		return
 	}
 	personal_data = append(personal_data, data)
 
-	//count how much followers and followeds
 	var followers_count int
 	var followed_count int
 	err = dataB.SocialDB.QueryRow("SELECT COUNT(*) FROM Followers WHERE followedId=?", user_id).Scan(&followers_count)
 	if err != nil {
+		log.Println("Error fetching followers count:", err)
 		followers_count = 0
 	}
 	err = dataB.SocialDB.QueryRow("SELECT COUNT(*) FROM Followers WHERE followerId=?", user_id).Scan(&followed_count)
 	if err != nil {
+		log.Println("Error fetching followed count:", err)
 		followed_count = 0
 	}
 
@@ -79,12 +92,14 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 	var followeds []interface{}
 	posts := []map[string]interface{}{}
 	var profile_type string
+
 	if accountType == "public" || checkAlreadyFollow(logged_user_id, user_id) {
 		profile_type = "public"
-		//get followers
+
 		rows, errf := dataB.SocialDB.Query(`SELECT followerId FROM Followers WHERE followedId=?`, user_id)
 		if errf != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			log.Println("Error fetching followers list:", errf)
+			http.Error(w, "Internal server error fetching followers", http.StatusInternalServerError)
 			return
 		}
 		defer rows.Close()
@@ -93,22 +108,22 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 			var follower_id int
 			err = rows.Scan(&follower_id)
 			if err != nil {
-				follower_id = 0
+				log.Println("Error scanning follower ID:", err)
+				continue
 			}
 
 			err = dataB.SocialDB.QueryRow("SELECT id, nickname, firstName, lastName, avatar, about FROM Users WHERE id=?", follower_id).Scan(&followerData.ID, &followerData.Nickname, &followerData.Firstname, &followerData.Lastname, &followerData.Avatar, &followerData.About)
 			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				return
+				log.Println("Error fetching follower data:", err)
+				continue
 			}
-
 			followers = append(followers, followerData)
 		}
 
-		//get followeds
 		rowsd, errd := dataB.SocialDB.Query(`SELECT followedId FROM Followers WHERE followerId=?`, user_id)
 		if errd != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			log.Println("Error fetching followeds list:", errd)
+			http.Error(w, "Internal server error fetching followeds", http.StatusInternalServerError)
 			return
 		}
 		defer rowsd.Close()
@@ -117,20 +132,18 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 			var followed_id int
 			err = rowsd.Scan(&followed_id)
 			if err != nil {
-				followed_id = 0
+				log.Println("Error scanning followed ID:", err)
+				continue
 			}
 
 			err = dataB.SocialDB.QueryRow("SELECT id, nickname, firstName, lastName, avatar, about FROM Users WHERE id=?", followed_id).Scan(&followedData.ID, &followedData.Nickname, &followedData.Firstname, &followedData.Lastname, &followedData.Avatar, &followedData.About)
 			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				return
+				log.Println("Error fetching followed data:", err)
+				continue
 			}
-
 			followeds = append(followeds, followedData)
 		}
 
-
-		//get posts
 		query := `
 			SELECT
 				p.id,
@@ -151,7 +164,7 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 		rows, err := dataB.SocialDB.Query(query, user_id, user_id)
 		if err != nil {
 			log.Println("Error fetching created posts:", err)
-			http.Error(w, "Error fetching created posts", http.StatusInternalServerError)
+			http.Error(w, "Internal server error fetching posts", http.StatusInternalServerError)
 			return
 		}
 		defer rows.Close()
@@ -166,7 +179,7 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 
 			err := rows.Scan(&postID, &content, &image, &avatar, &firstName, &lastName, &likeCount, &dislikeCount, &userReaction, &createdAt)
 			if err != nil {
-				log.Println("Error scanning row:", err)
+				log.Println("Error scanning post:", err)
 				continue
 			}
 
@@ -188,27 +201,22 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 		profile_type = "private"
 	}
 
-	//check if the visitor is the profile ownwer
-	var profile_status = "auther"
+	profile_status := "auther"
 	if logged_user_id == user_id {
 		profile_status = "mine"
 	}
 
-
-	//check if the logged use is already follow the profile owner
 	var follow_status string
 	if checkAlreadyFollow(logged_user_id, user_id) {
-		follow_status = "Unfollow"
-	} else if !checkAlreadyFollow(logged_user_id, user_id) {
-		follow_status = "Follow"
+		follow_status = "unfollow"
+	} else {
+		follow_status = "follow"
 	}
 
-	//check if the follower send follow request to followed
 	if checkAlreadyFollowRequest(logged_user_id, user_id) {
-		follow_status = "waiting for followed accept"
+		follow_status = "cancel_request"
 	}
 
-	//send response
 	response := map[string]interface{}{
 		"personal_data":   personal_data,
 		"followers_count": followers_count,
@@ -216,25 +224,26 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 		"followers_data":  followers,
 		"followeds_data":  followeds,
 		"posts":           posts,
-		"follow_status": follow_status,
-		"profile_status": profile_status,
-		"profile_type": profile_type,
+		"follow_status":   follow_status,
+		"profile_status":  profile_status,
+		"profile_type":    profile_type,
 	}
-	json.NewEncoder(w).Encode(response)
+	err = json.NewEncoder(w).Encode(response)
+	if err != nil {
+		log.Println("Failed to encode response:", err)
+		http.Error(w, "Failed to send response", http.StatusInternalServerError)
+	}
 }
-
-
-
 
 func checkAlreadyFollow(followerID, followedID int) bool {
 	rows, err := dataB.SocialDB.Query(`SELECT 1 FROM Followers WHERE followerId = ? AND followedId = ?`, followerID, followedID)
 	if err != nil {
+		log.Println("DB error in checkAlreadyFollow:", err)
 		return false
 	}
 	defer rows.Close()
 	return rows.Next()
 }
-
 
 func checkAlreadyFollowRequest(followerID, followedID int) bool {
 	rows, err := dataB.SocialDB.Query(`
@@ -242,6 +251,7 @@ func checkAlreadyFollowRequest(followerID, followedID int) bool {
 		WHERE senderId = ? AND receiverId = ? AND type = 'follow_request' AND status = 'pending'
 	`, followerID, followedID)
 	if err != nil {
+		log.Println("DB error in checkAlreadyFollowRequest:", err)
 		return false
 	}
 	defer rows.Close()

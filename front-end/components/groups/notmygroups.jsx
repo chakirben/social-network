@@ -33,7 +33,7 @@ export default function NoMyGroup({ group }) {
                        <div className="cancel" onClick={() => CancelToJoingroup(group.Id)}>cancel</div>
                     </>
                 ) : (
-                    <button id="buttontoseegroup" onClick={() => Jointogroup(group.Id)}>Join</button>
+                    <button className="tertiary" onClick={() => Jointogroup(group.Id)}>Join</button>
                 )
                 }
             </div>

@@ -71,7 +71,7 @@ export default function JustMyGroupsPage() {
           pageName="Groups"
           ele={
             <button onClick={handleCreateGroupClick} className="create-group-btn">
-              + Create Group
+              + Create
             </button>
           }
         />

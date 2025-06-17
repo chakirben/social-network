@@ -4,6 +4,7 @@
 }
 .leftSection {
     gap: 24px;
+    margin-top: 24px;
     border-right: 1px solid rgba(255, 255, 255, 0.123);
 }
 small  {
@@ -24,6 +25,7 @@ small  {
 
 .online-users-container {
   display: flex;
+  max-width: 300px;
   flex-direction: row;
   gap: 12px;
   padding: 10px 0;
@@ -161,7 +163,7 @@ small  {
 .online-users-container {
   max-height: 80px;
   padding-bottom: 15px;
-  margin-left: 40px;
+  margin-left: 16px;
 }
 
 /* Smooth scrolling for horizontal scroll */
@@ -249,9 +251,14 @@ small  {
 }
 
 .MessagesContainer {
+  scrollbar-width: none;
+    -ms-overflow-style: none;
+    overflow-y: auto;
+    overflow-y: scroll;
+    height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap:16px;
   overflow-y: auto;
   flex-grow: 1;
   padding: 24px;
@@ -262,4 +269,10 @@ small  {
 .chatView {
   flex-grow: 1  ;
   height: 100vh;
+}
+.online {
+  background: green;
+}
+.offline {
+  background: gray;
 }

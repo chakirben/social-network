@@ -1,8 +1,9 @@
 import { timePassed } from "@/public/utils/timePassed";
 import ReactionGroup from "./reactionGroup";
+import Avatar from "./avatar/avatar";
+import Divider from "./divider";
 
 export default function Comment({ comment }) {
-    console.log(comment);
 
     const { id, content, image, firstName, lastName, avatar, createdAt } = comment;
     const fullName = `${firstName} ${lastName}`;
@@ -11,13 +12,7 @@ export default function Comment({ comment }) {
         <article className="comment">
             <div className="content">
                 <div className="headerContainer">
-                    {avatar && (
-                        <img
-                            className="commentAvatar"
-                            src={`http://localhost:8080${avatar}`}
-
-                        />
-                    )}
+                    <Avatar url={avatar} name={firstName} />
                     <div className="commentHeader">
                         <div className="authorAndTime">
                             <p className="commentAuthor">{fullName}</p>
@@ -31,12 +26,13 @@ export default function Comment({ comment }) {
                 {image && (
                     <img
                         className="commentImage"
-                        src={`http://localhost:8080/${image}`}
+                        src={image}
                         alt="Attached to comment"
                     />
                 )}
             </div>
             <ReactionGroup className="reactionsContainer df gp12" likeCount={comment.likeCount} dislikeCount={comment.dislikeCount} itemType="comment" itemId={comment.id} userReaction={comment.userReaction} ></ReactionGroup>
+            <Divider />
         </article>
     );
 }

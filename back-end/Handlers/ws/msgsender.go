@@ -5,9 +5,10 @@ import (
 
 	dataB "socialN/dataBase"
 )
+
 func RedirectMessage(msg Message) error {
 	allowed := checkAuthorisation(msg)
-	if (! allowed) {
+	if !allowed {
 		return fmt.Errorf("Not allowed to msg this user")
 	}
 	_, err := dataB.SocialDB.Exec(`
@@ -15,6 +16,13 @@ func RedirectMessage(msg Message) error {
 		VALUES (?, ?, ?)`, msg.Sender, msg.Receiver, msg.Content)
 	if err != nil {
 		return fmt.Errorf("error inserting message into database: %v", err)
+	}
+
+	err = dataB.SocialDB.QueryRow(`
+		SELECT firstName, lastName, avatar FROM Users WHERE id = ?
+	`, msg.Sender).Scan(&msg.FirstName, &msg.LastName, &msg.Avatar)
+	if err != nil {
+		return fmt.Errorf("error fetching user details: %v", err)
 	}
 	for _, conn := range Connections[msg.Receiver] {
 		err := conn.WriteJSON(msg)
@@ -33,6 +41,7 @@ func RedirectMessage(msg Message) error {
 }
 
 func checkAuthorisation(msg Message) bool {
+	fmt.Println("_________", msg.Sender, msg.Receiver)
 	var isFollowing bool
 	err := dataB.SocialDB.QueryRow(`
 		SELECT EXISTS(

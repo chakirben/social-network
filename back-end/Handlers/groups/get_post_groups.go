@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"socialN/Handlers/auth"
-	dataB "socialN/dataBase"
 	"strconv"
 	"time"
+
+	"socialN/Handlers/auth"
+	dataB "socialN/dataBase"
 )
 
 type Posts struct {
@@ -16,6 +17,7 @@ type Posts struct {
 	Content      string    `json:"content"`
 	FirstName    string    `json:"creator"`
 	LastName     string    `json:"groupid"`
+	Avatar       string    `json:"avatar"`
 	LikeCount    *int      `json:"like_count"`
 	DislikeCount *int      `json:"dislike_count"`
 	UserReaction *int      `json:"user_reaction"`
@@ -54,6 +56,7 @@ func GetPostGroups(w http.ResponseWriter, r *http.Request) {
 		  P.image,
 		  U.firstName,
           U.lastName,
+          U.avatar,
           P.createdAt,
 		  	(SELECT COUNT(*) FROM postReactions WHERE postId = p.id AND reactionType = 1) AS likeCount,
 			(SELECT COUNT(*) FROM postReactions WHERE postId = p.id AND reactionType = -1) AS dislikeCount,
@@ -75,7 +78,7 @@ func GetPostGroups(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var P Posts
 		if err := rows.Scan(&P.Id, &P.Content, &P.Image,
-			&P.FirstName, &P.LastName, &P.CreatedAt, &P.LikeCount, &P.DislikeCount, &P.UserReaction); err != nil {
+			&P.FirstName, &P.LastName,&P.Avatar, &P.CreatedAt, &P.LikeCount, &P.DislikeCount, &P.UserReaction); err != nil {
 			fmt.Println("error to get posts groups", err)
 			http.Error(w, "error to get posts groups", http.StatusInternalServerError)
 			return

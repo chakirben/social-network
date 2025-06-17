@@ -8,5 +8,5 @@ CREATE TABLE IF NOT EXISTS Users (
     dateOfBirth DATETIME NOT NULL,
     avatar TEXT,
     about TEXT,
-    accountType TEXT
+    accountType TEXT NOT NULL DEFAULT 'public',
 );

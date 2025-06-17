@@ -1,42 +1,67 @@
 import { useRouter } from 'next/navigation';
-import { use, useState } from 'react';
-import Avatar  from './avatar';
+import { useState } from 'react';
+import Avatar from './avatar/avatar';
 
 export default function UserCard({ user }) {
     const router = useRouter();
-    const [isFollowed, setIsfollowed] = useState(user.requested)
-    const followReq = async (id) => {
+
+    const [hasRequested, setHasRequested] = useState(user.hasRequested);
+    const [isFollowed, setIsFollowed] = useState(user.isFollowed);
+
+    const getInitialBtnText = () => {
+        if (hasRequested) return "cancel_request";
+        if (isFollowed) return "unfollow";
+        return "follow";
+    };
+
+    const [btnText, setBtnText] = useState(getInitialBtnText());
+
+    const followReq = async (id, action) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/follow?id=${id}`, { credentials: "include" });
+            const response = await fetch(`http://localhost:8080/api/follow?id=${id}&action=${action}`, {
+                credentials: "include",
+            });
+
             if (response.ok) {
-                if (isFollowed) {
-                    setIsfollowed(false)
-                } else {
-                    setIsfollowed(true)
+                const newText = await response.text();
+
+                if (newText === "follow") {
+                    setIsFollowed(false);
+                    setHasRequested(false);
+                } else if (newText === "cancel_request") {
+                    setHasRequested(true); 
+                    setIsFollowed(false);
+                } else if (newText === "unfollow") {
+                    setIsFollowed(true);
+                    setHasRequested(false);
                 }
+
+                setBtnText(newText);
             }
         } catch (error) {
-            console.error("Error fetching posts:", error);
+            console.error("Error sending follow request:", error);
         }
-    }
+    };
+
     return (
         <div className="userCard" onClick={() => router.push(`/users/${user.id}`)}>
-            {user.avatar ? (
-                <img
-                    className="userAvatar"
-                    src={`http://localhost:8080/${user.avatar}`}
-                    alt={`${user.firstName}'s avatar`}
-                />
-            ) : (
-                //<div className="userAvatar fallback" />
-                <Avatar user={user} />
-            )}
+            <Avatar url={user.avatar} name={user.firstName} />
             <div className="userInfo">
                 <div className="userName">{user.firstName} {user.lastName}</div>
                 <div className="followerCount">{user.followerCount} followers</div>
             </div>
-            <button className={isFollowed ? "followedBtn" : "follow"} onClick={()=>{followReq(user.id)}}>
-                {isFollowed ? "cancel follow" : "follow"}
+            <button
+                className={
+                    btnText === "unfollow" || btnText === "cancel_request"
+                        ? "followedBtn"
+                        : "follow"
+                }
+                onClick={(e) => {
+                    e.stopPropagation();
+                    followReq(user.id, btnText);
+                }}
+            >
+                {btnText}
             </button>
         </div>
     );

@@ -63,7 +63,7 @@ export default function PostPage({ params }) {
                         ))
                     )}
                 </div>
-                <CommentInput id={id}></CommentInput>
+                <CommentInput id={id} setComments={setComments}></CommentInput>
             </div>
         </div>
     );

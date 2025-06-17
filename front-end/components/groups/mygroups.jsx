@@ -15,7 +15,7 @@ export default function MyGroup({ group }) {
                 </div>
             </div>
             <div className="buttonjoin">
-                <button href={`/groups/${group.Id}`} onClick={() => router.push(`/groups/${group.Id}?title=${group.Title}`) }>View</button>
+                <button className='secondaryBtn' href={`/groups/${group.Id}`} onClick={() => router.push(`/groups/${group.Id}?title=${group.Title}`) }>View</button>
             </div>
         </div>
     );

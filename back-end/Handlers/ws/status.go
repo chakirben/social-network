@@ -25,8 +25,8 @@ type StatusMessage struct {
 }
 
 func notifyStatusChange(statusType string, userID int) {
-	connMu.Lock()
-	defer func() { connMu.Unlock(); println("f5321") }()
+	ConnMu.Lock()
+	defer func() { ConnMu.Unlock(); println("f5321") }()
 
 	// Find followers of the user
 	query := `
@@ -84,7 +84,7 @@ func notifyStatusChange(statusType string, userID int) {
 }
 
 func removeConn(userID int, conn *websocket.Conn) {
-	connMu.Lock()
+	ConnMu.Lock()
 
 	conns := Connections[userID]
 	for i, c := range conns {
@@ -93,7 +93,7 @@ func removeConn(userID int, conn *websocket.Conn) {
 			break
 		}
 	}
-	connMu.Unlock()
+	ConnMu.Unlock()
 
 	if len(Connections[userID]) == 0 {
 		delete(Connections, userID)
