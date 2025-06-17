@@ -2,18 +2,21 @@
 import { useEffect, useState } from "react"
 import UserCard from "@/components/userCard"
 
-export default function InviteFollowersToGroups({ onSkip }) {
+export default function InviteFollowersToGroups({ onSkip, groupId }) {
     const [allFollowers, setAllFollowers] = useState([])
 
     useEffect(() => {
         const getFollowers = async () => {
             try {
-                const rep = await fetch("http://localhost:8080/api/getFollowersList", {
+                const rep = await fetch("http://localhost:8080/api/getFollowers", {
                     method: "POST",
                     credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
                     },
+                    body: JSON.stringify({
+                        groupId: parseInt(groupId, 10)
+                    }),
                 });
 
                 if (!rep.ok) {
@@ -38,7 +41,7 @@ export default function InviteFollowersToGroups({ onSkip }) {
                 <div className="AllFollowersToInvite">
                     {allFollowers && allFollowers.length > 0 ? (
                         allFollowers.map((user) => (
-                            <UserCard key={user.id} user={user} invite="+ invite" />
+                            <UserCard key={user.id} user={user} invite="+invite" groupId={groupId} />
                         ))
                     ) : (
                         <div>No followers to display.</div>

@@ -9,7 +9,7 @@ import CreateEvent from '@/components/createEventForm';
 import Avatar from '@/components/avatar/avatar';
 import { useUser } from '@/components/context/userContext';
 import Header from '@/components/Header/header';
-import InviteToGroups from "@/components/groups/invite_to_groups"
+import InviteToGroups from "@/components/groups/infite_followers_to_join"
 
 
 export default function GroupDetails({ groupId }) {
@@ -50,6 +50,7 @@ export default function GroupDetails({ groupId }) {
                 setError('You are not allowed to access this group.')
             }
             const PostsGroupData = await rep.json();
+
             setPostsGroup(PostsGroupData || []);
         } catch (error) {
             console.error("Error fhomeetching posts:", error);
@@ -237,7 +238,7 @@ export default function GroupDetails({ groupId }) {
                             )}
 
                             {showInviteForm && (
-                                <InviteToGroups onSkip={() => setShowInviteForm(false)} />
+                                <InviteToGroups groupId={groupId} onSkip={() => setShowInviteForm(false)} />
                             )}
                         </>
                     )}
