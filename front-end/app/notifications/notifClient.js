@@ -4,7 +4,7 @@ import SideBar from "@/components/sidebar";
 import "../home/home.css"
 import { use, useState, useEffect } from "react";
 import AcceptFollow from "./acceptFollow"
-import UserNotifications from "@/components/notification";
+import UserNotifications from "@/components/Notification/notification";
 import React from "react";
 
 
@@ -17,6 +17,7 @@ export default function NotifClient(session) {
             try {
                 const response = await fetch('http://localhost:8080/api/getNotifications', {
                     method: 'POST',
+                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -24,7 +25,7 @@ export default function NotifClient(session) {
                 });
 
                 if (!response.ok) {
-                    const errorText = await response.text();
+                    const errorText = await response.json();
                     console.error('Error fetching data:', errorText);
                 } else {
                     const data = await response.json();

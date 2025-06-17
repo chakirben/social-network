@@ -94,7 +94,6 @@ func SetupHandlers() {
 	// users
 	http.HandleFunc("/api/getUserData", AccessMiddleware(u.GetCurrentUserData))
 	http.HandleFunc("/api/getUnfollowedUsers", AccessMiddleware(u.GetUnfollowedUsers))
-
 	http.HandleFunc("/api/updatePrivacy", AccessMiddleware(u.SetPrivacy))
 	http.HandleFunc("/api/getFollowersList", AccessMiddleware(u.GetFollowersListHandler))
 
