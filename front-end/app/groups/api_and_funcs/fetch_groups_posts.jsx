@@ -103,14 +103,19 @@ export default function GroupDetails({ groupId }) {
         } else {
 
             try {
-                const res = await homefetch('http://localhost:8080/api/CreatePost', {
+                const res = await fetch('http://localhost:8080/api/CreatePost', {
                     method: 'POST',
                     body: formData,
                     credentials: 'include',
 
                 });
                 const result = await res.json();
-                setPostsGroup((pv) => [result, ...pv])
+
+                setPostsGroup((pv) => ({
+                    ...pv,
+                    allposts: [result, ...(pv.allposts || [])]
+                }));
+
 
                 setText('');
                 setImageSrc(null);
@@ -118,7 +123,8 @@ export default function GroupDetails({ groupId }) {
             } catch (err) {
                 console.error('Post failed:', err);
             }
-        } home
+        }
+        fetchPosts()
     };
 
 
@@ -223,22 +229,22 @@ export default function GroupDetails({ groupId }) {
                                     <>{`No posts yet in this group creat a one.. (:`}</>
                                 )}
 
-                            {!isLoading && activeTab === "events" && (
-                                <>
-                                    <CreateEvent setEvents={setEvents} events={events} />
-                                    {events.length > 0 ? (
-                                        <GroupEventsPage id={groupId} events={events} setEvents={setEvents} />
-                                    ) : (
-                                        <div className="noEvents">
-                                            <img className="noContent" src="/images/noContent.svg" alt="No content" />
-                                            No events created, be the first
-                                        </div>
-                                    )}
-                                </>
-                            )}
-
                             {showInviteForm && (
                                 <InviteToGroups groupId={groupId} onSkip={() => setShowInviteForm(false)} />
+                            )}
+                        </>
+                    )}
+
+                    {!isLoading && activeTab === "events" && (
+                        <>
+                            <CreateEvent setEvents={setEvents} events={events} />
+                            {events.length > 0 ? (
+                                <GroupEventsPage id={groupId} events={events} setEvents={setEvents} />
+                            ) : (
+                                <div className="noEvents">
+                                    <img className="noContent" src="/images/noContent.svg" alt="No content" />
+                                    No events created, be the first
+                                </div>
                             )}
                         </>
                     )}

@@ -2,7 +2,6 @@ package groups
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"socialN/Handlers/auth"
@@ -10,12 +9,11 @@ import (
 )
 
 type TheUserInvited struct {
-	UserId  int `json:"userId"`  
-	GroupId int `json:"groupId"`  
+	UserId  int `json:"userId"`
+	GroupId int `json:"groupId"`
 }
 
 func InfiteTheFollowers(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
 	userID, err := auth.ValidateSession(r, dataB.SocialDB)
 	if err != nil {
 		http.Error(w, "Invalid session :(", http.StatusUnauthorized)
@@ -25,7 +23,6 @@ func InfiteTheFollowers(w http.ResponseWriter, r *http.Request) {
 	var userIDToInvite TheUserInvited
 	err = json.NewDecoder(r.Body).Decode(&userIDToInvite)
 	if err != nil {
-		fmt.Println("GGHHH hi ysosf", err)
 		http.Error(w, "Invalid JSON :(", http.StatusBadRequest)
 		return
 	}
