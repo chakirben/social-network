@@ -16,8 +16,6 @@ export default async function FetchJoinToGroup(groupId) {
         if (rep.status !== 202) {
             throw new Error("Failed to send Request to join the group");
         }
-
-        return "pending"
        
     } catch (error) {
         console.error("Error sending the join request:", error.message || error);

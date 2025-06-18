@@ -37,7 +37,7 @@ func CancelRequestToJoinGroups(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query2 := `
-       DELETE FROM Notifications WHERE senderId = ? AND  groupId = ?
+       DELETE FROM Notifications WHERE senderId = ? AND type = "group_join_request" AND  groupId = ?
     `
 
 	_, err = dataB.SocialDB.Exec(query2, userID, req.GroupID)

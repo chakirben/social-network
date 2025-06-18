@@ -62,8 +62,8 @@ func GetGroupsUserNotJoined(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var exists bool
-		checkQuery := `SELECT EXISTS(SELECT 1 FROM Notifications WHERE groupId = ?  AND  type = "group_join_request"  LIMIT 1);`
-		err := dataB.SocialDB.QueryRow(checkQuery, g.Id).Scan(&exists)
+		checkQuery := `SELECT EXISTS(SELECT 1 FROM Notifications WHERE senderId = ? AND groupId = ?  AND  type = "group_join_request"  LIMIT 1);`
+		err := dataB.SocialDB.QueryRow(checkQuery, userID, g.Id).Scan(&exists)
 		if err != nil {
 			fmt.Println("error checking notification for group:", err)
 			http.Error(w, "error checking notification", http.StatusInternalServerError)
@@ -71,7 +71,7 @@ func GetGroupsUserNotJoined(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if exists {
-			g.Status = "pending"
+			g.Status = "Cancel"
 		} else {
 			g.Status = "Join"
 		}
