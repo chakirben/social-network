@@ -15,16 +15,17 @@ type TheUserInvited struct {
 }
 
 func InfiteTheFollowers(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
 	userID, err := auth.ValidateSession(r, dataB.SocialDB)
 	if err != nil {
 		http.Error(w, "Invalid session :(", http.StatusUnauthorized)
 		return
 	}
-	fmt.Println("user", userID)
+
 	var userIDToInvite TheUserInvited
 	err = json.NewDecoder(r.Body).Decode(&userIDToInvite)
 	if err != nil {
-		fmt.Println("GGHHH", err)
+		fmt.Println("GGHHH hi ysosf", err)
 		http.Error(w, "Invalid JSON :(", http.StatusBadRequest)
 		return
 	}
@@ -45,5 +46,4 @@ func InfiteTheFollowers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusAccepted)
-	w.Write([]byte("Invitation sent successfully"))
 }

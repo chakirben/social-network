@@ -1,6 +1,7 @@
 package groups
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -17,7 +18,6 @@ type Followers struct {
 	Avatar    string `json:"avatar"`
 	Status    string `json:"status"`
 }
-
 
 type GroupInvite struct {
 	GroupID int `json:"groupId"`
@@ -37,7 +37,6 @@ func GetFollowersList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	query := `
 		SELECT u.id, u.firstName, u.lastName, u.avatar
 		FROM Followers f
@@ -55,24 +54,23 @@ func GetFollowersList(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var u Followers
 		if err := rows.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Avatar); err != nil {
-			log.Println("Row scan error:", err)
 			http.Error(w, "Server error", http.StatusInternalServerError)
 			return
 		}
 
-		var exists bool
-		checkQuery := `SELECT EXISTS(SELECT 1 FROM Notifications WHERE groupId = ?  AND  type = "group_invite" AND senderId = ? AND receiverId = ? LIMIT 1);`
-		err := dataB.SocialDB.QueryRow(checkQuery, Group.GroupID , userID , u.ID).Scan(&exists)
-		if err != nil {
+		var status sql.NullString
+		checkQuery := `SELECT status FROM Notifications WHERE groupId = ? AND type = 'group_invite' AND senderId = ? AND receiverId = ? LIMIT 1;`
+		err := dataB.SocialDB.QueryRow(checkQuery, Group.GroupID, userID, u.ID).Scan(&status)
+		if err != nil && err != sql.ErrNoRows {
 			fmt.Println("error checking notification for group:", err)
-			http.Error(w, "error checking notification", http.StatusInternalServerError)
+			http.Error(w, "Error checking notification", http.StatusInternalServerError)
 			return
 		}
 
-		if exists {
-			u.Status = "INVITE"
+		if status.Valid {
+			u.Status = "Cancel-Invite"
 		} else {
-			u.Status = "CancelInvite"
+			u.Status = "+invite"
 		}
 
 		users = append(users, u)

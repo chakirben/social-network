@@ -2,6 +2,7 @@ package groups
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"socialN/Handlers/auth"
@@ -19,19 +20,21 @@ func CancelInviteToGroups(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid session :(", http.StatusUnauthorized)
 		return
 	}
-
+	
 	var req CancelInvite
 	err = json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
+		fmt.Println("ffhhhh", err)
 		http.Error(w, "Invalid JSON :(", http.StatusBadRequest)
 		return
 	}
-
+	
 	if req.GroupID < 1 {
 		http.Error(w, "Invalid request :(", http.StatusBadRequest)
 		return
 	}
 
+	fmt.Println("hui666666",req.GroupID)
 	query2 := `
        DELETE FROM Notifications WHERE senderId = ? AND receiverId = ? AND groupId = ? AND type = 'group_invite'
     `

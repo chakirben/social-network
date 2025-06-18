@@ -10,6 +10,8 @@ export default function UserCard({ user, invite, groupId }) {
     const [hasRequested, setHasRequested] = useState(user.hasRequested);
     const [isFollowed, setIsFollowed] = useState(user.isFollowed);
 
+    const [clickToInvite ,  setclickToInvite] = useState(user.status)
+
     const getInitialBtnText = () => {
         if (hasRequested) return "cancel_request";
         if (isFollowed) return "unfollow";
@@ -46,27 +48,29 @@ export default function UserCard({ user, invite, groupId }) {
     };
 
     const handlerToInvite = () => {
+        setclickToInvite("Cancel-Invite")
         InviteTheFollowers(user.id, groupId)
     }
 
     const handlerCancelInvite = () => {
+        setclickToInvite("+invite")
         CancelTheInvite(user.id, groupId)
     }
 
     return (
         <>
-            {invite ? (
+            {invite === "+invite" ? (
                 <div className="userCard">
                     <Avatar url={user.avatar} name={user.firstName} />
                     <div className="userInfo">
                         <div className="userName">{user.firstName} {user.lastName}</div>
                         <div className="followerCount">{user.followerCount} followers</div>
                     </div>
-                    {user.status == "INVITE" ? (
-                        <button onClick={handlerToInvite} > +invite </button>
+                    {clickToInvite == "+invite" ? (
+                        <button onClick={handlerToInvite} >{clickToInvite}</button>
 
                     ) : (
-                        <button onClick={handlerCancelInvite} > cancel_invite </button>
+                        <button onClick={handlerCancelInvite} >{clickToInvite}</button>
                     )}
                 </div>
             ) : (
