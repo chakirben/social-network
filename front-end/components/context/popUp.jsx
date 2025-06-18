@@ -54,7 +54,7 @@ export function PopupProvider({ children }) {
                         <span className={styles.user}>{name}</span> Requested to follow you
                     </p>
                 );
-            case "groupInvite":
+            case "invite":
                 return (
                     <p>
                         <span className={styles.user}>{name}</span> {"Invited you to Join Group " + notif.title}

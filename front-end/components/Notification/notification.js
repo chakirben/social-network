@@ -65,7 +65,7 @@ export default function Notification({ notification }) {
             <div className={styles.buttons}>
                 {response === "accept" && <span className={styles.accepted}>Accepted ! </span>}
                 {response === "decline" && <span className={styles.declined}>Declined !</span>}
-                {!response && status === "pending" && (type === "follow_request" || type === "group_invite" || type === "group_join_request") && (
+                {!response && status === "pending" && (type === "follow_request" || type === "group_invite" || type === "group_join_request"  || type === "new_event") && (
                     <>
                         <span className={styles.accept} onClick={() => handleResponse("accept")}>Accept</span>
                         <span className={styles.decline} onClick={() => handleResponse("decline")}>Decline</span>

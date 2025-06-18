@@ -27,7 +27,7 @@ export default function EventsList({ events, onRespond }) {
                                 </div>
                                 <hr />
                                 <div className="avatarAndName">
-                                   <Avatar url={event.avatar} name={event.title} />
+                                    <Avatar url={event.avatar} name={event.title} />
                                     <p className="eventCreator">{event.firstName} {event.lastName}</p>
                                 </div>
                             </div>
@@ -40,7 +40,11 @@ export default function EventsList({ events, onRespond }) {
                                 Going
                             </span>
                             <span
-                                className={`notGoingBtn ${event.isUserGoing === false ? "selected" : ""}`}
+                                className={
+                                    event.isUserGoing !== undefined && event.isUserGoing !== null
+                                        ? `notGoingBtn ${event.isUserGoing === false ? "selected" : ""}`
+                                        : "notGoingBtn"
+                                }
                                 onClick={() => onRespond(event.id, false, event.groupId)}
                             >
                                 Not Going

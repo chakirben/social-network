@@ -32,7 +32,7 @@ func RespondtoNotification(w http.ResponseWriter, r *http.Request) {
 	}
 	var notifType string
 	var senderId, receiverId int
-	var groupId, eventId sql.NullInt64 // nullable int types
+	var groupId, eventId sql.NullInt64 
 
 	err = dataB.SocialDB.QueryRow(`
     SELECT type, senderId, receiverId, groupId, eventId

@@ -31,6 +31,31 @@ type EventInput struct {
 	GroupId     int    `json:"groupId"`
 }
 
+type EventNotification struct {
+	Id               int64  `json:"id"`
+	Type             string `json:"type"`
+	NotificationType string `json:"notificationType"`
+	ItemId           int    `json:"itemId"`
+	Title            string `json:"title"`
+	Description      string `json:"description"`
+	EventDate        string `json:"eventDate"`
+	FirstName        string `json:"firstName"`
+	LastName         string `json:"lastName"`
+	Avatar           string `json:"avatar"`
+}
+
+type CreatedEvent struct {
+	Id           int       `json:"id"`
+	Title        string    `json:"title"`
+	Description  string    `json:"description"`
+	EventDate    time.Time `json:"eventDate"`
+	FirstName    string    `json:"firstName"`
+	LastName     string    `json:"lastName"`
+	Avatar       *string   `json:"avatar"`
+	GroupId      int       `json:"groupId"`
+	GoingMembers int       `json:"goingMembers"`
+}
+
 func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -44,14 +69,13 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var input EventInput
-	err = json.NewDecoder(r.Body).Decode(&input)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		http.Error(w, "Bad Request: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if input.Title == "" || input.Description == "" {
-		http.Error(w, "Missing required field", http.StatusBadRequest)
+		http.Error(w, "Missing required fields", http.StatusBadRequest)
 		return
 	}
 
@@ -66,20 +90,13 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newEvent := Event{
-		Title:       input.Title,
-		Description: input.Description,
-		EventDate:   parsedDate,
-		GroupId:     input.GroupId,
-		CreatorId:   userID,
-		CreatedAt:   time.Now(),
-	}
-
+	// Check if the user is in the group
 	var exists int
 	err = database.SocialDB.QueryRow(
 		`SELECT 1 FROM GroupsMembers WHERE memberId = ? AND groupId = ? LIMIT 1`,
-		userID, newEvent.GroupId,
+		userID, input.GroupId,
 	).Scan(&exists)
+
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "You are not a member of this group", http.StatusForbidden)
@@ -89,49 +106,53 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Insert event
 	result, err := database.SocialDB.Exec(
 		`INSERT INTO Events (title, description, eventDate, creatorId, groupId, createdAt)
 		 VALUES (?, ?, ?, ?, ?, ?)`,
-		newEvent.Title, newEvent.Description, newEvent.EventDate, newEvent.CreatorId, newEvent.GroupId, newEvent.CreatedAt,
+		input.Title, input.Description, parsedDate, userID, input.GroupId, time.Now(),
 	)
 	if err != nil {
 		http.Error(w, "Failed to insert event: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	eventID, err := result.LastInsertId()
 	if err != nil {
 		http.Error(w, "Failed to retrieve event ID: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	resultNotif, err := database.SocialDB.Exec(`
-	INSERT INTO Notifications (type, senderId, receiverId, groupId, eventId, status)
-	SELECT 'new_event', ?, memberId, ?, ?, 'pending'
-	FROM GroupsMembers
-	WHERE groupId = ? AND memberId != ?`, 
-		userID, newEvent.GroupId, eventID, newEvent.GroupId, userID,
+
+	// Create notifications for group members (excluding creator)
+	notifResult, err := database.SocialDB.Exec(`
+		INSERT INTO Notifications (type, senderId, receiverId, groupId, eventId, status)
+		SELECT 'new_event', ?, memberId, ?, ?, 'pending'
+		FROM GroupsMembers
+		WHERE groupId = ? AND memberId != ?`,
+		userID, input.GroupId, eventID, input.GroupId, userID,
 	)
 	if err != nil {
-		http.Error(w, "Failed to insert notification: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Failed to insert notifications: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	notificationId, err := resultNotif.LastInsertId()
+	notificationID, err := notifResult.LastInsertId()
 	if err != nil {
 		http.Error(w, "Failed to retrieve notification ID: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	var createdEvent GetEvents
+
+	// Fetch event details for WebSocket
+	var createdEvent CreatedEvent
 	query := `
 		SELECT e.id, e.title, e.description, e.eventDate,
 		       u.firstName, u.lastName, u.avatar, e.groupId,
-		       (SELECT COUNT(*) FROM EventsAttendance ea WHERE ea.eventId = e.id AND ea.isGoing = true) AS goingMembers,
-		       IFNULL((SELECT ea.isGoing FROM EventsAttendance ea WHERE ea.eventId = e.id AND ea.memberId = ? LIMIT 1), false) AS isUserGoing
+		       (SELECT COUNT(*) FROM EventsAttendance ea WHERE ea.eventId = e.id AND ea.isGoing = true) AS goingMembers
 		FROM Events e
 		JOIN Users u ON u.id = e.creatorId
 		WHERE e.id = ?
 	`
-
-	err = database.SocialDB.QueryRow(query, userID, eventID).Scan(
+	err = database.SocialDB.QueryRow(query, eventID).Scan(
 		&createdEvent.Id,
 		&createdEvent.Title,
 		&createdEvent.Description,
@@ -141,22 +162,23 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 		&createdEvent.Avatar,
 		&createdEvent.GroupId,
 		&createdEvent.GoingMembers,
-		&createdEvent.IsUserGoing,
 	)
 	if err != nil {
 		http.Error(w, "Failed to fetch created event: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	rowss, err := database.SocialDB.Query("SELECT memberId FROM GroupsMembers WHERE groupId = ?", newEvent.GroupId)
+	// Send WebSocket notifications to all group members
+	rows, err := database.SocialDB.Query("SELECT memberId FROM GroupsMembers WHERE groupId = ?", input.GroupId)
 	if err != nil {
-		fmt.Println("Error fetching group members:", err)
+		http.Error(w, "Failed to fetch group members", http.StatusInternalServerError)
+		return
 	}
-	fmt.Println("Group members fetched successfully")
-	for rowss.Next() {
+	defer rows.Close()
+
+	for rows.Next() {
 		var memberId int
-		if err := rowss.Scan(&memberId); err != nil {
-			fmt.Println("Error scanning memberId:", err)
+		if err := rows.Scan(&memberId); err != nil || memberId == userID {
 			continue
 		}
 
@@ -172,12 +194,13 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				SendMessage(conn, EventNotification{
-					Id:               notificationId,
+					Id:               notificationID,
 					Type:             "Notification",
 					NotificationType: "event",
+					ItemId:           createdEvent.Id,
 					Title:            createdEvent.Title,
 					Description:      createdEvent.Description,
-					EventDate:        createdEvent.EventDate.String(),
+					EventDate:        createdEvent.EventDate.Format(time.RFC3339),
 					FirstName:        createdEvent.FirstName,
 					LastName:         createdEvent.LastName,
 					Avatar:           avatarStr,
@@ -186,37 +209,18 @@ func SetEventHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if err := rowss.Err(); err != nil {
-		fmt.Println("Error reading group members:", err)
-	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(createdEvent)
 }
 
-type EventNotification struct {
-	Id               int64    `json:"id"`
-	Type             string `json:"type"`
-	NotificationType string `json:"notificationType"`
-	ItemId           int    `json:"itemId"`
-	Title            string `json:"title"`
-	Description      string `json:"description"`
-	EventDate        string `json:"eventDate"`
-	FirstName        string `json:"firstName"`
-	LastName         string `json:"lastName"`
-	Avatar           string `json:"avatar"`
-}
-
 func SendMessage(conn *websocket.Conn, msg EventNotification) {
-	fmt.Println("Sending message to client:", msg)
 	message, err := json.Marshal(msg)
 	if err != nil {
+		fmt.Println("Failed to marshal message:", err)
 		return
 	}
-	err = conn.WriteMessage(websocket.TextMessage, message)
-	if err != nil {
-		fmt.Println("Error sending message:", err)
-		return
+	if err := conn.WriteMessage(websocket.TextMessage, message); err != nil {
+		fmt.Println("Error sending WebSocket message:", err)
 	}
 }
