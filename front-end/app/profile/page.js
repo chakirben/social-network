@@ -1,6 +1,6 @@
 'use client'
 import SideBar from "@/components/sidebar";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../../styles/global.css"
 import "../profile/profile.css"
 import Post from "@/components/post";
@@ -8,6 +8,7 @@ import "../home/home.css"
 import Header from "@/components/Header/header";
 import { useRouter } from "next/navigation";
 import Divider from "@/components/divider";
+import { WebSocketContext } from "@/components/context/wsContext";
 
 
 export default function Profile() {
@@ -15,7 +16,9 @@ export default function Profile() {
     const [profileData, setData] = useState([])
     const [showOptions, setShowOptions] = useState(false)
     const router = useRouter()
-
+    const socket = useContext(WebSocketContext)
+    console.log(socket);
+    
     const handle = () => {
         setShowOptions(!showOptions)
     }
@@ -50,6 +53,7 @@ export default function Profile() {
                     console.log("logout")
                     localStorage.removeItem("user")
                     router.push('/login')
+                    socket.socket.close()
 
                 } else {
                     console.log("error");

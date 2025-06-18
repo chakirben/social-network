@@ -108,7 +108,7 @@ export const WebSocketProvider = ({ children }) => {
 
     return ws;
   };
-
+  
   useEffect(() => {
     if (connectedRef.current) return;
     if (pathname === '/login' || pathname === '/register') return;
