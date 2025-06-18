@@ -1,20 +1,22 @@
 "use client"
 
-export default async function FetchJoinToGroup(groupId) {
+export default async function InviteTheFollowers(userid , groupId) {
+
     try {
-        const rep = await fetch("http://localhost:8080/api/RequestToJoinGroups", {
+        const rep = await fetch("http://localhost:8080/api/InfiteTheFollowers", {
             method: "POST",
             credentials: "include",
             headers: {
                 "Content-Type": "application/json", 
             },
             body: JSON.stringify({
-                groupId: groupId, 
+                userid: userid,
+                groupId : parseInt(groupId, 10)
             }),
         });
 
-        if (rep.status !== 202) {
-            throw new Error("Failed to send Request to join the group");
+        if (!rep.ok) {
+            throw new Error("Failed to send Invite to join the group");
         }
        
     } catch (error) {

@@ -22,7 +22,6 @@ type Posts struct {
 	DislikeCount *int      `json:"dislike_count"`
 	UserReaction *int      `json:"user_reaction"`
 	CreatedAt    time.Time `json:"created_at"`
-	GPTitle      string
 }
 
 func GetPostGroups(w http.ResponseWriter, r *http.Request) {
@@ -62,6 +61,27 @@ func GetPostGroups(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var isMember bool
+	err = dataB.SocialDB.QueryRow("SELECT EXISTS(SELECT 1 FROM GroupsMembers WHERE groupId = ? AND memberId = ?)", idInt, userID).Scan(&isMember)
+	if err != nil {
+		http.Error(w, "Database error", http.StatusInternalServerError)
+		return
+	}
+	if !isMember {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusForbidden)
+		json.NewEncoder(w).Encode("You are not a member of this group.")
+		return
+	}
+
+	var nameOfGroup string
+	
+	err = dataB.SocialDB.QueryRow("SELECT title FROM Groups WHERE id = ?", idInt).Scan(&nameOfGroup)
+	if err != nil {
+		fmt.Println("hi yssssssssssss", err)
+		http.Error(w, "Database error", http.StatusInternalServerError)
+		return
+	}
 	query := `SELECT 
 	      P.id,
 		  P.content,
@@ -90,7 +110,7 @@ func GetPostGroups(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var P Posts
 		if err := rows.Scan(&P.Id, &P.Content, &P.Image,
-			&P.FirstName, &P.LastName,&P.Avatar, &P.CreatedAt, &P.LikeCount, &P.DislikeCount, &P.UserReaction); err != nil {
+			&P.FirstName, &P.LastName, &P.Avatar, &P.CreatedAt, &P.LikeCount, &P.DislikeCount, &P.UserReaction); err != nil {
 			fmt.Println("error to get posts groups", err)
 			http.Error(w, "error to get posts groups", http.StatusInternalServerError)
 			return
@@ -98,9 +118,13 @@ func GetPostGroups(w http.ResponseWriter, r *http.Request) {
 
 		allposts = append(allposts, P)
 	}
+	
 	w.WriteHeader(http.StatusAccepted)
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(allposts); err != nil {
+	if err := json.NewEncoder(w).Encode(map[string]any{
+		"allposts" : allposts,
+		"GPTitle" : nameOfGroup,
+	}); err != nil {
 		fmt.Println("JSON encode error", err)
 		http.Error(w, "JSON encode error", http.StatusInternalServerError)
 	}

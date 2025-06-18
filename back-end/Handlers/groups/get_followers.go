@@ -1,7 +1,9 @@
-package users
+package groups
 
 import (
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -9,19 +11,32 @@ import (
 	dataB "socialN/dataBase"
 )
 
-type Follower struct {
+type Followers struct {
 	ID        int    `json:"id"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Avatar    string `json:"avatar"`
+	Status    string `json:"status"`
 }
 
-func GetFollowersListHandler(w http.ResponseWriter, r *http.Request) {
+type GroupInvite struct {
+	GroupID int `json:"groupId"`
+}
+
+func GetFollowersList(w http.ResponseWriter, r *http.Request) {
 	userID, err := auth.ValidateSession(r, dataB.SocialDB)
 	if err != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
+
+	var Group GroupInvite
+	err = json.NewDecoder(r.Body).Decode(&Group)
+	if err != nil {
+		http.Error(w, "Invalid JSON :(", http.StatusBadRequest)
+		return
+	}
+
 	query := `
 		SELECT u.id, u.firstName, u.lastName, u.avatar
 		FROM Followers f
@@ -35,14 +50,29 @@ func GetFollowersListHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer rows.Close()
-	var users []Follower
+	var users []Followers
 	for rows.Next() {
-		var u Follower
+		var u Followers
 		if err := rows.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Avatar); err != nil {
-			log.Println("Row scan error:", err)
 			http.Error(w, "Server error", http.StatusInternalServerError)
 			return
 		}
+
+		var status sql.NullString
+		checkQuery := `SELECT status FROM Notifications WHERE groupId = ? AND type = 'group_invite' AND senderId = ? AND receiverId = ? LIMIT 1;`
+		err := dataB.SocialDB.QueryRow(checkQuery, Group.GroupID, userID, u.ID).Scan(&status)
+		if err != nil && err != sql.ErrNoRows {
+			fmt.Println("error checking notification for group:", err)
+			http.Error(w, "Error checking notification", http.StatusInternalServerError)
+			return
+		}
+
+		if status.Valid {
+			u.Status = "Cancel-Invite"
+		} else {
+			u.Status = "+invite"
+		}
+
 		users = append(users, u)
 	}
 

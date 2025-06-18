@@ -12,12 +12,11 @@ export default function DisplyGroup({ params }) {
   const { id } = use(params);
 
   const searchParams = useSearchParams();
-  const title = searchParams.get('title');
 
   return (
     <div className="home">
       <SideBar />
-      <GroupDetails groupId={id} title={title} />
+      <GroupDetails groupId={id}/>
     </div>
   )
 }

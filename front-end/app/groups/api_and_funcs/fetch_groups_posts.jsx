@@ -9,20 +9,26 @@ import CreateEvent from '@/components/createEventForm';
 import Avatar from '@/components/avatar/avatar';
 import { useUser } from '@/components/context/userContext';
 import Header from '@/components/Header/header';
+import InviteToGroups from "@/components/groups/infite_followers_to_join"
 
 
-
-export default function GroupDetails({ groupId, title }) {
+export default function GroupDetails({ groupId }) {
     const { user } = useUser();
     const [PostsGroup, setPostsGroup] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [events, setEvents] = useState([])
     const [activeTab, setActiveTab] = useState("posts");
 
+
+    const [showInviteForm, setShowInviteForm] = useState(false);
+
+
     const [text, setText] = useState('');
     const [imageSrc, setImageSrc] = useState(null);
     const inputRef = useRef(null);
 
+
+    const [error, setError] = useState("")
 
 
     useEffect(() => {
@@ -37,10 +43,17 @@ export default function GroupDetails({ groupId, title }) {
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
             });
+            if (rep.status === 404) {
+                router.push('/404')
+            }
+            if (rep.status === 403) {
+                setError('You are not allowed to access this group.')
+            }
             const PostsGroupData = await rep.json();
+
             setPostsGroup(PostsGroupData || []);
         } catch (error) {
-            console.error("Error fetching posts:", error);
+            console.error("Error fhomeetching posts:", error);
         } finally {
             setIsLoading(false);
         }
@@ -97,7 +110,12 @@ export default function GroupDetails({ groupId, title }) {
 
                 });
                 const result = await res.json();
-                setPostsGroup((pv) => [result, ...pv])
+
+                setPostsGroup((pv) => ({
+                    ...pv,
+                    allposts: [result, ...(pv.allposts || [])]
+                }));
+
 
                 setText('');
                 setImageSrc(null);
@@ -106,6 +124,7 @@ export default function GroupDetails({ groupId, title }) {
                 console.error('Post failed:', err);
             }
         }
+        fetchPosts()
     };
 
 
@@ -128,85 +147,112 @@ export default function GroupDetails({ groupId, title }) {
         return <div>Loading posts of the group...</div>;
     }
 
+    const handlInviteClick = () => {
+        setShowInviteForm(true)
+    }
 
 
     return (
         <div className='postEventsInGroup'>
-            <Header pageName={title} />
-            <div className='filterPostsAndEvents'>
-                <span
-                    className={`postsSpan ${activeTab === "posts" ? "active" : ""}`}
-                    onClick={() => setActiveTab("posts")}
-                >
-                    Posts
-                </span>
-                <span
-                    className={`eventsSpan ${activeTab === "events" ? "active" : ""}`}
-                    onClick={() => setActiveTab("events")}
-                >
-                    Events
-                </span>
-            </div>
-            <Divider />
-            {isLoading && <div>Loading...</div>}
 
-            {!isLoading && activeTab === "posts" && (
+            {error != "" ? (
+                <>{error}</>
+            ) : (
                 <>
-                    <form className="creatPostForm" onSubmit={handleSubmit}>
-                        <div className="searchBar df gp12 center">
-                            <Avatar url={user.avatar} name={user.firstName} />
+                    <Header pageName={PostsGroup.GPTitle}
+                        ele={
+                            <button onClick={handlInviteClick} className="create-group-btn">
+                                + INVITE
+                            </button>
+                        }
+                    />
+                    <div className='filterPostsAndEvents'>
+                        <span
+                            className={`postsSpan ${activeTab === "posts" ? "active" : ""}`}
+                            onClick={() => setActiveTab("posts")}
+                        >
+                            Posts
+                        </span>
+                        <span
+                            className={`eventsSpan ${activeTab === "events" ? "active" : ""}`}
+                            onClick={() => setActiveTab("events")}
+                        >
+                            Events
+                        </span>
+                    </div>
+                    <Divider />
+                    {isLoading && <div>Loading...</div>}
 
-                            <input
-                                className="searchInput"
-                                placeholder="What’s happening ?"
-                                value={text}
-                                onChange={(e) => setText(e.target.value)}
-                            />
-                        </div>
 
-                        <div className="ImagePreviewBox">
-                            {imageSrc && <img src={imageSrc} alt="Preview" className="preview-img" />}
-                        </div>
+                    {!isLoading && activeTab === "posts" && (
+                        <>
+                            <form className="creatPostForm" onSubmit={handleSubmit}>
+                                <div className="searchBar df gp12 center">
+                                    <Avatar url={user.avatar} name={user.firstName} />
 
-                        <Divider />
+                                    <input
+                                        className="searchInput"
+                                        placeholder="What’s happening ?"
+                                        value={text}
+                                        onChange={(e) => setText(e.target.value)}
+                                    />
+                                </div>
 
-                        <div className='spB'>
-                            <div className='group'>
-                                <img style={{ width: "20px", height: "20px", cursor: "pointer" }}
-                                    src="../../images/image.svg"
-                                    className="upload-icon"
-                                    onClick={handleImageClick}
-                                />
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    ref={inputRef}
-                                    onChange={handleFileChange}
-                                    style={{ display: 'none' }}
-                                />
-                            </div>
-                            <button type='submit'>post</button>
-                        </div>
-                    </form>
-                    {PostsGroup.map((pst) => (
-                        <Post key={pst.id} pst={pst} />
-                    ))}
-                </>
-            )}
+                                <div className="ImagePreviewBox">
+                                    {imageSrc && <img src={imageSrc} alt="Preview" className="preview-img" />}
+                                </div>
 
-            {!isLoading && activeTab === "events" && (
-                <>
-                    <CreateEvent setEvents={setEvents} events={events} />
-                    {events.length > 0 ? (
-                        <GroupEventsPage id={groupId} events={events} setEvents={setEvents} />
-                    ) : (
-                        <div className="noEvents">
-                            <img className="noContent" src="/images/noContent.svg" alt="No content" />
-                            No events created, be the first
-                        </div>
+                                <Divider />
+
+                                <div className='spB'>
+                                    <div className='group'>
+                                        <img style={{ width: "20px", height: "20px", cursor: "pointer" }}
+                                            src="../../images/image.svg"
+                                            className="upload-icon"
+                                            onClick={handleImageClick}
+                                        />
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            ref={inputRef}
+                                            onChange={handleFileChange}
+                                            style={{ display: 'none' }}
+                                        />
+                                    </div>
+                                    <button type='submit'>post</button>
+                                </div>
+                            </form>
+                            {Array.isArray(PostsGroup.allposts) && PostsGroup.allposts.length > 0 ?
+                                PostsGroup.allposts.map((pst) => (
+                                    <Post key={pst.id} pst={pst} />
+                                )) : (
+                                    <>{`No posts yet in this group creat a one.. (:`}</>
+                                )}
+
+                            {showInviteForm && (
+                                <InviteToGroups groupId={groupId} onSkip={() => setShowInviteForm(false)} />
+                            )}
+                        </>
                     )}
+
+                    {!isLoading && activeTab === "events" && (
+                        <>
+                            <CreateEvent setEvents={setEvents} events={events} />
+                            {events.length > 0 ? (
+                                <GroupEventsPage id={groupId} events={events} setEvents={setEvents} />
+                            ) : (
+                                <div className="noEvents">
+                                    <img className="noContent" src="/images/noContent.svg" alt="No content" />
+                                    No events created, be the first
+                                </div>
+                            )}
+                        </>
+                    )}
+
+
                 </>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 }
