@@ -136,7 +136,13 @@ body {
     width: calc(100% - 200px);
     height: 100vh;
 }
+@media (max-width: 1000px) {
 
+    .home {
+        margin: 0;
+    }
+
+}
 @media (max-width: 1200px) {
 
     .mainContent {
@@ -145,7 +151,9 @@ body {
 
 }
 @media (max-width: 750px) {
-
+    .leftSection {
+        min-width: 200px;
+    }
     .rightSection {
        display: none;
     }

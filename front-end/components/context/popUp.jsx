@@ -25,7 +25,7 @@ export function PopupProvider({ children }) {
             timer = setTimeout(() => {
                 setPopup(null);
                 setResponse(null); 
-            }, 60000);
+            }, 1000);
         }
         return () => clearTimeout(timer);
     }, [popup]);

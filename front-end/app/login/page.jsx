@@ -42,7 +42,7 @@ export default function Login() {
       if (Connect) {
         Connect();
       }
-
+      
       async function FirstTimeUser() {
         try {
           const rep = await fetch("http://localhost:8080/api/getUserData", {
@@ -59,7 +59,10 @@ export default function Login() {
         }
       }
 
+      
       await FirstTimeUser();
+      console.log("Login successful");
+      
       router.push('/home');
 
     } catch (err) {

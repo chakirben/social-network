@@ -3,8 +3,7 @@
 .home {
     display: flex;
     position: sticky;
-    top: 0;
-    width: 100%;
+    width: fit-content;
 }
 
 .layout {

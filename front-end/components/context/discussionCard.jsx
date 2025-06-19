@@ -16,8 +16,8 @@ export default function DiscussionCard({ discussion }) {
         router.push(`/chat/${type}${discussion.id}_${nameSlug}`);
       }}
     >
-      <div className="df  gp6 center spB">
-       <Avatar url={discussion.avatar} name={discussion.name}/>
+      <div className="df  gp12 center spB">
+       <Avatar url={discussion.avatar} name={discussion.name} size={"big"}/>
         <div className="df cl gp6">
           <h4>{discussion.name}</h4>
           <p>{discussion.lastMessageContent || "No messages yet"}</p>

@@ -85,9 +85,7 @@ export const WebSocketProvider = ({ children }) => {
           }
 
           case 'message': {
-            console.log('Received private message:', data, currentUser);
-
-            if (data.sender !== currentUser?.id) {
+            if (data.sender !== currentUser?.id && !pathname.startsWith('/chat')) {
               setMessagesCounter((prev) => prev + 1);
             }
             const formattedMsg = {
@@ -103,31 +101,39 @@ export const WebSocketProvider = ({ children }) => {
           }
 
           case 'groupmsg': {
-            setMessagesCounter((prev) => prev + 1);
+            if (!pathname.startsWith('/chat')) {
+              setMessagesCounter((prev) => prev + 1);
+            }
+
             const formattedGroupMsg = {
               content: data.content,
               sender_id: data.sender,
+              first_name: data.firstName,
+              last_name: data.lastName,
+              avatar: data.avatar,
               groupId: data.groupID || data.groupId,
               sent_at: data.sentAt || data.sent_at,
               type: 'group',
             };
+
             const discussionKey = 'group' + formattedGroupMsg.groupId;
             setDiscussionMap((prev) => ({
               ...prev,
               [discussionKey]: [...(prev[discussionKey] || []), formattedGroupMsg]
-            }))
+            }));
+
             setwsMessages((prev) => [...prev, formattedGroupMsg]);
             break;
           }
 
-          case 'Notification':
-            console.log(notifCounter);
-            
-            setNotifCounter((prev) => prev + 1);
-            console.log(notifCounter);
+          case 'Notification': {
+            if (!pathname.startsWith('/notifications')) {
+              setNotifCounter((prev) => prev + 1);
+            }
 
-            showPopup({ data })
+            showPopup({ data });
             break;
+          }
 
           default:
             console.warn('Unknown message type:', data.type);

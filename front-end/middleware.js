@@ -4,7 +4,6 @@ import { NextResponse } from 'next/server';
 const protectedRoutes = [
   '/home',
   '/profile',
-  '/user',
   '/group',
   '/groups',
   '/users',
@@ -17,7 +16,7 @@ export async function middleware(req) {
 
   const cookie = req.headers.get('cookie') || '';
 
-  const authCheck = await fetch('http://localhost:8080/api/checkAuth', {
+  const authCheck = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/checkAuth`, {
     headers: {
       cookie,
     },
@@ -51,8 +50,8 @@ export const config = {
     '/home',
     '/',
     '/profile',
-    '/user/:path*',
-    '/group/:path*',
+    '/users/:path*',
+    '/groups/:path*',
     '/groups',
     '/users',
     '/chat',
