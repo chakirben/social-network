@@ -18,14 +18,20 @@ export default function Avatar({ url, name, size }) {
     }, [url]);
 
     const initial = name ? name[0].toUpperCase() : '?';
-    const classNames = `${styles.letterAvatar} ${size || ''}`;
+
+    let sizeClass = styles.md;
+    if (size === 'xs') sizeClass = styles.xs;
+    else if (size === 'big') sizeClass = styles.big;
+
+    const letterClass = `${styles.letterAvatar} ${sizeClass}`;
+    const avatarClass = `${styles.avatar} ${sizeClass}`;
 
     if (isValid === true && url) {
-        return <img className={`${styles.avatar} ${size || ''}`} src={url} alt={name || 'avatar'} />;
+        return <img className={avatarClass} src={url} alt={name || 'avatar'} />;
     }
 
     return (
-        <div className={classNames}>
+        <div className={letterClass}>
             <span>{initial}</span>
         </div>
     );

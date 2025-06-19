@@ -14,7 +14,7 @@ export default function Events({ event  , index}) {
                     </div>
                     <hr/>
                     <div className="avatarAndName">
-                        <Avatar url={event.avatar} name={ event.title}/>
+                        <Avatar url={event.avatar} name={ event.title} size={"xs"}/>
                         <p className="eventCreator">{event.firstName} {event.lastName}</p>
                     </div>
                 </div>
