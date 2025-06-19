@@ -52,7 +52,7 @@ export default function JustMyGroupsPage() {
 
   const renderGroupContent = () => {
     if (myGroups.length === 0 && otherGroups.length === 0) {
-      return <div>No groups found...</div>;
+      return <div className="msgNoGroups">No groups found... ): creat a one (:</div>;
     }
 
     return (

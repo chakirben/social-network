@@ -228,10 +228,6 @@ export default function GroupDetails({ groupId }) {
                                 )) : (
                                     <>{`No posts yet in this group creat a one.. (:`}</>
                                 )}
-
-                            {showInviteForm && (
-                                <InviteToGroups groupId={groupId} onSkip={() => setShowInviteForm(false)} />
-                            )}
                         </>
                     )}
 
@@ -248,8 +244,9 @@ export default function GroupDetails({ groupId }) {
                             )}
                         </>
                     )}
-
-
+                    {showInviteForm && (
+                        <InviteToGroups groupId={groupId} onSkip={() => setShowInviteForm(false)} />
+                    )}
                 </>
             )
             }
