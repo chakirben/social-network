@@ -99,7 +99,7 @@ export default function Home() {
                     <SearchTerm search={searchTerm} />
                 )}
             </div>
-            <div>
+            <div className="rightSection">
 
                 <ProfileButton />
                 <div className="onlineUsers df cl">

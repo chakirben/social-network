@@ -32,7 +32,7 @@ export default function Post({ pst }) {
 
                     {pst.image && (
                         <img
-                            className="pic nrml"
+                            className="preview-img"
                             src={pst?.image}
                             onClick={(e) => {
                                 e.stopPropagation();

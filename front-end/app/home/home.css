@@ -24,11 +24,23 @@
     display: flex;
     flex-direction: column;
 }
-
+.notificationBadge {
+    width: 20px;
+    height: 20px;
+    background: #ffffff;
+    color: #000000;
+    opacity: 1;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    font-weight: bolder;
+}
 
 .homeP {
     max-width: 600px;
-    min-width: 600px;
+    min-width: 300px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -46,8 +58,7 @@
 .posts {
     display: flex;
     flex-direction: column;
-    width: fit-content;
-
+    align-self: stretch;
 }
 
 .postContent {
@@ -79,7 +90,7 @@ h5 {
 }
 
 .ImagePreviewBox {
-    width: 600px;
+   align-self: stretch;    
 }
 
 .imagePreview {
@@ -123,7 +134,7 @@ h5 {
 .post {
     display: flex;
     padding: 40px 40px;
-    width: 100%;
+    align-self: stretch;
     border-bottom: rgba(255, 255, 255, 0.137) solid 1px;
 }
 
@@ -294,10 +305,9 @@ h5 {
 
 .commentInput {
     position: sticky;
-    bottom: 0px;
     width: 100%;
-    padding: 16px 40px 0px 40px;
-    position: sticky;
+    padding: 16px 40px 16px 40px;
+    align-self: stretch;
     top: 0;
     backdrop-filter: blur(64px);
     background-color: #171717b9;
@@ -463,9 +473,4 @@ h5 {
 .avatarAndEmail:hover {
     background: linear-gradient(90.89deg, rgba(255, 255, 255, 0.06) 0.95%, rgba(255, 255, 255, 0) 100.41%);
     cursor: pointer;
-}
-
-.mainContent {
-    width: 100%;
-    max-width: 1200px;
 }

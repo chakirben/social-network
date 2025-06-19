@@ -1,9 +1,9 @@
 html {
-   overflow: hidden;
+    overflow: hidden;
 }
+
 body {
     margin: 0;
-    padding: 48px;
     background-color: black;
     color: white;
     font-family: 'Arial', sans-serif;
@@ -20,10 +20,12 @@ h4,
 h3 {
     margin: 0px;
 }
+
 hr {
     border: 1px solid rgba(255, 255, 255, 0.137);
     opacity: 0.5;
 }
+
 p {
     margin: 0px;
     opacity: 0.8;
@@ -59,7 +61,6 @@ textarea {
 
 body {
     margin: 0;
-    padding: 48px;
     box-sizing: border-box;
     background-color: #0A0A0A;
     color: white;
@@ -68,6 +69,10 @@ body {
 .logo {
     width: 84px;
     height: 24px;
+}
+
+.logo:hover {
+    cursor: pointer;
 }
 
 .layout {
@@ -125,11 +130,46 @@ body {
 }
 
 .mainContent {
+    display: flex;
+    justify-content: center;
     position: absolute;
     width: calc(100% - 200px);
     height: 100vh;
 }
 
+@media (max-width: 1200px) {
+
+    .mainContent {
+        width: 100%;
+    }
+
+}
+@media (max-width: 750px) {
+
+    .rightSection {
+       display: none;
+    }
+
+}
+@media (max-width: 750px) {
+
+    .creatPostForm {
+       padding: 16px;
+    }
+    .post {
+        padding: 16px;
+    }
+}
+.searchInput {
+    border: none;
+}
+.searchInput:focus {
+    outline: none;
+}
+.strech {
+    width: calc(100% - 64px);
+    align-self: stretch;
+}
 .navBar {
     display: flex;
     flex-direction: column;
@@ -218,7 +258,8 @@ button:hover {
     color: black;
     border-radius: 12px;
 }
-.bigPic{
+
+.bigPic {
     width: 50px;
     height: 50px;
 

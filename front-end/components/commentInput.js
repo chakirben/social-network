@@ -61,7 +61,7 @@ export default function CommentInput({ id, setComments }) {
                     />
                 </div>
             )}
-            <div className="df spB center">
+            <div className="strech df spB center">
                 <div className="df gp6 center">
                     <img
                         className="icn1"

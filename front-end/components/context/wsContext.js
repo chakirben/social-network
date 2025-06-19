@@ -3,12 +3,13 @@
 import { usePathname } from 'next/navigation';
 import { createContext, useEffect, useRef, useState } from 'react';
 import { usePopup } from './popUp';
+import { useUser } from './userContext';
 
 export const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
   console.log('WebSocketProvider rendered');
-  
+
   const [statuses, setStatuses] = useState({});
   const [discussionMap, setDiscussionMap] = useState({});
   const [wsMessages, setwsMessages] = useState([]);
@@ -16,9 +17,26 @@ export const WebSocketProvider = ({ children }) => {
   const { showPopup } = usePopup();
   const connectedRef = useRef(false);
   const pathname = usePathname();
+  const [notifCounter, setNotifCounter] = useState(0);
+  const [messagesCounter, setMessagesCounter] = useState(0);
+  const { user } = useUser();
+  const userRef = useRef(user);
+  useEffect(() => {
+    if (pathname === '/chat') {
+      setMessagesCounter(0);
+    }
+  }, [pathname]);
+  useEffect(() => {
+    if (pathname === '/notifications') {
+      setNotifCounter(0);
+    }
+  }, [pathname]);
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
 
   const Connect = () => {
-    if (connectedRef.current) return;
+    if (connectedRef.current || !userRef.current) return;
 
     const ws = new WebSocket('ws://localhost:8080/api/ws');
 
@@ -42,7 +60,8 @@ export const WebSocketProvider = ({ children }) => {
     ws.addEventListener('message', (event) => {
       try {
         const data = JSON.parse(event.data);
-        console.log('Message from server:', data);
+        const currentUser = userRef.current;
+        console.log('Message from server:', data, currentUser);
 
         switch (data.type) {
           case 'Status': {
@@ -64,7 +83,13 @@ export const WebSocketProvider = ({ children }) => {
             }
             break;
           }
+
           case 'message': {
+            console.log('Received private message:', data, currentUser);
+
+            if (data.sender !== currentUser?.id) {
+              setMessagesCounter((prev) => prev + 1);
+            }
             const formattedMsg = {
               content: data.content,
               sender_id: data.sender,
@@ -78,6 +103,7 @@ export const WebSocketProvider = ({ children }) => {
           }
 
           case 'groupmsg': {
+            setMessagesCounter((prev) => prev + 1);
             const formattedGroupMsg = {
               content: data.content,
               sender_id: data.sender,
@@ -95,7 +121,12 @@ export const WebSocketProvider = ({ children }) => {
           }
 
           case 'Notification':
-           showPopup({data})
+            console.log(notifCounter);
+            
+            setNotifCounter((prev) => prev + 1);
+            console.log(notifCounter);
+
+            showPopup({ data })
             break;
 
           default:
@@ -108,12 +139,12 @@ export const WebSocketProvider = ({ children }) => {
 
     return ws;
   };
-  
+
   useEffect(() => {
-    if (connectedRef.current) return;
+    if (!user || connectedRef.current) return;
     if (pathname === '/login' || pathname === '/register') return;
     Connect();
-  }, [pathname]);
+  }, [pathname, user]);
 
   return (
     <WebSocketContext.Provider
@@ -126,6 +157,10 @@ export const WebSocketProvider = ({ children }) => {
         setStatuses,
         wsMessages,
         setwsMessages,
+        notifCounter,
+        setNotifCounter,
+        messagesCounter,
+        setMessagesCounter
       }}
     >
       {children}

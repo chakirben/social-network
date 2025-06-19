@@ -47,7 +47,7 @@ export default function PostPage({ params }) {
     return (
         <div className="home">
             <SideBar />
-            <div className="singlePost df cl spB">
+            <div className="homeP df cl spB">
                 <Header pageName={"post"}></Header>
                 <div className="postContent df cl">
                     {post === null ? (
