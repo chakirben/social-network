@@ -16,7 +16,7 @@ export function PopupProvider({ children }) {
     console.log("PopupProvider rendered");
     
     const [popup, setPopup] = useState(null);
-    const [response, setResponse] = useState(null); // "accepted" or "declined"
+    const [response, setResponse] = useState(null); 
     const router = useRouter();
 
     useEffect(() => {
@@ -24,7 +24,7 @@ export function PopupProvider({ children }) {
         if (popup) {
             timer = setTimeout(() => {
                 setPopup(null);
-                setResponse(null); // Reset on next popup
+                setResponse(null); 
             }, 60000);
         }
         return () => clearTimeout(timer);
@@ -54,7 +54,7 @@ export function PopupProvider({ children }) {
                         <span className={styles.user}>{name}</span> Requested to follow you
                     </p>
                 );
-            case "groupInvite":
+            case "invite":
                 return (
                     <p>
                         <span className={styles.user}>{name}</span> {"Invited you to Join Group " + notif.title}
@@ -82,7 +82,7 @@ export function PopupProvider({ children }) {
                 }
             );
             if (res.ok) {
-                setResponse(action); // Show "Accepted" or "Declined"
+                setResponse(action);
             } else {
                 console.error("Failed to respond to notification");
             }

@@ -1,3 +1,5 @@
+import Avatar from "../avatar/avatar"
+
 export default function Events({ event  , index}) {
     if(!event)return null
     return (
@@ -12,7 +14,7 @@ export default function Events({ event  , index}) {
                     </div>
                     <hr/>
                     <div className="avatarAndName">
-                        <img className="eventAvatar" src={event.avatar} />
+                        <Avatar url={event.avatar} name={ event.title}/>
                         <p className="eventCreator">{event.firstName} {event.lastName}</p>
                     </div>
                 </div>

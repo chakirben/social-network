@@ -38,18 +38,29 @@ func GetFollowersList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := `
-		SELECT u.id, u.firstName, u.lastName, u.avatar
-		FROM Followers f
-		JOIN Users u ON f.followedId = u.id
-		WHERE f.followerId = ?
+            SELECT u.id, u.firstName, u.lastName, u.avatar
+            FROM Users u
+            WHERE (
+                EXISTS (
+                    SELECT 1 FROM Followers f
+                    WHERE (f.followerId = ? AND f.followedId = u.id)
+                       OR (f.followerId = u.id AND f.followedId = ?)
+                )
+            )
+            AND NOT EXISTS (
+                SELECT 1 FROM GroupsMembers gm
+                WHERE gm.memberId = u.id AND gm.groupId = ?
+            )    
 	`
-	rows, err := dataB.SocialDB.Query(query, userID)
+
+	rows, err := dataB.SocialDB.Query(query, userID, userID, Group.GroupID)
 	if err != nil {
 		log.Println("DB query error:", err)
 		http.Error(w, "Server error", http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()
+
 	var users []Followers
 	for rows.Next() {
 		var u Followers
@@ -59,7 +70,7 @@ func GetFollowersList(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var status sql.NullString
-		checkQuery := `SELECT status FROM Notifications WHERE groupId = ? AND type = 'group_invite' AND senderId = ? AND receiverId = ? LIMIT 1;`
+		checkQuery := `SELECT status FROM Notifications WHERE groupId = ? AND type = 'group_invite' AND senderId = ? AND receiverId = ? LIMIT 1`
 		err := dataB.SocialDB.QueryRow(checkQuery, Group.GroupID, userID, u.ID).Scan(&status)
 		if err != nil && err != sql.ErrNoRows {
 			fmt.Println("error checking notification for group:", err)
@@ -76,6 +87,7 @@ func GetFollowersList(w http.ResponseWriter, r *http.Request) {
 		users = append(users, u)
 	}
 
+	fmt.Println("gg", users)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users)
 }

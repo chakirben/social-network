@@ -1,6 +1,8 @@
 package notification
 
 import (
+	"database/sql"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -28,17 +30,18 @@ func RespondtoNotification(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid action type", http.StatusBadRequest)
 		return
 	}
-
 	var notifType string
-	var senderId, receiverId, groupId, eventId int
+	var senderId, receiverId int
+	var groupId, eventId sql.NullInt64 
+
 	err = dataB.SocialDB.QueryRow(`
-		SELECT type, senderId, receiverId, groupId, eventId
-		FROM Notifications
-		WHERE id = ? AND status = 'pending'`,
+    SELECT type, senderId, receiverId, groupId, eventId
+    FROM Notifications
+    WHERE id = ? AND status = 'pending'`,
 		notificationId,
 	).Scan(&notifType, &senderId, &receiverId, &groupId, &eventId)
-
 	if err != nil {
+		fmt.Println("Error fetching notification:", err)
 		http.Error(w, "Notification not found or already handled", http.StatusNotFound)
 		return
 	}

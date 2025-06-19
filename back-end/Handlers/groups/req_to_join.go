@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"socialN/Handlers/auth"
+	"socialN/Handlers/ws"
 	dataB "socialN/dataBase"
 )
 
@@ -15,10 +16,6 @@ type ReqJoinGroup struct {
 }
 
 func Req_To_Join_Groups(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Invalid Method", http.StatusMethodNotAllowed)
-		return
-	}
 	userID, err := auth.ValidateSession(r, dataB.SocialDB)
 	if err != nil {
 		http.Error(w, "Invalid session :(", http.StatusUnauthorized)
@@ -51,13 +48,48 @@ func Req_To_Join_Groups(w http.ResponseWriter, r *http.Request) {
 	   INSERT INTO Notifications (senderId, receiverId, type , groupId) VALUES (?,?,?,?)
 	`
 
-	_, err = dataB.SocialDB.Exec(query2, userID, adminId, "group_join_request", req.GroupID)
+	res, err := dataB.SocialDB.Exec(query2, userID, adminId, "group_join_request", req.GroupID)
 	if err != nil {
 		fmt.Println(err)
 		log.Println("Error to select admin in db :(", err)
 		http.Error(w, "Failed to join group. Please try again later. :(", http.StatusInternalServerError)
 		return
 	}
+	notifId, err := res.LastInsertId()
+	if err != nil {
+		fmt.Println("failed to extract notification I d")
+		http.Error(w, "failed to extract notification I d", http.StatusInternalServerError)
+		return
+	}
+	var firstName, lastName, avatar, groupName string
+	err = dataB.SocialDB.QueryRow(`
+	    SELECT u.firstName, u.lastName, u.avatar, g.title
+	    FROM Users u
+	    JOIN Groups g ON g.id = ?
+	    WHERE u.id = ?
+    `, req.GroupID, userID).Scan(&firstName, &lastName, &avatar, &groupName)
+	if err != nil {
+		log.Println("Error fetching sender and group info:", err)
+		http.Error(w, "Could not get sender/group info", http.StatusInternalServerError)
+		return
+	}
 
+	ws.ConnMu.Lock()
+	conns := ws.Connections[adminId]
+	ws.ConnMu.Unlock()
+
+	for _, conn := range conns {
+		if conn != nil {
+			SendMessage(conn, InviteNotification{
+				Id:               notifId,
+				Type:             "Notification",
+				NotificationType: "invite",
+				GroupName:        groupName,
+				FirstName:        firstName,
+				LastName:         lastName,
+				Avatar:           avatar,
+			})
+		}
+	}
 	w.WriteHeader(http.StatusAccepted)
 }

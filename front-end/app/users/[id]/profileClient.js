@@ -43,7 +43,7 @@ export default function ProfileClient({ session, searchParams }) {
                     const data = await response.json();
                     setProfileData(data);
                     setErrorMessage(null); // clear error
-                    console.log("Success data:", data);
+                    console.log("Success dasetShowFollowModalta:", data);
                 }
             } catch (error) {
                 console.error("Network error:", error);
@@ -86,11 +86,6 @@ export default function ProfileClient({ session, searchParams }) {
         profile_type
     } = profileData;
 
-
-    //follow
-    //cancel_request
-    //unfollow
-
     return (
         <div className="profileContainer">
             <SideBar />
@@ -129,8 +124,6 @@ export default function ProfileClient({ session, searchParams }) {
                     <Post key={i} pst={p} />
                 ))}
             </div>
-
-            {/* Followers/Following Modal */}
             {showFollowModal && (
                 <div className="modal-backdrop" onClick={() => setShowFollowModal(false)} style={{
                     position: 'fixed',

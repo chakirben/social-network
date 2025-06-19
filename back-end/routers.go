@@ -61,7 +61,7 @@ func SetupHandlers() {
 	http.HandleFunc("/api/CancelRequestToJoinGroups", AccessMiddleware(SessionMiddleware(Group.CancelRequestToJoinGroups)))
 	http.HandleFunc("/api/CancelInviteToGroups", AccessMiddleware(SessionMiddleware(Group.CancelInviteToGroups)))
 	http.HandleFunc("/api/getFollowers", AccessMiddleware(Group.GetFollowersList))
-	http.HandleFunc("/api/InfiteTheFollowers", AccessMiddleware(SessionMiddleware(Group.InfiteTheFollowers)))
+	http.HandleFunc("/api/InfiteTheFollowers", AccessMiddleware(SessionMiddleware(Group.InviteTheFollowers)))
 
 	// SearchData
 	http.HandleFunc("/api/SearchData", AccessMiddleware(SessionMiddleware(Search.SearchData)))
@@ -97,7 +97,6 @@ func SetupHandlers() {
 	// users
 	http.HandleFunc("/api/getUserData", AccessMiddleware(u.GetCurrentUserData))
 	http.HandleFunc("/api/getUnfollowedUsers", AccessMiddleware(u.GetUnfollowedUsers))
-
 	http.HandleFunc("/api/updatePrivacy", AccessMiddleware(u.SetPrivacy))
 	http.HandleFunc("/api/getFollowersList", AccessMiddleware(u.GetFollowersListHandler))
 

@@ -92,9 +92,9 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 							SendMsg(conn, NotificationMessage{
 								ID:               notificationId,
 								Type:             "Notification",
-								NotificationType: "follow_request",
+								NotificationType: "follow",
 								FirstName:           firstName,
-								LastName:      lastName ,
+								LastName:      	lastName ,
 								Avatar:           avatar,
 							})
 						}
@@ -106,7 +106,6 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("cancel_request"))
 			return
 		} else {
-			// public: insert into Followers
 			_, err := db.Exec(`
                 INSERT OR IGNORE INTO Followers (followerId, followedId)
                 VALUES (?, ?)
@@ -156,8 +155,8 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 
 type NotificationMessage struct {
 	ID               int64  `json:"id"`
-	Type             string `json:"type"`             // always "Notification"
-	NotificationType string `json:"notificationType"` // e.g. "follow_request"
+	Type             string `json:"type"`             
+	NotificationType string `json:"notificationType"`
 	FirstName        string `json:"firstName"`
 	LastName         string `json:"lastName"`
 	Avatar           string `json:"avatar"`
