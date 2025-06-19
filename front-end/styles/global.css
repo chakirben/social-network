@@ -1,6 +1,9 @@
+html {
+   overflow: hidden;
+}
 body {
     margin: 0;
-    padding: 0;
+    padding: 48px;
     background-color: black;
     color: white;
     font-family: 'Arial', sans-serif;
@@ -9,7 +12,6 @@ body {
 
 body::-webkit-scrollbar {
     display: none;
-
 }
 
 h1,
@@ -18,7 +20,10 @@ h4,
 h3 {
     margin: 0px;
 }
-
+hr {
+    border: 1px solid rgba(255, 255, 255, 0.137);
+    opacity: 0.5;
+}
 p {
     margin: 0px;
     opacity: 0.8;
@@ -54,7 +59,7 @@ textarea {
 
 body {
     margin: 0;
-    padding: 0;
+    padding: 48px;
     box-sizing: border-box;
     background-color: #0A0A0A;
     color: white;

@@ -25,7 +25,6 @@
 
 .type {
     font-size: 18px;
-    background-color: #1a1a1aaf;
     width: 100%;
-    padding: 10px;
+    font-weight: bold;
 }

@@ -7,8 +7,8 @@
 .event {
     display: flex;
     justify-content: space-between;
-    padding: 40px;
     align-items: center;
+    background: #ffffff0e;
 }
 
 .eventData {
@@ -22,7 +22,13 @@
     flex-direction: column;
     gap: 24px;
 }
-
+.EventInHome {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: scroll;
+    height: 800px;
+}
 .goingBtn,
 .notGoingBtn {
     padding: 12px;
@@ -71,6 +77,7 @@
 
 .EventTitle {
     font-size: 22px;
+    font-weight: bold;
 }
 
 .eventAvatar {
@@ -86,4 +93,5 @@
 .dateAndName {
     display: flex;
     gap: 12px;
+
 }
