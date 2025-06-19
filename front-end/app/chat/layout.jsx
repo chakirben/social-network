@@ -115,7 +115,7 @@ export default function ChatLayout({ children }) {
 
                                         }}
                                     >
-                                        <Avatar url={entity.avatar} name={displayName} size={"bigPic"} />
+                                        <Avatar url={entity.avatar} name={displayName} size={"big"} />
                                         <div />
                                     </div>
                                     <div
