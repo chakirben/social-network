@@ -1,10 +1,11 @@
 'use client';
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import FollowButton from './FollowButton';
 import SideBar from "@/components/sidebar";
 import Post from "@/components/post";
 import Header from "@/components/Header/header";
+import { useUser } from "@/components/context/userContext";
 import "../../../styles/global.css";
 import "../../profile/profile.css";
 import "../../home/home.css";
@@ -15,8 +16,18 @@ export default function ProfileClient({ session, searchParams }) {
     const [profileId, setProfileId] = useState(null);
     const [profileData, setProfileData] = useState(null);
     const [showFollowModal, setShowFollowModal] = useState(false);
-    const [errorMessage, setErrorMessage] = useState(null); 
+    const [errorMessage, setErrorMessage] = useState(null);
     const { id } = useParams() || searchParams;
+
+    const route = useRouter()
+    const { user } = useUser();
+
+    useEffect(() => {
+        if (user?.id == id) {
+            route.push('/profile');
+        }
+    }, [user, id]);
+
 
     useEffect(() => {
         setProfileId(id);
@@ -26,7 +37,7 @@ export default function ProfileClient({ session, searchParams }) {
         const fetchData = async () => {
             try {
                 const response = await fetch('http://localhost:8080/api/profile', {
-                     credentials: 'include',
+                    credentials: 'include',
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -95,10 +106,10 @@ export default function ProfileClient({ session, searchParams }) {
                     <img className="coverture" src={"http://localhost:8080/uploads/coverture.png"} alt="Coverture" />
                     <div className="userdata gp12">
                         <div className="imgAndFollow sb">
-                           
-                            <Avatar name={ personal_data[0].Firstname} url={personal_data[0].Avatar}/>
 
-                            
+                            <Avatar name={personal_data[0].Firstname} url={personal_data[0].Avatar} />
+
+
                             <div className="follow">
                                 <p onClick={() => setShowFollowModal(true)}><strong className="followers-number">{followers_count}</strong> Followers</p>
                                 <p onClick={() => setShowFollowModal(true)}><strong className="following-number">{followed_count}</strong> Following</p>
