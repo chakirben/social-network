@@ -15,6 +15,7 @@ import (
 
 	db "socialN/dataBase"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -75,6 +76,8 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	avatarPath, err := handleAvatarUpload(r, w)
 	if err != nil {
+		http.Error(w, "Error handling avatar upload", http.StatusInternalServerError)
+		fmt.Println("Error handling avatar upload:", err)
 		return
 	}
 	user.Avatar = avatarPath
@@ -138,15 +141,15 @@ func handleAvatarUpload(r *http.Request, w http.ResponseWriter) (string, error) 
 		return "", fmt.Errorf("invalid avatar file type")
 	}
 
-	timestamp := time.Now().UnixNano()
-	filename := fmt.Sprintf("%d_%s", timestamp, header.Filename)
-	avatarPath := filepath.Join("uploads", filename)
+	uuidStr := uuid.New().String()
+	filename := fmt.Sprintf("%s_%s", uuidStr, header.Filename)
+	localPath := filepath.Join("uploads", filename)
 
 	if _, err := os.Stat("uploads"); os.IsNotExist(err) {
 		os.Mkdir("uploads", 0o755)
 	}
 
-	dst, err := os.Create(avatarPath)
+	dst, err := os.Create(localPath)
 	if err != nil {
 		http.Error(w, "Failed to save avatar", http.StatusInternalServerError)
 		return "", err
@@ -158,7 +161,8 @@ func handleAvatarUpload(r *http.Request, w http.ResponseWriter) (string, error) 
 		return "", err
 	}
 
-	return avatarPath, nil
+	publicPath := fmt.Sprintf("/uploads/%s", filename)
+	return publicPath, nil
 }
 
 func checkUserExistence(nickname, email string) error {

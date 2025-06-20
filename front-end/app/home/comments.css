@@ -14,7 +14,12 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     width: 100%;
 }
-
+.commentsSection {
+    flex-grow: 1;
+}
+.cmsss {
+    margin-left:10px ;
+}
 .authorAndTime {
     display: flex;
     align-items: center;

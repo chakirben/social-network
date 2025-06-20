@@ -3,7 +3,7 @@ export default async function fetchReaction(itemId, itemType, reactionValue) {
     console.log(itemId , itemType ,  reactionValue);
     
     try {
-        const response = await fetch(`http://localhost:8080/api/reaction?itemType=${itemType}&itemId=${itemId}&reactionType=${reactionValue}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reaction?itemType=${itemType}&itemId=${itemId}&reactionType=${reactionValue}`, {
             method: 'POST',
             credentials: "include"
         });
@@ -12,9 +12,7 @@ export default async function fetchReaction(itemId, itemType, reactionValue) {
             console.error("Server error:", response.statusText);
             return false;
         }
-
-        // const data = await response.json();
-        return true; // assumes API returns { success: true } on success
+        return true;
     } catch (error) {
         console.error("Network error:", error);
         return false;

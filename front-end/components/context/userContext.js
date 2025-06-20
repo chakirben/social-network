@@ -8,14 +8,26 @@ export const UserProvider = ({ children }) => {
 
     const [user, setUser] = useState(null);
 
-
     useEffect(() => {
-        const savedUser = localStorage.getItem("user");
-        if (savedUser) {
-            setUser(JSON.parse(savedUser));
-        }
-    }, []);
+        const fetchUser = async () => {
+            try {
+                const rep = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getUserData`, {
+                    credentials: "include",
+                });
 
+                if (!rep.ok) {
+                    throw new Error(`HTTP error! Status: ${rep.status}`);
+                }
+
+                const data = await rep.json();
+                setUser(data);
+            } catch (err) {
+                console.log("Error fetching user:", err);
+            }
+
+        };
+        fetchUser();
+    }, []);
     return (
         <UserContext.Provider value={{ user, setUser }}>
             {children}

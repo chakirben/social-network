@@ -2,7 +2,8 @@
 
 export default async function FetchCancelToJoingroup(groupId) {
     try {
-        const rep = await fetch("http://localhost:8080/api/CancelRequestToJoinGroups", {
+        const rep = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/CancelRequestToJoinGroups`
+, {
             method: "POST",
             credentials: "include",
             headers: {

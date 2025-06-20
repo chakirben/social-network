@@ -10,14 +10,13 @@ import "../../styles/global.css"
 import { useRouter } from "next/navigation"
 
 export default function ChatLayout({ children }) {
-    const { discussionMap, setDiscussionMap } = useContext(WebSocketContext)
+    const { discussionMap, setDiscussionMap ,counter } = useContext(WebSocketContext)
     const { statuses, setStatuses } = useContext(WebSocketContext)
 
     const [friends, setFriends] = useState([])
     const [groups, setGroups] = useState([])
     const router = useRouter()
 
-    // Fetch discussions
     useEffect(() => {
         const fetchDiscussions = async () => {
             try {
@@ -36,12 +35,13 @@ export default function ChatLayout({ children }) {
             }
         }
         fetchDiscussions()
-    }, [])
+    }, [counter])
 
     // Fetch online users
     const fetchOnlineUsers = useCallback(async () => {
         try {
-            const response = await fetch("http://localhost:8080/api/online", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/online`
+, {
                 credentials: "include"
             })
             const users = await response.json()
@@ -71,7 +71,8 @@ export default function ChatLayout({ children }) {
 
     const fetchFriendsAndGroups = useCallback(async () => {
         try {
-            const response = await fetch("http://localhost:8080/api/friendsAndGroups", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/friendsAndGroups`
+, {
                 credentials: "include"
             })
             const data = await response.json()

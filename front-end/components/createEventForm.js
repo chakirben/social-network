@@ -40,7 +40,7 @@ export default function CreateEvent({ setEvents, evnts }) {
 
 
     try {
-      const res = await fetch('http://localhost:8080/api/CreateEvent', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/CreateEvent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

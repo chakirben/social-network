@@ -24,7 +24,8 @@ export default function ChatView() {
     if (!type || !id) return
     const fetchMessages = async () => {
       try {
-        const baseUrl = "http://localhost:8080/api/fetchMessages"
+        const baseUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/fetchMessages`
+
         const queryParams =
           type === "user"
             ? `?type=private&other_id=${id}`

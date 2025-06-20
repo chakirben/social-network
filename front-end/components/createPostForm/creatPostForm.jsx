@@ -20,7 +20,7 @@ export default function CreatePost({ newpost }) {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/getFollowersList", { credentials: "include" });
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getFollowersList`, { credentials: "include" });
         const data = await response.json();
         setUsers(data);
       } catch (error) {
@@ -37,7 +37,7 @@ export default function CreatePost({ newpost }) {
   const toggleUser = (id) => {
 
     setSelectedUsers((prev) =>
-      prev.includes(id) ? prev.filter((uid) => uid !== id) : [...prev, id]
+      prev?.includes(id) ? prev.filter((uid) => uid !== id) : [...prev, id]
     );
     console.log("selected users: ", selectedUsers);
 
@@ -77,7 +77,7 @@ export default function CreatePost({ newpost }) {
     }
 
     try {
-      const res = await fetch('http://localhost:8080/api/CreatePost', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/CreatePost`, {
         method: 'POST',
         body: formData,
         credentials: 'include',

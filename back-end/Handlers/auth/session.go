@@ -18,8 +18,7 @@ func CheckAuth(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	fmt.Println(id)
-	w.Write([]byte(fmt.Sprintf("%d", id)))
-}
+	}
 
 func ValidateSession(r *http.Request, db *sql.DB) (int, error) {
 	cookie, err := r.Cookie("sessionId")

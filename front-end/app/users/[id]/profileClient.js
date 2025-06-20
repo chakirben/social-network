@@ -36,7 +36,7 @@ export default function ProfileClient({ session, searchParams }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/profile', {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/profile`, {
                     credentials: 'include',
                     method: 'POST',
                     headers: {
@@ -103,7 +103,7 @@ export default function ProfileClient({ session, searchParams }) {
             <div className="classname df cl">
                 <Header />
                 <div className="userProfile">
-                    <img className="coverture" src={"http://localhost:8080/uploads/coverture.png"} alt="Coverture" />
+                    <img className="coverture" src="/images/coverture.png" />
                     <div className="userdata gp12">
                         <div className="imgAndFollow sb">
 

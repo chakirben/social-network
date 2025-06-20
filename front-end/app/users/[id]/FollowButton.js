@@ -7,7 +7,7 @@ export default function FollowButton({ follow_status,session, id }) {
   const  [btnText, setbtnText] = useState(follow_status);
   const handleFollow = async (e) => {
     e.preventDefault();
-    const response = await fetch(`http://localhost:8080/api/follow?id=${id}&action=${btnText}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/follow?id=${id}&action=${btnText}`, {
       method: 'POST',
       credentials: 'include',
       headers: {

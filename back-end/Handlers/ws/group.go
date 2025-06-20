@@ -50,8 +50,8 @@ func RedirectGroupMessage(msg Message) error {
 	// 4. Get all group members (excluding the sender)
 	rows, err := dataB.SocialDB.Query(`
 		SELECT memberId FROM GroupsMembers 
-		WHERE groupId = ? AND memberId != ?
-	`, msg.GroupID, msg.Sender)
+		WHERE groupId = ?
+	`, msg.GroupID)
 	if err != nil {
 		return fmt.Errorf("error retrieving group members: %v", err)
 	}

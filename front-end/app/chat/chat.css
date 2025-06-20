@@ -21,8 +21,9 @@ small  {
 .Msgs {
     margin-left: 24px;
 }
-/* Instagram-style Online Users Styles */
-
+.no-discussions {
+  margin: 0px 24px 0px 24px; ;
+}
 .online-users-container {
   display: flex;
   max-width: 300px;

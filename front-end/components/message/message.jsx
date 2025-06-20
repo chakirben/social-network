@@ -7,7 +7,7 @@ import Avatar from "../avatar/avatar";
 
 export default function Message({ msg }) {
     const { user } = useUser();
-    const isSender = msg.sender_id === user.id;
+    const isSender = msg.sender_id === user?.id;
 
     const messageContainerClass = isSender
         ? `${styles.messageContainer} ${styles.me}`

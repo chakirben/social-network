@@ -75,7 +75,7 @@ export function PopupProvider({ children }) {
         try {
             
             const res = await fetch(
-                `http://localhost:8080/api/respondToNotification?notificationId=${popup.id}&actionType=${action}`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/respondToNotification?notificationId=${popup.id}&actionType=${action}`,
                 {
                     method: "POST",
                     credentials: "include",

@@ -126,20 +126,9 @@
 
 
 .msgNoGroups {
-    position: fixed;
     display: flex;
     flex-direction: column;
-    min-width: 300px;
-    gap: 10px;
-    z-index: 106;
-    top: 30%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #ffffff1a;
     padding: 20px;
     border-radius: 12px;
-    backdrop-filter: blur(10px);
-    font-family: Arial, Helvetica, sans-serif;
     margin: auto;
-    z-index: 1000; 
 }

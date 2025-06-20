@@ -22,7 +22,6 @@ type Comment struct {
 	DislikeCount int     `json:"dislikeCount"`
 	UserReaction *int    `json:"userReaction"`
 }
-
 func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 	postIDStr := r.URL.Query().Get("id")
 	if postIDStr == "" {
@@ -42,6 +41,38 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var exists bool
+	err = dataB.SocialDB.QueryRow(`
+		SELECT EXISTS (
+			SELECT 1 FROM Posts p
+			WHERE p.id = ?
+			AND (
+				(p.creatorId = ?)
+				OR (p.groupId IS NOT NULL AND EXISTS (
+					SELECT 1 FROM GroupsMembers WHERE groupId = p.groupId AND memberId = ?
+				))
+				OR (p.privacy = 'public')
+				OR (p.privacy = 'almostPrivate' AND EXISTS (
+					SELECT 1 FROM Followers WHERE followedId = p.creatorId AND followerId = ?
+				))
+				OR (p.privacy = 'private' AND EXISTS (
+					SELECT 1 FROM PostViewPermissions WHERE postId = p.id AND userId = ?
+				))
+			)
+		)
+	`, postID, userID, userID, userID, userID, userID).Scan(&exists)
+
+	if err != nil {
+		log.Println("Error checking post permissions:", err)
+		http.Error(w, "Error checking permissions", http.StatusInternalServerError)
+		return
+	}
+
+	if !exists {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
 	commentRows, err := dataB.SocialDB.Query(`
 		SELECT 
 			c.id,
@@ -58,7 +89,7 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 		JOIN Users u ON c.userId = u.id
 		WHERE c.postId = ?
 		ORDER BY c.createdAt DESC
-	`,userID, postID)
+	`, userID, postID)
 	if err != nil {
 		log.Println("Error fetching comments:", err)
 		http.Error(w, "Failed to fetch comments", http.StatusInternalServerError)

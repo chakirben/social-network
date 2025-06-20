@@ -83,7 +83,6 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Invalid group ID", http.StatusBadRequest)
 			return
 		}
-
 		result, err = dataB.SocialDB.Exec(`
 			INSERT INTO Posts (content, image, privacy, groupId, creatorId)
 			VALUES (?, ?, ?, ?, ?)`,

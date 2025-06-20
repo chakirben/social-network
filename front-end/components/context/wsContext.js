@@ -8,8 +8,7 @@ import { useUser } from './userContext';
 export const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
-  console.log('WebSocketProvider rendered');
-
+  const [counter , setCounter] = useState(0);
   const [statuses, setStatuses] = useState({});
   const [discussionMap, setDiscussionMap] = useState({});
   const [wsMessages, setwsMessages] = useState([]);
@@ -38,7 +37,7 @@ export const WebSocketProvider = ({ children }) => {
   const Connect = () => {
     if (connectedRef.current || !userRef.current) return;
 
-    const ws = new WebSocket('ws://localhost:8080/api/ws');
+    const ws = new WebSocket('ws://10.1.2.10:8080/api/ws');
 
     ws.addEventListener('open', () => {
       console.log('WebSocket connected');
@@ -58,6 +57,7 @@ export const WebSocketProvider = ({ children }) => {
     });
 
     ws.addEventListener('message', (event) => {
+      setCounter((prev) => prev + 1);
       try {
         const data = JSON.parse(event.data);
         const currentUser = userRef.current;
@@ -166,7 +166,8 @@ export const WebSocketProvider = ({ children }) => {
         notifCounter,
         setNotifCounter,
         messagesCounter,
-        setMessagesCounter
+        setMessagesCounter , 
+        counter,
       }}
     >
       {children}

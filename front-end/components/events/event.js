@@ -9,7 +9,7 @@ export default function Events({ event  , index}) {
                 <p className="Eventdescription">{event.description}</p>
                 <div className="dateAndName">
                     <div className="iconAndDate">
-                        <img src="http://localhost:8080/uploads/dateOfBirth.svg" />
+                        <img src="images/dateOfBirth.svg" />
                         <p className="eventDate">{new Date(event.eventDate).toDateString()}</p>
                     </div>
                     <hr/>

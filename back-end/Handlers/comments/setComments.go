@@ -11,6 +11,8 @@ import (
 
 	"socialN/Handlers/auth"
 	dataB "socialN/dataBase"
+
+	"github.com/google/uuid"
 )
 
 type CommentResponse struct {
@@ -101,14 +103,16 @@ func SetCommentHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SaveAvatar(file io.Reader) (string, error) {
-	timestamp := time.Now().UnixNano()
-	filename := fmt.Sprintf("%d_avatar.jpg", timestamp)
+	uuidStr := uuid.New().String()
+	filename := fmt.Sprintf("%s_avatar.jpg", uuidStr)
+
 	uploadDir := "uploads"
 	if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
 		if err := os.Mkdir(uploadDir, 0o755); err != nil {
 			return "", err
 		}
 	}
+
 	localPath := filepath.Join(uploadDir, filename)
 	dst, err := os.Create(localPath)
 	if err != nil {
@@ -120,6 +124,7 @@ func SaveAvatar(file io.Reader) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	publicURL := fmt.Sprintf("http://localhost:8080/uploads/%s", filename)
+
+	publicURL := fmt.Sprintf("/uploads/%s", filename)
 	return publicURL, nil
 }

@@ -9,6 +9,7 @@ import Header from "@/components/Header/header";
 import { useRouter } from "next/navigation";
 import Divider from "@/components/divider";
 import { WebSocketContext } from "@/components/context/wsContext";
+import Avatar from "@/components/avatar/avatar";
 
 
 export default function Profile() {
@@ -26,7 +27,7 @@ export default function Profile() {
     const handleSelection = async (choise) => {
         setShowOptions(false)
         try {
-            let res = await fetch('http://localhost:8080/api/updatePrivacy', {
+            let res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/updatePrivacy`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -44,7 +45,7 @@ export default function Profile() {
         }
     }
     const handleLogout = async () => {
-        fetch('http://localhost:8080/api/logout', {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/logout`, {
             method: 'POST',
             credentials: 'include',
         })
@@ -68,7 +69,7 @@ export default function Profile() {
     useEffect(() => {
         async function fetchProfile() {
             try {
-                const res = await fetch('http://localhost:8080/api/getUserData', { credentials: "include" })
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getUserData`, { credentials: "include" })
                 if (!res.ok) {
                     throw new Error(`HTTP error! Status: ${res.status}`);
                 }
@@ -86,7 +87,7 @@ export default function Profile() {
     useEffect(() => {
         async function fetchPosts() {
             try {
-                let res = await fetch('http://localhost:8080/api/GetCreatedPosts', {
+                let res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/GetCreatedPosts`, {
                     method: 'POST',
                     credentials: 'include',
                     headers: {
@@ -115,20 +116,20 @@ export default function Profile() {
             <div className="classname df cl">
                 <Header pageName={"profile"} ele={<button className="Secondary" onClick={handleLogout}>logout</button>} />
                 <div className="userProfile">
-                    <img className="coverture" src="http://localhost:8080/uploads/coverture.png"></img>
+                    <img className="coverture" src="images/coverture.png"></img>
                     <div className="userdata gp12">
                         <div className="imgAndFollow sb">
-                            {profile && <img className="userAvatar" src={`http://localhost:8080/${profile.avatar}`} />}
+                            <Avatar url={profile?.avatar} size={"big"}  name={profile?.firstName}/>
                             <div className="follow">
                                 <p><strong className="number">{profile?.followers}</strong> Followers</p>
                                 <p><strong className="number">{profile?.following}</strong> Following</p>
                                 <span onClick={handle} className="privacyOptions">
                                     privacy {profile?.accountType === "public"
-                                        ? <img className="icon" src="http://localhost:8080/uploads/unlock.svg" />
-                                        : <img className="icon" src="http://localhost:8080/uploads/lock.svg" />}
+                                        ? <img className="icon" src="images/unlock.svg" />
+                                        : <img className="icon" src="images/lock.svg" />}
                                     <div className={`options ${showOptions ? "" : "hidden"}`}>
-                                        <span className="button" onClick={() => handleSelection("private")}> <img className="icon" src="http://localhost:8080/uploads/lock.svg" /> Private</span>
-                                        <span className="button" onClick={() => handleSelection("public")}> <img className="icon" src="http://localhost:8080/uploads/unlock.svg" /> Public</span>
+                                        <span className="button" onClick={() => handleSelection("private")}> <img className="icon" src="images/lock.svg" /> Private</span>
+                                        <span className="button" onClick={() => handleSelection("public")}> <img className="icon" src="images/unlock.svg" /> Public</span>
                                     </div>
                                 </span>
 
@@ -138,7 +139,7 @@ export default function Profile() {
                             {profile && <h4>{profile.firstName} {profile.lastName}</h4>}
                             {profile && <p>Hey everyone! I’ve been thinking about starting</p>}
                             <div className="df gp6">
-                                {profile && <img src="http://localhost:8080/uploads/dateOfBirth.svg" />}
+                                {profile && <img src="images/dateOfBirth.svg" />}
                                 {profile && <p>{new Date(profile.dateOfBirth).toLocaleDateString('fr-FR')}</p>}
                             </div>
 

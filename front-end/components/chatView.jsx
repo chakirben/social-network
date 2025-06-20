@@ -21,7 +21,7 @@ export default function ChatView() {
 
     const fetchMessages = async () => {
       try {
-        const baseUrl = "http://localhost:8080/api/ws/messages"
+        const baseUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/ws/messages`
         const queryParams =
           type === "user"
             ? `?type=private&other_id=${id}`

@@ -10,7 +10,7 @@ export default function FollowersCard({ user }) {
             {user.avatar ? (
                 <img
                     className="userAvatar"
-                    src={`http://localhost:8080/${user.Avatar}`}
+                    src={`${process.env.NEXT_PUBLIC_API_URL}/${user.Avatar}`}
                     alt={`${user.Firstname}'s avatar`}
                 />
             ) : (

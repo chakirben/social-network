@@ -1,10 +1,9 @@
 'use client'
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { WebSocketContext } from '@/components/context/wsContext';
 
 import { useUser } from '@/components/context/userContext'
-
 import '../register/register.css';
 import styles from './login.module.css'
 export default function Login() {
@@ -24,7 +23,7 @@ export default function Login() {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:8080/api/login`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -42,27 +41,29 @@ export default function Login() {
       if (Connect) {
         Connect();
       }
-      
-      async function FirstTimeUser() {
+
+      const fetchUser = async () => {
         try {
-          const rep = await fetch("http://localhost:8080/api/getUserData", {
-            credentials: "include"
+          const rep = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getUserData`, {
+            credentials: "include",
           });
+
           if (!rep.ok) {
             throw new Error(`HTTP error! Status: ${rep.status}`);
           }
-          let data = await rep.json();
-          localStorage.setItem("user", JSON.stringify(data));
+
+          const data = await rep.json();
           setUser(data);
         } catch (err) {
-          console.log('errrrror', err);
+          console.log("Error fetching user:", err);
         }
-      }
 
-      
-      await FirstTimeUser();
+      };
+      fetchUser();
+
+
       console.log("Login successful");
-      
+
       router.push('/home');
 
     } catch (err) {
