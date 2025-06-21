@@ -14,9 +14,6 @@ import (
 )
 
 var SocialDB *sql.DB
-
-const dbPath = "dataBase/socialN.db"
-
 func DbInit() {
 	var err error
 	SocialDB, err = sql.Open("sqlite3", "../dataBase/socialN.db")
@@ -28,7 +25,7 @@ func DbInit() {
 	}
 	_, err = SocialDB.Exec("PRAGMA foreign_keys = ON")
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("PRAGMA ERR",err)
 		return
 	}
 	err = ApplyMigrations()

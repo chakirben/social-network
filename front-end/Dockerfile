@@ -12,7 +12,7 @@ FROM node:18
 
 WORKDIR /app
 
-COPY --from=builder /app ./
+COPY --from=builder /app .
 
 EXPOSE 3000
 

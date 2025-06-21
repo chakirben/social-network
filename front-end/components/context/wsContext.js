@@ -37,7 +37,7 @@ export const WebSocketProvider = ({ children }) => {
   const Connect = () => {
     if (connectedRef.current || !userRef.current) return;
 
-    const ws = new WebSocket('ws://10.1.2.10:8080/api/ws');
+    const ws = new WebSocket('ws://127.0.0.1:8080/api/ws');
 
     ws.addEventListener('open', () => {
       console.log('WebSocket connected');

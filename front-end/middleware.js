@@ -15,8 +15,10 @@ export async function middleware(req) {
   const path = url.pathname;
 
   const cookie = req.headers.get('cookie') || '';
-
-  const authCheck = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/checkAuth`, {
+  const link = process.env.ENVIREMENT === "Developpement"
+    ? `${process.env.NEXT_PUBLIC_API_URL}/api/checkAuth`
+    : "http://social-network_backend_1:8080/api/checkAuth";
+  const authCheck = await fetch(link, {
     headers: {
       cookie,
     },

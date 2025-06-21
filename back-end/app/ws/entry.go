@@ -15,7 +15,7 @@ import (
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		origin := r.Header.Get("Origin")
-		allowedOrigin := "http://10.1.2.10:3000"
+		allowedOrigin := "http://127.0.0.1:3000"
 		return origin == allowedOrigin
 	},
 }
