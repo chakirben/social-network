@@ -18,8 +18,30 @@ export default function Profile() {
     const [showOptions, setShowOptions] = useState(false)
     const router = useRouter()
     const socket = useContext(WebSocketContext)
+    const [showFollowersModal, setShowFollowersModal] = useState(false);
+    const [showFollowingModal, setShowFollowingModal] = useState(false);
+    const [userList, setUserList] = useState([]);
     console.log(socket);
-    
+    const fetchUserList = async (listType) => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/followersList?&type=${listType}`, {
+                credentials: 'include',
+            });
+            if (!response.ok) {
+                console.error("Error:", await response.text());
+                return;
+            }
+            const data = await response.json();
+            setUserList(data);
+            if (listType === "followers") {
+                setShowFollowersModal(true);
+            } else {
+                setShowFollowingModal(true);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
     const handle = () => {
         setShowOptions(!showOptions)
     }
@@ -119,10 +141,10 @@ export default function Profile() {
                     <img className="coverture" src="images/coverture.png"></img>
                     <div className="userdata gp12">
                         <div className="imgAndFollow sb">
-                            <Avatar url={profile?.avatar} size={"big"}  name={profile?.firstName}/>
+                            <Avatar url={profile?.avatar} size={"big"} name={profile?.firstName} />
                             <div className="follow">
-                                <p><strong className="number">{profile?.followers}</strong> Followers</p>
-                                <p><strong className="number">{profile?.following}</strong> Following</p>
+                                <p onClick={() => fetchUserList("followers")}><strong className="number">{profile?.followers}</strong> Followers</p>
+                                <p onClick={() => fetchUserList("following")}><strong className="number">{profile?.following}</strong> Following</p>
                                 <span onClick={handle} className="privacyOptions">
                                     privacy {profile?.accountType === "public"
                                         ? <img className="icon" src="images/unlock.svg" />
@@ -147,6 +169,42 @@ export default function Profile() {
                     </div>
                     <Divider />
                 </div>
+                {showFollowersModal && (
+                    <div className="modal-backdrop" onClick={() => setShowFollowersModal(false)}>
+                        <div onClick={(e) => e.stopPropagation()} >
+                            <h2>Followers</h2>
+                            {userList.length > 0 ? (
+                                userList.map((user) => (
+                                    <div key={user.id} className="df gp6 center">
+                                        <Avatar url={user.avatar} name={user.firstName} />
+                                        <span>{user.firstName} {user.lastName}</span>
+                                    </div>
+                                ))
+                            ) : (
+                                <div>No followers</div>
+                            )}
+                            <button onClick={() => setShowFollowersModal(false)}>Close</button>
+                        </div>
+                    </div>
+                )}
+                {showFollowingModal && (
+                    <div className="modal-backdrop" onClick={() => setShowFollowingModal(false)}>
+                        <div onClick={(e) => e.stopPropagation()} >
+                            <h2>Following</h2>
+                            {userList.length > 0 ? (
+                                userList.map((user) => (
+                                    <div key={user.id}  className="df gp6 center">
+                                        <Avatar url={user.avatar} name={user.firstName} />
+                                        <span>{user.firstName} {user.lastName}</span>
+                                    </div>
+                                ))
+                            ) : (
+                                <div>Not following anyone</div>
+                            )}
+                            <button onClick={() => setShowFollowingModal(false)}>Close</button>
+                        </div>
+                    </div>
+                )}
 
                 {profileData && profileData.map((p, i) => (
                     <Post key={i} pst={p} />

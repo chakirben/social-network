@@ -4,7 +4,7 @@ import ReactionGroup from './reactionGroup';
 import { timePassed } from '@/public/utils/timePassed';
 import Avatar from './avatar/avatar';
 
-export default function Post({ pst }) {    
+export default function Post({ pst }) {
     const router = useRouter();
     const [modalOpen, setModalOpen] = useState(false);
     const [modalImageSrc, setModalImageSrc] = useState('');
@@ -33,7 +33,7 @@ export default function Post({ pst }) {
                     {pst.image && (
                         <img
                             className="preview-img"
-                            src={pst?.image}
+                            src={process.env.NEXT_PUBLIC_API_URL + pst?.image}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 openImageModal(pst?.image);
@@ -53,7 +53,7 @@ export default function Post({ pst }) {
 
             {modalOpen && (
                 <div className="image-modal" onClick={closeModal}>
-                    <img src={modalImageSrc} className="modal-img" />
+                    <img src={process.env.NEXT_PUBLIC_API_URL + modalImageSrc} className="modal-img" />
                 </div>
             )}
         </>

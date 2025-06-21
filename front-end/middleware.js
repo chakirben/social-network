@@ -32,12 +32,10 @@ export async function middleware(req) {
     );
   }
 
-  // Redirect unauthenticated users away from protected pages
   if (!isAuthenticated && isProtectedRoute) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
-  // Redirect logged-in users away from login page
   if (isAuthenticated && (path === '/login' || path === '/register')) {
     return NextResponse.redirect(new URL('/home', req.url));
   }
