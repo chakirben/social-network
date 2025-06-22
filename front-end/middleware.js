@@ -13,25 +13,35 @@ const protectedRoutes = [
 export async function middleware(req) {
   const url = req.nextUrl;
   const path = url.pathname;
+  console.log(`[middleware] ${url.pathname}`);
+  if (path.startsWith('/api') || path.startsWith('/uploads')) {
+    return NextResponse.next();
+  }
 
   const cookie = req.headers.get('cookie') || '';
-  const link = process.env.ENVIREMENT === "Developpement"
-    ? `${process.env.NEXT_PUBLIC_API_URL}/api/checkAuth`
-    : "http://social-network_backend_1:8080/api/checkAuth";
-  const authCheck = await fetch(link, {
-    headers: {
-      cookie,
-    },
-  });
+  const baseUrl = process.env.NODE_ENV === 'development'
+    ? 'http://127.0.0.1:8080'
+    : 'http://backend:8080';
+  const apiUrl = `${baseUrl}/api/checkAuth`;
 
-  const isAuthenticated = authCheck.ok;
-  const isProtectedRoute = protectedRoutes.some((route) =>
+  let isAuthenticated = false;
+
+  try {
+    const authCheck = await fetch(apiUrl, {
+      headers: { cookie },
+      cache: 'no-store',
+    });
+    isAuthenticated = authCheck.ok;
+  } catch {
+    isAuthenticated = false;
+  }
+
+  const isProtectedRoute = protectedRoutes.some(route =>
     path === route || path.startsWith(route + '/')
   );
+
   if (path === '/') {
-    return NextResponse.redirect(
-      new URL(isAuthenticated ? '/home' : '/login', req.url)
-    );
+    return NextResponse.redirect(new URL(isAuthenticated ? '/home' : '/login', req.url));
   }
 
   if (!isAuthenticated && isProtectedRoute) {
@@ -47,15 +57,14 @@ export async function middleware(req) {
 
 export const config = {
   matcher: [
-    '/home',
     '/',
+    '/home',
     '/profile',
-    '/users/:path*',
+    '/group',
     '/groups/:path*',
-    '/groups',
-    '/users',
+    '/users/:path*',
     '/chat',
     '/login',
-    '/register'
+    '/register',
   ],
 };

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"socialN/app/auth"
@@ -24,49 +23,48 @@ import (
 )
 
 func SetupHanlers() {
-	fmt.Println("hi tyos")
 	// Serve Images
 	http.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
 
 	// auth
-	http.HandleFunc("/api/checkAuth", AccessMiddleware(auth.CheckAuth))
-	http.HandleFunc("/api/register", AccessMiddleware(auth.RegisterUser))
-	http.HandleFunc("/api/login", AccessMiddleware(auth.LogUser))
-	http.HandleFunc("/api/logout", AccessMiddleware(auth.LogoutHandler))
-	// http.HandleFunc("/api/profile", AccessMiddleware(auth.ProfileHandler))
+	http.HandleFunc("/api/checkAuth", (auth.CheckAuth))
+	http.HandleFunc("/api/register", (auth.RegisterUser))
+	http.HandleFunc("/api/login", (auth.LogUser))
+	http.HandleFunc("/api/logout", (auth.LogoutHandler))
+	// http.HandleFunc("/api/profile", (auth.ProfileHandler))
 
 	// comments
-	http.HandleFunc("/api/GetComments", AccessMiddleware(Comment.GetCommentsHandler))
-	http.HandleFunc("/api/SetComment", AccessMiddleware(Comment.SetCommentHandler))
+	http.HandleFunc("/api/GetComments", (Comment.GetCommentsHandler))
+	http.HandleFunc("/api/SetComment", (Comment.SetCommentHandler))
 
 	// posts
-	http.HandleFunc("/api/GetCreatedPosts", AccessMiddleware(Post.GetCreatedPostsHandler))
-	http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.GetPostHandler)))
-	// http.HandleFunc("/api/GetOnePost", AccessMiddleware(SessionMiddleware(Post.CreatePostHandler)))
-	http.HandleFunc("/api/CreatePost", AccessMiddleware(SessionMiddleware(Post.CreatePostHandler)))
-	http.HandleFunc("/api/GetPosts", AccessMiddleware(SessionMiddleware(Post.GetPostsHandler)))
+	http.HandleFunc("/api/GetCreatedPosts", (Post.GetCreatedPostsHandler))
+	http.HandleFunc("/api/GetOnePost", (SessionMiddleware(Post.GetPostHandler)))
+	// http.HandleFunc("/api/GetOnePost", (SessionMiddleware(Post.CreatePostHandler)))
+	http.HandleFunc("/api/CreatePost", (SessionMiddleware(Post.CreatePostHandler)))
+	http.HandleFunc("/api/GetPosts", (SessionMiddleware(Post.GetPostsHandler)))
 	// http.HandleFunc("/api/GetLikedPosts", Post.GetLikedPostsHandler)
 
 	// Events
-	http.HandleFunc("/api/CreateEvent", AccessMiddleware(event.SetEventHandler))
-	http.HandleFunc("/api/SetAttendance", AccessMiddleware(event.SetAttendanceHandler))
-	http.HandleFunc("/api/GetHomeEvents", AccessMiddleware(event.GetHomeEventsHandler))
-	http.HandleFunc("/api/GetGroupEvents", AccessMiddleware(event.GetGroupEventsHandler))
+	http.HandleFunc("/api/CreateEvent", (event.SetEventHandler))
+	http.HandleFunc("/api/SetAttendance", (event.SetAttendanceHandler))
+	http.HandleFunc("/api/GetHomeEvents", (event.GetHomeEventsHandler))
+	http.HandleFunc("/api/GetGroupEvents", (event.GetGroupEventsHandler))
 
 	// groups Creat_Groups
-	http.HandleFunc("/api/CreatGroup", AccessMiddleware(SessionMiddleware(Group.Creat_Groups)))
-	http.HandleFunc("/api/JoinGroup", AccessMiddleware(SessionMiddleware(Group.JoinGroup)))
-	http.HandleFunc("/api/MyGroups", AccessMiddleware(SessionMiddleware(Group.GetMyGroups)))
-	http.HandleFunc("/api/NotMyGroups", AccessMiddleware(SessionMiddleware(Group.GetGroupsUserNotJoined)))
-	http.HandleFunc("/api/PostsGroups", AccessMiddleware(SessionMiddleware(Group.GetPostGroups)))
-	http.HandleFunc("/api/RequestToJoinGroups", AccessMiddleware(SessionMiddleware(Group.Req_To_Join_Groups)))
-	http.HandleFunc("/api/CancelRequestToJoinGroups", AccessMiddleware(SessionMiddleware(Group.CancelRequestToJoinGroups)))
-	http.HandleFunc("/api/CancelInviteToGroups", AccessMiddleware(SessionMiddleware(Group.CancelInviteToGroups)))
-	http.HandleFunc("/api/getFollowers", AccessMiddleware(Group.GetFollowersList))
-	http.HandleFunc("/api/InfiteTheFollowers", AccessMiddleware(SessionMiddleware(Group.InviteTheFollowers)))
+	http.HandleFunc("/api/CreatGroup", (SessionMiddleware(Group.Creat_Groups)))
+	http.HandleFunc("/api/JoinGroup", (SessionMiddleware(Group.JoinGroup)))
+	http.HandleFunc("/api/MyGroups", (SessionMiddleware(Group.GetMyGroups)))
+	http.HandleFunc("/api/NotMyGroups", (SessionMiddleware(Group.GetGroupsUserNotJoined)))
+	http.HandleFunc("/api/PostsGroups", (SessionMiddleware(Group.GetPostGroups)))
+	http.HandleFunc("/api/RequestToJoinGroups", (SessionMiddleware(Group.Req_To_Join_Groups)))
+	http.HandleFunc("/api/CancelRequestToJoinGroups", (SessionMiddleware(Group.CancelRequestToJoinGroups)))
+	http.HandleFunc("/api/CancelInviteToGroups", (SessionMiddleware(Group.CancelInviteToGroups)))
+	http.HandleFunc("/api/getFollowers", (Group.GetFollowersList))
+	http.HandleFunc("/api/InfiteTheFollowers", (SessionMiddleware(Group.InviteTheFollowers)))
 
 	// SearchData
-	http.HandleFunc("/api/SearchData", AccessMiddleware(SessionMiddleware(Search.SearchData)))
+	http.HandleFunc("/api/SearchData", (SessionMiddleware(Search.SearchData)))
 
 	// // chat
 	// http.HandleFunc("/api/Chat", chat.ChatHandler)
@@ -75,39 +73,39 @@ func SetupHanlers() {
 	// http.HandleFunc("/api/GetOnlineUsers", chat.GetOnlineUsersHandler)
 
 	// http.HandleFunc("/api/Like", app.ReactionHandler)
-	http.HandleFunc("/api/Profile", AccessMiddleware(auth.ProfileHandler))
-	// http.HandleFunc("/api/CheckAuth", AccessMiddleware(auth.CheckAuth))
+	http.HandleFunc("/api/Profile", (auth.ProfileHandler))
+	// http.HandleFunc("/api/CheckAuth", (auth.CheckAuth))
 	// http.HandleFunc("/api/Profile", auth.ProfileHandler)
 	http.HandleFunc("/api/CheckAuth", auth.CheckAuth)
 
 	// follows
-	http.HandleFunc("/api/follow", AccessMiddleware(followers.FollowHandler))
-	http.HandleFunc("/api/acceptFollowRequest", AccessMiddleware(followers.AcceptFollowRequest))
-	http.HandleFunc("/api/declineFollowRequest", AccessMiddleware(followers.DeclineFollowRequest))
+	http.HandleFunc("/api/follow", (followers.FollowHandler))
+	http.HandleFunc("/api/acceptFollowRequest", (followers.AcceptFollowRequest))
+	http.HandleFunc("/api/declineFollowRequest", (followers.DeclineFollowRequest))
 
 	// profile
-	http.HandleFunc("/api/profile", AccessMiddleware(profile.GetData))
+	http.HandleFunc("/api/profile", (profile.GetData))
 
 	// reactions
-	http.HandleFunc("/api/reaction", AccessMiddleware(h.ReactionHandler))
+	http.HandleFunc("/api/reaction", (h.ReactionHandler))
 
 	// users
-	http.HandleFunc("/api/getUserData", AccessMiddleware(u.GetCurrentUserData))
-	http.HandleFunc("/api/getUnfollowedUsers", AccessMiddleware(u.GetUnfollowedUsers))
-	http.HandleFunc("/api/updatePrivacy", AccessMiddleware(u.SetPrivacy))
-	http.HandleFunc("/api/getFollowersList", AccessMiddleware(u.GetFollowersListHandler))
-	http.HandleFunc("/api/followersList", AccessMiddleware(followers.GetListHandler))
+	http.HandleFunc("/api/getUserData", (u.GetCurrentUserData))
+	http.HandleFunc("/api/getUnfollowedUsers", (u.GetUnfollowedUsers))
+	http.HandleFunc("/api/updatePrivacy", (u.SetPrivacy))
+	http.HandleFunc("/api/getFollowersList", (u.GetFollowersListHandler))
+	http.HandleFunc("/api/followersList", (followers.GetListHandler))
 
 	// notifications
-	http.HandleFunc("/api/getNotifications", AccessMiddleware(notification.GetNotifications))
-	http.HandleFunc("/api/respondToNotification", AccessMiddleware(notification.RespondtoNotification))
+	http.HandleFunc("/api/getNotifications", (notification.GetNotifications))
+	http.HandleFunc("/api/respondToNotification", (notification.RespondtoNotification))
 
 	// chat
 	http.HandleFunc("/api/ws", ws.OpenWsConn)
-	http.HandleFunc("/api/GetDiscussionList", AccessMiddleware(ws.GetAllDiscussionsHandler))
-	http.HandleFunc("/api/online", AccessMiddleware(ws.GetOnlineUsers))
-	http.HandleFunc("/api/fetchMessages", AccessMiddleware(ws.GetMessagesHandler))
-	http.HandleFunc("/api/friendsAndGroups", AccessMiddleware(ws.GetUserConnectionsHandler))
+	http.HandleFunc("/api/GetDiscussionList", (ws.GetAllDiscussionsHandler))
+	http.HandleFunc("/api/online", (ws.GetOnlineUsers))
+	http.HandleFunc("/api/fetchMessages", (ws.GetMessagesHandler))
+	http.HandleFunc("/api/friendsAndGroups", (ws.GetUserConnectionsHandler))
 }
 
 func SessionMiddleware(fun http.HandlerFunc) http.HandlerFunc {
@@ -115,21 +113,6 @@ func SessionMiddleware(fun http.HandlerFunc) http.HandlerFunc {
 		_, err := auth.ValidateSession(r, db.SocialDB)
 		if err != nil {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
-			return
-		}
-		fun(w, r)
-	}
-}
-
-func AccessMiddleware(fun http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", `http://127.0.0.1:3000`)
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Cookie")
-		w.Header().Set("Access-Control-Allow-Credentials", "true")
-
-		if r.Method == "OPTIONS" {
-			w.WriteHeader(http.StatusOK)
 			return
 		}
 		fun(w, r)

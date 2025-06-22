@@ -6,7 +6,7 @@ export default function AcceptFollow({ followerID, followedSession }) {
     const acceptFollow = async (e) => {
         e.preventDefault();
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/acceptFollowRequest`, {
+        const response = await fetch(`/api/acceptFollowRequest`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -31,7 +31,7 @@ export default function AcceptFollow({ followerID, followedSession }) {
     const declineFollow = async (e) => {
         e.preventDefault();
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/declineFollowRequest`, {
+        const response = await fetch(`/api/declineFollowRequest`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

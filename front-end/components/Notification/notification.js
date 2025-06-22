@@ -37,7 +37,7 @@ export default function Notification({ notification }) {
     const handleResponse = async (action) => {
         try {
             const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/respondToNotification?notificationId=${id}&actionType=${action}`,
+                `/api/respondToNotification?notificationId=${id}&actionType=${action}`,
                 {
                     method: "POST",
                     credentials: "include",

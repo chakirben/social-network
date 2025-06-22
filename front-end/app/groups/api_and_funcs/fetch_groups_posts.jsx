@@ -34,7 +34,7 @@ export default function GroupDetails({ groupId }) {
     const fetchPosts = async () => {
         setIsLoading(true);
         try {
-            const rep = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/PostsGroups?id=${groupId}`, {
+            const rep = await fetch(`/api/PostsGroups?id=${groupId}`, {
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
             });
@@ -55,7 +55,7 @@ export default function GroupDetails({ groupId }) {
     };
     const fetchEvents = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/GetGroupEvents?id=${groupId}`, {
+            const res = await fetch(`/api/GetGroupEvents?id=${groupId}`, {
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
             });
@@ -98,7 +98,7 @@ export default function GroupDetails({ groupId }) {
         } else {
 
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/CreatePost`, {
+                const res = await fetch(`/api/CreatePost`, {
                     method: 'POST',
                     body: formData,
                     credentials: 'include',

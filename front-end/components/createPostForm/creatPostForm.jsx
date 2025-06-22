@@ -22,7 +22,7 @@ export default function CreatePost({ newpost }) {
   const fetchUsers = async () => {
     setLoadingUsers(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getFollowersList`, { credentials: "include" });
+      const response = await fetch(`/api/getFollowersList`, { credentials: "include" });
       const data = await response.json();
       setUsers(data);
     } catch (error) {
@@ -85,7 +85,7 @@ export default function CreatePost({ newpost }) {
     }
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/CreatePost`, {
+      const res = await fetch(`/api/CreatePost`, {
         method: 'POST',
         body: formData,
         credentials: 'include',

@@ -3,7 +3,7 @@ export default async function fetchReaction(itemId, itemType, reactionValue) {
     console.log(itemId , itemType ,  reactionValue);
     
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reaction?itemType=${itemType}&itemId=${itemId}&reactionType=${reactionValue}`, {
+        const response = await fetch(`/api/reaction?itemType=${itemType}&itemId=${itemId}&reactionType=${reactionValue}`, {
             method: 'POST',
             credentials: "include"
         });

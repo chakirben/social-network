@@ -23,7 +23,7 @@ export default function Login() {
       return;
     }
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login`, {
+      const response = await fetch(`/api/login`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -44,7 +44,7 @@ export default function Login() {
 
       const fetchUser = async () => {
         try {
-          const rep = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getUserData`, {
+          const rep = await fetch(`/api/getUserData`, {
             credentials: "include",
           });
 

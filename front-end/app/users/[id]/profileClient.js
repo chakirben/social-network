@@ -43,7 +43,7 @@ export default function ProfileClient({ session, searchParams }) {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/profile`, {
+        const response = await fetch(`/api/profile`, {
           credentials: 'include',
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -69,7 +69,7 @@ export default function ProfileClient({ session, searchParams }) {
 
   const fetchUserList = async (type) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/followersList?type=${type}&id=${id}`, {
+      const response = await fetch(`/api/followersList?type=${type}&id=${id}`, {
         credentials: 'include',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -78,7 +78,7 @@ export default function ProfileClient({ session, searchParams }) {
       const data = await response.json();
       if (type === 'followers') {
         setFollowersList(data);
-        setFollowersCount(data.length);
+        setFollowersCount(data?.length);
         setShowFollowersModal(true);
       } else {
         setFollowingList(data);
@@ -94,7 +94,7 @@ export default function ProfileClient({ session, searchParams }) {
     if (!followBtnText) return;
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/follow?id=${id}&action=${followBtnText}`, {
+      const response = await fetch(`/api/follow?id=${id}&action=${followBtnText}`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -194,12 +194,11 @@ export default function ProfileClient({ session, searchParams }) {
           <Post key={i} pst={p} />
         ))}
 
-        {/* Followers Modal */}
         {showFollowersModal && (
           <div className="modal-backdrop" onClick={() => setShowFollowersModal(false)}>
             <div onClick={e => e.stopPropagation()}>
               <h2>Followers</h2>
-              {followersList.length > 0 ? (
+              {followersList?.length > 0 ? (
                 followersList.map(user => (
                   <div key={user.id || user.ID} className="df gp6 center" style={{ gap: '10px', marginBottom: '8px' }}>
                     <Avatar url={user.avatar} name={user.firstName} />
@@ -214,7 +213,6 @@ export default function ProfileClient({ session, searchParams }) {
           </div>
         )}
 
-        {/* Following Modal */}
         {showFollowingModal && (
           <div className="modal-backdrop" onClick={() => setShowFollowingModal(false)}>
             <div onClick={e => e.stopPropagation()}>

@@ -39,7 +39,6 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid or missing 'type' parameter. Use 'private' or 'group'", http.StatusBadRequest)
 	}
 }
-
 func handlePrivateMessages(w http.ResponseWriter, r *http.Request, userID int) {
 	otherIDStr := r.URL.Query().Get("other_id")
 	if otherIDStr == "" {
@@ -51,6 +50,16 @@ func handlePrivateMessages(w http.ResponseWriter, r *http.Request, userID int) {
 	if err != nil {
 		http.Error(w, "Invalid 'other_id' parameter", http.StatusBadRequest)
 		return
+	}
+
+	offsetStr := r.URL.Query().Get("offset")
+	offset := 0
+	if offsetStr != "" {
+		offset, err = strconv.Atoi(offsetStr)
+		if err != nil {
+			http.Error(w, "Invalid 'offset' parameter", http.StatusBadRequest)
+			return
+		}
 	}
 
 	query := `
@@ -68,10 +77,10 @@ func handlePrivateMessages(w http.ResponseWriter, r *http.Request, userID int) {
 			(m.senderId = ? AND m.receiverId = ?)
 			OR (m.senderId = ? AND m.receiverId = ?)
 		ORDER BY m.sentAt DESC
-		LIMIT 50;
+		LIMIT 10 OFFSET ?;
 	`
 
-	rows, err := database.SocialDB.Query(query, userID, otherID, otherID, userID)
+	rows, err := database.SocialDB.Query(query, userID, otherID, otherID, userID, offset)
 	if err != nil {
 		fmt.Println("DB error:", err)
 		http.Error(w, "Error fetching messages", http.StatusInternalServerError)
@@ -90,7 +99,6 @@ func handlePrivateMessages(w http.ResponseWriter, r *http.Request, userID int) {
 	sort.Slice(messages, func(i, j int) bool {
 		return messages[i].SentAt.Before(messages[j].SentAt)
 	})
-
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(messages)
 }
@@ -100,6 +108,17 @@ func handleGroupMessages(w http.ResponseWriter, r *http.Request) {
 	if groupID == "" {
 		http.Error(w, "Missing 'group_id' parameter", http.StatusBadRequest)
 		return
+	}
+
+	offsetStr := r.URL.Query().Get("offset")
+	offset := 0
+	var err error
+	if offsetStr != "" {
+		offset, err = strconv.Atoi(offsetStr)
+		if err != nil {
+			http.Error(w, "Invalid 'offset' parameter", http.StatusBadRequest)
+			return
+		}
 	}
 
 	query := `
@@ -115,10 +134,10 @@ func handleGroupMessages(w http.ResponseWriter, r *http.Request) {
 		JOIN users u ON u.id = m.senderId
 		WHERE m.groupId = ?
 		ORDER BY m.sentAt DESC
-		LIMIT 50;
+		LIMIT 10 OFFSET ?;
 	`
 
-	rows, err := database.SocialDB.Query(query, groupID)
+	rows, err := database.SocialDB.Query(query, groupID, offset)
 	if err != nil {
 		fmt.Println("DB error:", err)
 		http.Error(w, "Error fetching group messages", http.StatusInternalServerError)
@@ -137,7 +156,6 @@ func handleGroupMessages(w http.ResponseWriter, r *http.Request) {
 	sort.Slice(messages, func(i, j int) bool {
 		return messages[i].SentAt.Before(messages[j].SentAt)
 	})
-
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(messages)
 }

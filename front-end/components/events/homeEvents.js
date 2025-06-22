@@ -10,7 +10,7 @@ export default function HomeEvents() {
 
     useEffect(() => {
         const fetchEvents = async () => {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/GetHomeEvents`, {
+            const res = await fetch(`/api/GetHomeEvents`, {
                 credentials: "include",
             })
             const data = await res.json()

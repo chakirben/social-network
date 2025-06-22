@@ -14,18 +14,20 @@ import (
 )
 
 var SocialDB *sql.DB
+
 func DbInit() {
 	var err error
-	SocialDB, err = sql.Open("sqlite3", "../dataBase/socialN.db")
+	SocialDB, err = sql.Open("sqlite3", "dataBase/socialN.db")
 	if err != nil {
 		fmt.Println("in 20 ", err)
 		return
 	} else {
 		fmt.Println("db connection opened successfully ! ")
 	}
+
 	_, err = SocialDB.Exec("PRAGMA foreign_keys = ON")
 	if err != nil {
-		fmt.Println("PRAGMA ERR",err)
+		fmt.Println("PRAGMA ERR", err)
 		return
 	}
 	err = ApplyMigrations()
@@ -40,12 +42,10 @@ func ApplyMigrations() error {
 	if err != nil {
 		return err
 	}
-	parentDir := filepath.Dir(wd)
-	migrationsDir := filepath.Join(parentDir, "dataBase", "migrations")
+	migrationsDir := filepath.Join(wd, "dataBase", "migrations")
 	migrationsPath := "file://" + filepath.ToSlash(migrationsDir)
-	absDbPath := filepath.Join(parentDir, "dataBase", "socialN.db")
+	absDbPath := filepath.Join(wd, "dataBase", "socialN.db")
 	dbUri := "sqlite3://" + absDbPath
-
 	m, err := migrate.New(migrationsPath, dbUri)
 	if err != nil {
 		fmt.Println("Migration create error:", err)

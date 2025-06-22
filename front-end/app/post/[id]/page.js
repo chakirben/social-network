@@ -18,7 +18,7 @@ export default function PostPage({ params }) {
     useEffect(() => {
         const fetchPost = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/GetOnePost?id=${id}`, {
+                const response = await fetch(`/api/GetOnePost?id=${id}`, {
                     credentials: "include",
                 });
 
@@ -40,7 +40,7 @@ export default function PostPage({ params }) {
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/GetComments?id=${id}`, {
+                const response = await fetch(`/api/GetComments?id=${id}`, {
                     credentials: "include",
                 });
 

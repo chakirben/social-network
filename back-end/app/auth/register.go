@@ -81,9 +81,9 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user.Avatar = avatarPath
-
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
+		fmt.Println("Failed to hash password:", err)
 		http.Error(w, "Failed to hash password", http.StatusInternalServerError)
 		return
 	}

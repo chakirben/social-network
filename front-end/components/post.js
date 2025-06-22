@@ -33,7 +33,7 @@ export default function Post({ pst }) {
                     {pst.image && (
                         <img
                             className="preview-img"
-                            src={process.env.NEXT_PUBLIC_API_URL + pst?.image}
+                            src={ pst?.image}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 openImageModal(pst?.image);
@@ -53,7 +53,7 @@ export default function Post({ pst }) {
 
             {modalOpen && (
                 <div className="image-modal" onClick={closeModal}>
-                    <img src={process.env.NEXT_PUBLIC_API_URL + modalImageSrc} className="modal-img" />
+                    <img src={modalImageSrc} className="modal-img" />
                 </div>
             )}
         </>

@@ -53,7 +53,7 @@ export default function Register() {
     }
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/register`, {
+      const response = await fetch(`/api/register`, {
         method: 'POST',
         credentials: 'include',
         body: formData,
@@ -67,7 +67,7 @@ export default function Register() {
 
       const fetchUser = async () => {
         try {
-          const rep = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getUserData`, {
+          const rep = await fetch(`/api/getUserData`, {
             credentials: "include",
           });
 

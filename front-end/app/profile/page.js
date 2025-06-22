@@ -24,7 +24,7 @@ export default function Profile() {
     console.log(socket);
     const fetchUserList = async (listType) => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/followersList?&type=${listType}`, {
+            const response = await fetch(`/api/followersList?&type=${listType}`, {
                 credentials: 'include',
             });
             if (!response.ok) {
@@ -49,7 +49,7 @@ export default function Profile() {
     const handleSelection = async (choise) => {
         setShowOptions(false)
         try {
-            let res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/updatePrivacy`, {
+            let res = await fetch(`/api/updatePrivacy`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -67,7 +67,7 @@ export default function Profile() {
         }
     }
     const handleLogout = async () => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/logout`, {
+        fetch(`/api/logout`, {
             method: 'POST',
             credentials: 'include',
         })
@@ -91,7 +91,7 @@ export default function Profile() {
     useEffect(() => {
         async function fetchProfile() {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getUserData`, { credentials: "include" })
+                const res = await fetch(`/api/getUserData`, { credentials: "include" })
                 if (!res.ok) {
                     throw new Error(`HTTP error! Status: ${res.status}`);
                 }
@@ -109,7 +109,7 @@ export default function Profile() {
     useEffect(() => {
         async function fetchPosts() {
             try {
-                let res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/GetCreatedPosts`, {
+                let res = await fetch(`/api/GetCreatedPosts`, {
                     method: 'POST',
                     credentials: 'include',
                     headers: {
@@ -173,7 +173,7 @@ export default function Profile() {
                     <div className="modal-backdrop" onClick={() => setShowFollowersModal(false)}>
                         <div onClick={(e) => e.stopPropagation()} >
                             <h2>Followers</h2>
-                            {userList.length > 0 ? (
+                            {userList?.length > 0 ? (
                                 userList.map((user) => (
                                     <div key={user.id} className="df gp6 center">
                                         <Avatar url={user.avatar} name={user.firstName} />
@@ -191,7 +191,7 @@ export default function Profile() {
                     <div className="modal-backdrop" onClick={() => setShowFollowingModal(false)}>
                         <div onClick={(e) => e.stopPropagation()} >
                             <h2>Following</h2>
-                            {userList.length > 0 ? (
+                            {userList?.length > 0 ? (
                                 userList.map((user) => (
                                     <div key={user.id}  className="df gp6 center">
                                         <Avatar url={user.avatar} name={user.firstName} />

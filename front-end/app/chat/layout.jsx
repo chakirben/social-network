@@ -10,7 +10,7 @@ import "../../styles/global.css"
 import { useRouter } from "next/navigation"
 
 export default function ChatLayout({ children }) {
-    const { discussionMap, setDiscussionMap ,counter } = useContext(WebSocketContext)
+    const { discussionMap, setDiscussionMap, counter } = useContext(WebSocketContext)
     const { statuses, setStatuses } = useContext(WebSocketContext)
 
     const [friends, setFriends] = useState([])
@@ -20,7 +20,7 @@ export default function ChatLayout({ children }) {
     useEffect(() => {
         const fetchDiscussions = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/GetDiscussionList`, {
+                const response = await fetch(`/api/GetDiscussionList`, {
                     credentials: "include",
                 })
                 const data = await response.json()
@@ -37,13 +37,12 @@ export default function ChatLayout({ children }) {
         fetchDiscussions()
     }, [counter])
 
-    // Fetch online users
     const fetchOnlineUsers = useCallback(async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/online`
-, {
-                credentials: "include"
-            })
+            const response = await fetch(`/api/online`
+                , {
+                    credentials: "include"
+                })
             const users = await response.json()
             const newStatuses = {}
             users.forEach(user => {
@@ -61,7 +60,7 @@ export default function ChatLayout({ children }) {
         } catch (error) {
             console.error("Error fetching online users:", error)
         }
-    }, [setStatuses])
+    }, [])
 
     useEffect(() => {
         fetchOnlineUsers()
@@ -71,10 +70,10 @@ export default function ChatLayout({ children }) {
 
     const fetchFriendsAndGroups = useCallback(async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/friendsAndGroups`
-, {
-                credentials: "include"
-            })
+            const response = await fetch(`/api/friendsAndGroups`
+                , {
+                    credentials: "include"
+                })
             const data = await response.json()
             setFriends(data.friends || [])
             setGroups(data.groups || [])
@@ -94,6 +93,7 @@ export default function ChatLayout({ children }) {
                 <h3 className="Msgs">People & Groups</h3>
                 <div className="online-users-container">
                     {friends.concat(groups).length > 0 ? (
+
                         friends.concat(groups).map(entity => {
                             const isGroup = !!entity.name
                             const isOnline = !isGroup && statuses[entity.id]?.isOnline
@@ -103,17 +103,15 @@ export default function ChatLayout({ children }) {
 
                             return (
                                 <div
-                                    key={entity.id}
+                                    key={`${isGroup ? 'group' : 'user'}-${entity.id}`} // ✅ fixed key
                                     className="online-user-avatar"
                                     title={displayName}
                                 >
                                     <div
                                         onClick={() => {
                                             const type = isGroup ? 'group' : 'user';
-
                                             const nameSlug = !isGroup ? (entity.firstName + " " + entity.lastName).replace(/\s+/g, '_') : entity.name.replace(/\s+/g, '_');
                                             router.push(`/chat/${type}${entity.id}_${nameSlug}`);
-
                                         }}
                                     >
                                         <Avatar url={entity.avatar} name={displayName} size={"big"} />
@@ -127,10 +125,11 @@ export default function ChatLayout({ children }) {
                                                 : "offline"
                                             }`}
                                     ></div>
-
                                 </div>
                             )
                         })
+
+
                     ) : (
                         <div className="no-online-users">No users or groups to show</div>
                     )}

@@ -1,7 +1,7 @@
 "use client"
 export default async function FetchCreatGroup(title, description) {
     try {
-        const rep = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/CreatGroup`
+        const rep = await fetch(`/api/CreatGroup`
 , {
             method: "POST",
             credentials: "include",

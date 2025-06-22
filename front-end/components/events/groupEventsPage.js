@@ -5,7 +5,7 @@ import EventsList from "./eventList"
 export default function GroupEventsPage({id, events, setEvents})  {
     
     const handleRespond = async (eventId, isGoing, groupId) => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/SetAttendance`, {
+        const res = await fetch(`/api/SetAttendance`, {
             method: "POST",
             credentials: "include",
             headers: {

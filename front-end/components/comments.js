@@ -26,7 +26,7 @@ export default function Comment({ comment }) {
                 {image && (
                     <img
                         className="commentImage"
-                        src={process.env.NEXT_PUBLIC_API_URL+image}
+                        src={image}
                         alt="Attached to comment"
                     />
                 )}

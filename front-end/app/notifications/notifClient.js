@@ -15,7 +15,7 @@ export default function NotifClient(session) {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getNotifications`, {
+                const response = await fetch(`/api/getNotifications`, {
                     method: 'POST',
                     credentials: 'include',
                     headers: {

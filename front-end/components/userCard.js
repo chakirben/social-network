@@ -22,7 +22,7 @@ export default function UserCard({ user, invite, groupId }) {
 
     const followReq = async (id, action) => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/follow?id=${id}&action=${action}`, {
+            const response = await fetch(`/api/follow?id=${id}&action=${action}`, {
                 credentials: "include",
             });
 

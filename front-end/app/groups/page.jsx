@@ -20,7 +20,7 @@ export default function JustMyGroupsPage() {
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/MyGroups`, {
+        const res = await fetch(`/api/MyGroups`, {
           credentials: "include",
         });
         const data = await res.json();
@@ -34,7 +34,7 @@ export default function JustMyGroupsPage() {
     fetchGroups();
     const fetchNotGroups = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/NotMyGroups`, {
+        const res = await fetch(`/api/NotMyGroups`, {
           credentials: "include",
         });
         const data = await res.json();

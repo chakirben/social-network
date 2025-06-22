@@ -11,7 +11,7 @@ export const UserProvider = ({ children }) => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const rep = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getUserData`, {
+                const rep = await fetch(`/api/getUserData`, {
                     credentials: "include",
                 });
 

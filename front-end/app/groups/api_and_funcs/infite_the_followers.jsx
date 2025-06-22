@@ -3,7 +3,7 @@
 export default async function InviteTheFollowers(userid , groupId) {
 
     try {
-        const rep = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/InfiteTheFollowers`, {
+        const rep = await fetch(`/api/InfiteTheFollowers`, {
             method: "POST",
             credentials: "include",
             headers: {

@@ -14,7 +14,7 @@ export default function SearchTerm(Search) {
     useEffect(() => {
         const FetchSearchData = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/SearchData?query=${encodeURIComponent(Search.search)}`, {
+                const response = await fetch(`/api/SearchData?query=${encodeURIComponent(Search.search)}`, {
                     credentials: "include"
                 });
                 if (!response.ok) {

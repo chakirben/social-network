@@ -30,7 +30,7 @@ export default function Home() {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/GetPosts`, {
+                const response = await fetch(`/api/GetPosts`, {
                     credentials: "include"
                 })
                 const data = await response.json()
@@ -46,7 +46,7 @@ export default function Home() {
     useEffect(() => {
         const fetchOnlineUsers = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/online`, {
+                const response = await fetch(`/api/online`, {
                     credentials: "include"
                 })
                 const users = await response.json()
