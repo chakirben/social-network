@@ -52,7 +52,7 @@ export default function Home() {
                 const users = await response.json()
 
                 const newStatuses = {}
-                users.forEach(user => {
+                users?.forEach(user => {
                     const id = user.id || user._id
                     newStatuses[id] = {
                         firstName: user.firstName,
