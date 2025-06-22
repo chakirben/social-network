@@ -94,7 +94,7 @@ export default function ChatView() {
   const handleScroll = (e) => {
     if (!hasMore || loading) return;
     if (e.target.scrollTop === 0) {
-      const newOffset = offset + 10
+      const newOffset = offset + 12
       setOffset(newOffset)
       fetchMessages(newOffset) 
     }

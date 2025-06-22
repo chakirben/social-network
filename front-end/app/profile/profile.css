@@ -2,18 +2,25 @@
 
 .profileContainer {
     display: flex;
+    flex-grow: 1;
+    justify-content: center;
+    width: 100%;
 }
 
 .userProfile {
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
 }
 
 .classname {
     overflow-y: auto;
     height: 100vh;
     scrollbar-width: none;
-    width: 700px;
+    max-width: 600px;
+    min-width: 300px;
+    flex-grow: 1;
+    border-right: 1px solid rgba(255, 255, 255, 0.123);
 }
 .userdata {
     padding: 24px;
@@ -40,7 +47,7 @@
 }
 .coverture {
     max-height: 300px;
-    /* max-width: 600px; */
+    min-width: 300px;
 }
 
 .imgAndFollow {

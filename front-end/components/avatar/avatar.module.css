@@ -36,3 +36,11 @@
   height: 48px;
   font-size: 18px;
 }
+
+@media (max-width: 400px) {
+  .big {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+}

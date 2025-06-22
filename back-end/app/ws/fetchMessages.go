@@ -77,7 +77,7 @@ func handlePrivateMessages(w http.ResponseWriter, r *http.Request, userID int) {
 			(m.senderId = ? AND m.receiverId = ?)
 			OR (m.senderId = ? AND m.receiverId = ?)
 		ORDER BY m.sentAt DESC
-		LIMIT 10 OFFSET ?;
+		LIMIT 12 OFFSET ?;
 	`
 
 	rows, err := database.SocialDB.Query(query, userID, otherID, otherID, userID, offset)
@@ -134,7 +134,7 @@ func handleGroupMessages(w http.ResponseWriter, r *http.Request) {
 		JOIN users u ON u.id = m.senderId
 		WHERE m.groupId = ?
 		ORDER BY m.sentAt DESC
-		LIMIT 10 OFFSET ?;
+		LIMIT 12 OFFSET ?;
 	`
 
 	rows, err := database.SocialDB.Query(query, groupID, offset)
