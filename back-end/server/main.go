@@ -6,14 +6,14 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	db"socialN/dataBase"
 
+	db "socialN/dataBase"
 )
 
 func main() {
 	db.DbInit()
-	
-	SetupHanlers()
+
+	SetupHandlers()
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, os.Interrupt)
 

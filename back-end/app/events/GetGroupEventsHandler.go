@@ -29,7 +29,7 @@ func GetGroupEventsHandler(w http.ResponseWriter, r *http.Request) {
 	FROM Events e
 	JOIN Users u ON u.id = e.creatorId
 	WHERE e.groupId = ?
-	ORDER BY e.eventDate DESC
+	ORDER BY e.createdAt DESC
 	`
 
 	rows, err := database.SocialDB.Query(query, userID, groupID)

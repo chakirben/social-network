@@ -96,6 +96,7 @@ func GetPostGroups(w http.ResponseWriter, r *http.Request) {
 		FROM Posts P
 		JOIN Users U ON P.creatorId = U.id
 		WHERE groupId = ?
+		ORDER BY P.createdAt DESC
 	`
 
 	rows, err := dataB.SocialDB.Query(query, userID, idInt)

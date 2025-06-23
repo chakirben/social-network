@@ -183,7 +183,7 @@ export default function GroupDetails({ groupId }) {
                         <>
                             <form className="creatPostForm" onSubmit={handleSubmit}>
                                 <div className="searchBar df gp12 center">
-                                    <Avatar url={user?.avatar} name={user.firstName} />
+                                    <Avatar url={user?.avatar} name={user?.firstName} />
 
                                     <input
                                         className="searchInput"

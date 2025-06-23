@@ -22,7 +22,7 @@ import (
 	db "socialN/dataBase"
 )
 
-func SetupHanlers() {
+func SetupHandlers() {
 	// Serve Images
 	http.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
 
