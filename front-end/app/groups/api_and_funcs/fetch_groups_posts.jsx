@@ -29,17 +29,12 @@ export default function GroupDetails({ groupId }) {
 
 
     const [error, setError] = useState("")
-
-
-    useEffect(() => {
-        console.log("Updated events:", events);
-    }, [events]);
     const router = useRouter();
 
     const fetchPosts = async () => {
         setIsLoading(true);
         try {
-            const rep = await fetch(`http://localhost:8080/api/PostsGroups?id=${groupId}`, {
+            const rep = await fetch(`/api/PostsGroups?id=${groupId}`, {
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
             });
@@ -60,7 +55,7 @@ export default function GroupDetails({ groupId }) {
     };
     const fetchEvents = async () => {
         try {
-            const res = await fetch(`http://localhost:8080/api/GetGroupEvents?id=${groupId}`, {
+            const res = await fetch(`/api/GetGroupEvents?id=${groupId}`, {
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
             });
@@ -103,7 +98,7 @@ export default function GroupDetails({ groupId }) {
         } else {
 
             try {
-                const res = await fetch('http://localhost:8080/api/CreatePost', {
+                const res = await fetch(`/api/CreatePost`, {
                     method: 'POST',
                     body: formData,
                     credentials: 'include',
@@ -188,7 +183,7 @@ export default function GroupDetails({ groupId }) {
                         <>
                             <form className="creatPostForm" onSubmit={handleSubmit}>
                                 <div className="searchBar df gp12 center">
-                                    <Avatar url={user.avatar} name={user.firstName} />
+                                    <Avatar url={user?.avatar} name={user?.firstName} />
 
                                     <input
                                         className="searchInput"

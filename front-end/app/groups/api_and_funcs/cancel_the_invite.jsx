@@ -2,7 +2,8 @@
 
 export default async function CancelTheInvite(userid , groupId) {
     try {
-        const rep = await fetch("http://localhost:8080/api/CancelInviteToGroups", {
+        const rep = await fetch(`/api/CancelInviteToGroups`
+, {
             method: "POST",
             credentials: "include",
             headers: {

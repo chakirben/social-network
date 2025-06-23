@@ -25,7 +25,7 @@ export function PopupProvider({ children }) {
             timer = setTimeout(() => {
                 setPopup(null);
                 setResponse(null); 
-            }, 60000);
+            }, 1000);
         }
         return () => clearTimeout(timer);
     }, [popup]);
@@ -75,7 +75,7 @@ export function PopupProvider({ children }) {
         try {
             
             const res = await fetch(
-                `http://localhost:8080/api/respondToNotification?notificationId=${popup.id}&actionType=${action}`,
+                `/api/respondToNotification?notificationId=${popup.id}&actionType=${action}`,
                 {
                     method: "POST",
                     credentials: "include",

@@ -6,6 +6,7 @@ import UserData from "@/components/UserData";
 import { useUser } from '../context/userContext';
 import styles from './create.module.css';
 import Avatar from '../avatar/avatar';
+
 export default function CreatePost({ newpost }) {
   const inputRef = useRef(null);
   const [imageSrc, setImageSrc] = useState(null);
@@ -14,33 +15,32 @@ export default function CreatePost({ newpost }) {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [users, setUsers] = useState([]);
   const [collapsed, setCollapsed] = useState(false);
-  const [err, setErr] = useState("")
-  const { user, setUser } = useUser();
+  const [err, setErr] = useState("");
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const { user } = useUser();
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch("http://localhost:8080/api/getFollowersList", { credentials: "include" });
-        const data = await response.json();
-        setUsers(data);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      }
-    };
-    fetchUsers();
-  }, []);
+  const fetchUsers = async () => {
+    setLoadingUsers(true);
+    try {
+      const response = await fetch(`/api/getFollowersList`, { credentials: "include" });
+      const data = await response.json();
+      setUsers(data);
+    } catch (error) {
+      console.error("Error fetching followers:", error);
+      setErr("Failed to load followers list");
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
 
   const handleImageClick = () => {
     inputRef.current.click();
   };
 
   const toggleUser = (id) => {
-
     setSelectedUsers((prev) =>
       prev.includes(id) ? prev.filter((uid) => uid !== id) : [...prev, id]
     );
-    console.log("selected users: ", selectedUsers);
-
   };
 
   const handleFileChange = (e) => {
@@ -56,63 +56,78 @@ export default function CreatePost({ newpost }) {
 
   const handleChange = (e) => {
     setSelectedOption(e.target.value);
-    console.log(e.target.value);
+    // Clear any previous error when privacy changes
+    setErr("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (selectedOption === "only" && !selectedUsers.length) {
-      setErr("please select at least 1 user")
-      return
+    // Validate selected users only if privacy is "private"
+    if (selectedOption === "private" && selectedUsers.length === 0) {
+      setErr("Please select at least 1 user");
+      return;
     }
+
     const file = inputRef.current.files[0];
     const formData = new FormData();
     formData.append('content', text);
-    formData.append('privacy', "inGroup");
-    selectedUsers?.forEach(id => {
-      formData.append('selectedUsers', id);
-    });
+    formData.append('privacy', selectedOption);
+
+    // Append selected users only if privacy is private
+    if (selectedOption === "private") {
+      selectedUsers.forEach(id => {
+        formData.append('selectedUsers', id);
+      });
+    }
+
     if (file) {
       formData.append('image', file);
     }
 
     try {
-      const res = await fetch('http://localhost:8080/api/CreatePost', {
+      const res = await fetch(`/api/CreatePost`, {
         method: 'POST',
         body: formData,
         credentials: 'include',
       });
+
       if (res.ok) {
-        console.log('Post submitted:', res);
+        const result = await res.json();
+        newpost(result);
+
         setText('');
-        setSelectedUsers(null)
-        setErr(null)
+        setSelectedUsers([]);
+        setErr('');
         setSelectedOption('public');
         setImageSrc(null);
         inputRef.current.value = null;
-        const result = await res.json();
-        newpost(result);
+      } else {
+        const errorText = await res.text();
+        setErr(`Post failed: ${errorText}`);
       }
-
-
     } catch (err) {
       console.error('Post failed:', err);
+      setErr('Post failed: Network error');
     }
   };
 
-  const showUsersList = (e) => {
+  const showUsersList = async (e) => {
     e.preventDefault();
+    if (!collapsed) {
+      // Only fetch when opening the modal
+      await fetchUsers();
+    }
     setCollapsed(!collapsed);
   };
 
   return (
-    <form className="creatPostForm">
+    <form className="creatPostForm" onSubmit={handleSubmit}>
       <div className="df center">
         <Avatar url={user?.avatar} name={user?.firstName} />
 
         <input
           className={styles.searchInput}
-          placeholder="What's happening ?"
+          placeholder="What's happening?"
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
@@ -121,9 +136,11 @@ export default function CreatePost({ newpost }) {
       <div className="ImagePreviewBox">
         {imageSrc && <img src={imageSrc} alt="Preview" className="preview-img" />}
       </div>
+
       <Divider />
-      <div className='spB pd8'>
-        <div className='group'>
+
+      <div className="spB pd8">
+        <div className="group">
           <img
             src="./images/image.svg"
             className="upload-icon"
@@ -142,46 +159,69 @@ export default function CreatePost({ newpost }) {
             <option value="almostPrivate">Followers</option>
             <option value="private">Only</option>
           </select>
+
           {selectedOption === "private" && (
             <>
-              <button className='thiary' onClick={(e) => showUsersList(e)}> {selectedUsers && selectedUsers.length ? `${selectedUsers.length} selected users ✔️` : "+ Select users"}</button>
+              <button className="thiary" onClick={showUsersList}>
+                {selectedUsers.length ? `${selectedUsers.length} selected users ✔️` : "+ Select users"}
+              </button>
               {collapsed && (
-                <div className='FriendList'>
-                  <div className='df sb center'>
+                <div className="FriendList">
+                  <div className="df sb center">
                     <h4>Select users</h4>
-                    <img src='/images/close.svg' className='icn' alt="Close" onClick={(e) => { e.preventDefault(); setCollapsed(false); }} />
+                    <img
+                      src="/images/close.svg"
+                      className="icn"
+                      alt="Close"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCollapsed(false);
+                      }}
+                    />
                   </div>
-                  <div className='userList df cl gp12 start'>
-                    {!users ? <div className='df gp12' >no follow</div> :
-                      users.map((user) => (
-                        <div key={user.id} className='df gp12'>
+                  <div className="userList df cl gp12 start">
+                    {loadingUsers ? (
+                      <div className="df gp12">Loading followers...</div>
+                    ) : users?.length === 0 ? (
+                      <div className="df gp12">No followers</div>
+                    ) : (
+                      users?.map((user) => (
+                        <div key={user.id} className="df gp12">
                           <input
                             type="checkbox"
-                            checked={selectedUsers?.includes(user.id)}
+                            checked={selectedUsers.includes(user.id)}
                             onChange={() => toggleUser(user.id)}
                             className="checkBox"
                           />
                           <UserData usr={user} />
                         </div>
-                      ))}
+                      ))
+                    )}
                   </div>
-                  <button onClick={(e) => { e.preventDefault(); setCollapsed(false); }}>Select</button>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCollapsed(false);
+                    }}
+                  >
+                    Select
+                  </button>
                 </div>
               )}
             </>
           )}
         </div>
+
         <button
-          type='submit'
-          onClick={handleSubmit}
+          type="submit"
           disabled={!text.trim()}
           className={!text.trim() ? 'button-disabled' : 'button-active'}
         >
           Post
         </button>
-
       </div>
-      <div className='err'>{err}</div>
+
+      <div className="err">{err}</div>
     </form>
   );
 }

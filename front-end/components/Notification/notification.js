@@ -37,7 +37,7 @@ export default function Notification({ notification }) {
     const handleResponse = async (action) => {
         try {
             const res = await fetch(
-                `http://localhost:8080/api/respondToNotification?notificationId=${id}&actionType=${action}`,
+                `/api/respondToNotification?notificationId=${id}&actionType=${action}`,
                 {
                     method: "POST",
                     credentials: "include",

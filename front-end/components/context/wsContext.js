@@ -3,12 +3,12 @@
 import { usePathname } from 'next/navigation';
 import { createContext, useEffect, useRef, useState } from 'react';
 import { usePopup } from './popUp';
+import { useUser } from './userContext';
 
 export const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
-  console.log('WebSocketProvider rendered');
-  
+  const [counter, setCounter] = useState(0);
   const [statuses, setStatuses] = useState({});
   const [discussionMap, setDiscussionMap] = useState({});
   const [wsMessages, setwsMessages] = useState([]);
@@ -16,11 +16,28 @@ export const WebSocketProvider = ({ children }) => {
   const { showPopup } = usePopup();
   const connectedRef = useRef(false);
   const pathname = usePathname();
+  const [notifCounter, setNotifCounter] = useState(0);
+  const [messagesCounter, setMessagesCounter] = useState(0);
+  const { user } = useUser();
+  const userRef = useRef(user);
+  useEffect(() => {
+    if (pathname === '/chat') {
+      setMessagesCounter(0);
+    }
+  }, [pathname]);
+  useEffect(() => {
+    if (pathname === '/notifications') {
+      setNotifCounter(0);
+    }
+  }, [pathname]);
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
 
   const Connect = () => {
-    if (connectedRef.current) return;
+    if (connectedRef.current || !userRef.current) return;
 
-    const ws = new WebSocket('ws://localhost:8080/api/ws');
+    const ws = new WebSocket('/api/ws');
 
     ws.addEventListener('open', () => {
       console.log('WebSocket connected');
@@ -40,31 +57,55 @@ export const WebSocketProvider = ({ children }) => {
     });
 
     ws.addEventListener('message', (event) => {
+      setCounter((prev) => prev + 1);
       try {
         const data = JSON.parse(event.data);
-        console.log('Message from server:', data);
+        const currentUser = userRef.current;
+        console.log('Message from server:', data, currentUser);
 
         switch (data.type) {
+
+
           case 'Status': {
             const { userId, statusType, user } = data;
             if (userId && statusType) {
               setStatuses((prev) => {
                 const updated = { ...prev };
                 if (statusType === 'online' && user) {
+                  // Always add or update online user
                   updated[userId] = {
                     firstName: user.firstName,
                     lastName: user.lastName,
-                    avatar: user.avatar
+                    avatar: user.avatar,
+                    isOnline: true,
+                    lastSeen: new Date().toISOString(),
                   };
-                } else if (statusType === 'offline') {
-                  delete updated[userId];
+                } else if (statusType === 'offline' && user) {
+                  // If user existed, remove it
+                  if (updated[userId]) {
+                    delete updated[userId];
+                  } else {
+                    // If it didn’t exist, add it with isOnline: false
+                    updated[userId] = {
+                      firstName: user.firstName,
+                      lastName: user.lastName,
+                      avatar: user.avatar,
+                      isOnline: false,
+                      lastSeen: new Date().toISOString(),
+                    };
+                  }
                 }
                 return updated;
               });
             }
             break;
           }
+
+
           case 'message': {
+            if (data.sender !== currentUser?.id && !pathname.startsWith('/chat')) {
+              setMessagesCounter((prev) => prev + 1);
+            }
             const formattedMsg = {
               content: data.content,
               sender_id: data.sender,
@@ -78,25 +119,39 @@ export const WebSocketProvider = ({ children }) => {
           }
 
           case 'groupmsg': {
+            if (!pathname.startsWith('/chat')) {
+              setMessagesCounter((prev) => prev + 1);
+            }
+
             const formattedGroupMsg = {
               content: data.content,
               sender_id: data.sender,
+              first_name: data.firstName,
+              last_name: data.lastName,
+              avatar: data.avatar,
               groupId: data.groupID || data.groupId,
               sent_at: data.sentAt || data.sent_at,
               type: 'group',
             };
+
             const discussionKey = 'group' + formattedGroupMsg.groupId;
             setDiscussionMap((prev) => ({
               ...prev,
               [discussionKey]: [...(prev[discussionKey] || []), formattedGroupMsg]
-            }))
+            }));
+
             setwsMessages((prev) => [...prev, formattedGroupMsg]);
             break;
           }
 
-          case 'Notification':
-           showPopup({data})
+          case 'Notification': {
+            if (!pathname.startsWith('/notifications')) {
+              setNotifCounter((prev) => prev + 1);
+            }
+
+            showPopup({ data });
             break;
+          }
 
           default:
             console.warn('Unknown message type:', data.type);
@@ -108,12 +163,12 @@ export const WebSocketProvider = ({ children }) => {
 
     return ws;
   };
-  
+
   useEffect(() => {
-    if (connectedRef.current) return;
+    if (!user || connectedRef.current) return;
     if (pathname === '/login' || pathname === '/register') return;
     Connect();
-  }, [pathname]);
+  }, [pathname, user]);
 
   return (
     <WebSocketContext.Provider
@@ -126,6 +181,11 @@ export const WebSocketProvider = ({ children }) => {
         setStatuses,
         wsMessages,
         setwsMessages,
+        notifCounter,
+        setNotifCounter,
+        messagesCounter,
+        setMessagesCounter,
+        counter,
       }}
     >
       {children}

@@ -30,7 +30,7 @@ export default function Home() {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/GetPosts", {
+                const response = await fetch(`/api/GetPosts`, {
                     credentials: "include"
                 })
                 const data = await response.json()
@@ -46,13 +46,13 @@ export default function Home() {
     useEffect(() => {
         const fetchOnlineUsers = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/online", {
+                const response = await fetch(`/api/online`, {
                     credentials: "include"
                 })
                 const users = await response.json()
 
                 const newStatuses = {}
-                users.forEach(user => {
+                users?.forEach(user => {
                     const id = user.id || user._id
                     newStatuses[id] = {
                         firstName: user.firstName,
@@ -99,7 +99,7 @@ export default function Home() {
                     <SearchTerm search={searchTerm} />
                 )}
             </div>
-            <div>
+            <div className="rightSection">
 
                 <ProfileButton />
                 <div className="onlineUsers df cl">

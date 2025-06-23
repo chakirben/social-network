@@ -53,41 +53,40 @@ export default function Register() {
     }
 
     try {
-    const response = await fetch(`http://localhost:8080/api/register`, {
-      method: 'POST',
-      credentials: 'include',
-      body: formData,
-    });
+      const response = await fetch(`/api/register`, {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
+      });
 
-    if (!response.ok) {
-      let resp = await response.text();
-      setErrorMessage(resp || 'Registration failed.');
-      return;
-    }
+      if (!response.ok) {
+        let resp = await response.text();
+        setErrorMessage(resp || 'Registration failed.');
+        return;
+      }
 
+      const fetchUser = async () => {
+        try {
+          const rep = await fetch(`/api/getUserData`, {
+            credentials: "include",
+          });
 
+          if (!rep.ok) {
+            throw new Error(`HTTP error! Status: ${rep.status}`);
+          }
+
+          const data = await rep.json();
+          setUser(data);
+        } catch (err) {
+          console.log("Error fetching user:", err);
+        }
+
+      };
+      fetchUser();
 
       if (Connect) {
         Connect();
       }
-
-      async function FirstTimeUser() {
-        try {
-          const rep = await fetch("http://localhost:8080/api/getUserData", {
-            credentials: "include"
-          });
-          if (!rep.ok) {
-            throw new Error(`HTTP error! Status: ${rep.status}`);
-          }
-          let data = await rep.json();
-          localStorage.setItem("user", JSON.stringify(data));
-          setUser(data);
-        } catch (err) {
-          console.log('errrrror', err);
-        }
-      }
-
-      await FirstTimeUser();
       router.push('/home');
 
     } catch (err) {
@@ -165,7 +164,7 @@ export default function Register() {
         </form>
 
         <p className="registerLink">
-          Already have an account? <a onClick={()=> {router.push("/login")}}>Login</a>
+          Already have an account? <a onClick={() => { router.push("/login") }}>Login</a>
         </p>
       </div>
     </div>

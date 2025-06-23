@@ -11,7 +11,7 @@ export default function Notifications() {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/getNotifications", {
+                const response = await fetch(`/api/getNotifications`, {
                     method: "POST",
                     credentials: "include",
                     headers: {

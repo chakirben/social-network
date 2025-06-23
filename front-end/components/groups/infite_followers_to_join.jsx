@@ -8,7 +8,7 @@ export default function InviteFollowersToGroups({ onSkip, groupId }) {
     useEffect(() => {
         const getFollowers = async () => {
             try {
-                const rep = await fetch("http://localhost:8080/api/getFollowers", {
+                const rep = await fetch(`/api/getFollowers`, {
                     method: "POST",
                     credentials: "include",
                     headers: {

@@ -4,7 +4,7 @@ import ReactionGroup from './reactionGroup';
 import { timePassed } from '@/public/utils/timePassed';
 import Avatar from './avatar/avatar';
 
-export default function Post({ pst }) {    
+export default function Post({ pst }) {
     const router = useRouter();
     const [modalOpen, setModalOpen] = useState(false);
     const [modalImageSrc, setModalImageSrc] = useState('');
@@ -32,8 +32,8 @@ export default function Post({ pst }) {
 
                     {pst.image && (
                         <img
-                            className="pic nrml"
-                            src={pst?.image}
+                            className="preview-img"
+                            src={ pst?.image}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 openImageModal(pst?.image);

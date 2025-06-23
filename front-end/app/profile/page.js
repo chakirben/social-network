@@ -9,6 +9,7 @@ import Header from "@/components/Header/header";
 import { useRouter } from "next/navigation";
 import Divider from "@/components/divider";
 import { WebSocketContext } from "@/components/context/wsContext";
+import Avatar from "@/components/avatar/avatar";
 
 
 export default function Profile() {
@@ -17,8 +18,30 @@ export default function Profile() {
     const [showOptions, setShowOptions] = useState(false)
     const router = useRouter()
     const socket = useContext(WebSocketContext)
+    const [showFollowersModal, setShowFollowersModal] = useState(false);
+    const [showFollowingModal, setShowFollowingModal] = useState(false);
+    const [userList, setUserList] = useState([]);
     console.log(socket);
-    
+    const fetchUserList = async (listType) => {
+        try {
+            const response = await fetch(`/api/followersList?&type=${listType}`, {
+                credentials: 'include',
+            });
+            if (!response.ok) {
+                console.error("Error:", await response.text());
+                return;
+            }
+            const data = await response.json();
+            setUserList(data);
+            if (listType === "followers") {
+                setShowFollowersModal(true);
+            } else {
+                setShowFollowingModal(true);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
     const handle = () => {
         setShowOptions(!showOptions)
     }
@@ -26,7 +49,7 @@ export default function Profile() {
     const handleSelection = async (choise) => {
         setShowOptions(false)
         try {
-            let res = await fetch('http://localhost:8080/api/updatePrivacy', {
+            let res = await fetch(`/api/updatePrivacy`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -44,7 +67,7 @@ export default function Profile() {
         }
     }
     const handleLogout = async () => {
-        fetch('http://localhost:8080/api/logout', {
+        fetch(`/api/logout`, {
             method: 'POST',
             credentials: 'include',
         })
@@ -68,7 +91,7 @@ export default function Profile() {
     useEffect(() => {
         async function fetchProfile() {
             try {
-                const res = await fetch('http://localhost:8080/api/getUserData', { credentials: "include" })
+                const res = await fetch(`/api/getUserData`, { credentials: "include" })
                 if (!res.ok) {
                     throw new Error(`HTTP error! Status: ${res.status}`);
                 }
@@ -86,7 +109,7 @@ export default function Profile() {
     useEffect(() => {
         async function fetchPosts() {
             try {
-                let res = await fetch('http://localhost:8080/api/GetCreatedPosts', {
+                let res = await fetch(`/api/GetCreatedPosts`, {
                     method: 'POST',
                     credentials: 'include',
                     headers: {
@@ -115,20 +138,20 @@ export default function Profile() {
             <div className="classname df cl">
                 <Header pageName={"profile"} ele={<button className="Secondary" onClick={handleLogout}>logout</button>} />
                 <div className="userProfile">
-                    <img className="coverture" src="http://localhost:8080/uploads/coverture.png"></img>
+                    <img className="coverture" src="images/coverture.png"></img>
                     <div className="userdata gp12">
                         <div className="imgAndFollow sb">
-                            {profile && <img className="userAvatar" src={`http://localhost:8080/${profile.avatar}`} />}
+                            <Avatar url={profile?.avatar} size={"big"} name={profile?.firstName} />
                             <div className="follow">
-                                <p><strong className="number">{profile?.followers}</strong> Followers</p>
-                                <p><strong className="number">{profile?.following}</strong> Following</p>
+                                <p onClick={() => fetchUserList("followers")}><strong className="number">{profile?.followers}</strong> Followers</p>
+                                <p onClick={() => fetchUserList("following")}><strong className="number">{profile?.following}</strong> Following</p>
                                 <span onClick={handle} className="privacyOptions">
                                     privacy {profile?.accountType === "public"
-                                        ? <img className="icon" src="http://localhost:8080/uploads/unlock.svg" />
-                                        : <img className="icon" src="http://localhost:8080/uploads/lock.svg" />}
+                                        ? <img className="icon" src="images/unlock.svg" />
+                                        : <img className="icon" src="images/lock.svg" />}
                                     <div className={`options ${showOptions ? "" : "hidden"}`}>
-                                        <span className="button" onClick={() => handleSelection("private")}> <img className="icon" src="http://localhost:8080/uploads/lock.svg" /> Private</span>
-                                        <span className="button" onClick={() => handleSelection("public")}> <img className="icon" src="http://localhost:8080/uploads/unlock.svg" /> Public</span>
+                                        <span className="button" onClick={() => handleSelection("private")}> <img className="icon" src="images/lock.svg" /> Private</span>
+                                        <span className="button" onClick={() => handleSelection("public")}> <img className="icon" src="images/unlock.svg" /> Public</span>
                                     </div>
                                 </span>
 
@@ -138,7 +161,7 @@ export default function Profile() {
                             {profile && <h4>{profile.firstName} {profile.lastName}</h4>}
                             {profile && <p>Hey everyone! I’ve been thinking about starting</p>}
                             <div className="df gp6">
-                                {profile && <img src="http://localhost:8080/uploads/dateOfBirth.svg" />}
+                                {profile && <img src="images/dateOfBirth.svg" />}
                                 {profile && <p>{new Date(profile.dateOfBirth).toLocaleDateString('fr-FR')}</p>}
                             </div>
 
@@ -146,6 +169,42 @@ export default function Profile() {
                     </div>
                     <Divider />
                 </div>
+                {showFollowersModal && (
+                    <div className="modal-backdrop" onClick={() => setShowFollowersModal(false)}>
+                        <div onClick={(e) => e.stopPropagation()} >
+                            <h2>Followers</h2>
+                            {userList?.length > 0 ? (
+                                userList.map((user) => (
+                                    <div key={user.id} className="df gp6 center">
+                                        <Avatar url={user.avatar} name={user.firstName} />
+                                        <span>{user.firstName} {user.lastName}</span>
+                                    </div>
+                                ))
+                            ) : (
+                                <div>No followers</div>
+                            )}
+                            <button onClick={() => setShowFollowersModal(false)}>Close</button>
+                        </div>
+                    </div>
+                )}
+                {showFollowingModal && (
+                    <div className="modal-backdrop" onClick={() => setShowFollowingModal(false)}>
+                        <div onClick={(e) => e.stopPropagation()} >
+                            <h2>Following</h2>
+                            {userList?.length > 0 ? (
+                                userList.map((user) => (
+                                    <div key={user.id}  className="df gp6 center">
+                                        <Avatar url={user.avatar} name={user.firstName} />
+                                        <span>{user.firstName} {user.lastName}</span>
+                                    </div>
+                                ))
+                            ) : (
+                                <div>Not following anyone</div>
+                            )}
+                            <button onClick={() => setShowFollowingModal(false)}>Close</button>
+                        </div>
+                    </div>
+                )}
 
                 {profileData && profileData.map((p, i) => (
                     <Post key={i} pst={p} />

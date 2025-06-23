@@ -1,6 +1,6 @@
 'use client'
 
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useState, useRef } from "react"
 import { usePathname } from "next/navigation"
 import MessageInput from "@/components/chatInput/chatInput"
 import Message from "@/components/message/message"
@@ -11,6 +11,11 @@ import { useUser } from "@/components/context/userContext"
 export default function ChatView() {
   const pathname = usePathname()
   const [messages, setMessages] = useState([])
+  const [offset, setOffset] = useState(0)         
+  const [hasMore, setHasMore] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const messagesContainerRef = useRef(null)
+
   const { wsMessages } = useContext(WebSocketContext)
   const { myId } = useUser()
 
@@ -20,50 +25,90 @@ export default function ChatView() {
   const rawName = match?.[3] || ''
   const name = rawName.replace(/_/g, ' ')
 
-  useEffect(() => {
-    if (!type || !id) return
-    const fetchMessages = async () => {
-      try {
-        const baseUrl = "http://localhost:8080/api/fetchMessages"
-        const queryParams =
-          type === "user"
-            ? `?type=private&other_id=${id}`
-            : `?type=group&group_id=${id}`
+  const fetchMessages = async (newOffset) => {
+    if (!type || !id || !hasMore) return;
 
-        const res = await fetch(baseUrl + queryParams, {
-          credentials: "include",
-        })
+    setLoading(true);
+    try {
+      const baseUrl = `/api/fetchMessages`
+      const queryParams =
+        type === "user"
+          ? `?type=private&other_id=${id}&offset=${newOffset}`
+          : `?type=group&group_id=${id}&offset=${newOffset}`
 
-        if (!res.ok) throw new Error("Failed to fetch messages")
+      const res = await fetch(baseUrl + queryParams, {
+        credentials: "include",
+      })
 
-        const data = await res.json()
-        setMessages(data || [])
-      } catch (err) {
-        console.error("Error fetching messages:", err)
+      if (!res.ok) throw new Error("Failed to fetch messages")
+      const data = await res.json()
+
+      if (data?.length < 10) {
+        setHasMore(false)
       }
+
+      if (newOffset === 0) {
+        setMessages(data)
+        setTimeout(() => {
+          messagesContainerRef.current?.scrollTo(0, messagesContainerRef.current.scrollHeight);
+        }, 0);
+      } else {
+        const container = messagesContainerRef.current
+        const prevScrollHeight = container.scrollHeight
+        setMessages((prev) => [...data, ...prev])
+        setTimeout(() => {
+          const newScrollHeight = container.scrollHeight
+          container.scrollTop = newScrollHeight - prevScrollHeight
+        }, 0);
+      }
+    } catch (err) {
+      console.error("Error fetching messages:", err)
+    } finally {
+      setLoading(false)
     }
-    fetchMessages()
+  }
+
+  useEffect(() => {
+    setOffset(0)
+    setHasMore(true)
+    fetchMessages(0)
   }, [type, id, pathname])
 
   useEffect(() => {
     if (wsMessages.length === 0) return;
 
     const lastMsg = wsMessages[wsMessages.length - 1];
-    console.log("last msg is " ,lastMsg);
-    
     const isRelevant =
-      (type === "user" && (lastMsg.receiver_id == id || lastMsg.sender_id == id)) ||
-      (type === "group" && lastMsg.groupId == id);
+      (type === "user" && (lastMsg?.receiver_id == id || lastMsg?.sender_id == id)) ||
+      (type === "group" && lastMsg?.groupId == id);
 
     if (isRelevant) {
       setMessages((prev) => [...prev, lastMsg]);
+      setTimeout(() => {
+        messagesContainerRef.current?.scrollTo(0, messagesContainerRef.current.scrollHeight);
+      }, 0);
+      setOffset((prev) => prev + 1); 
     }
   }, [wsMessages, id, type]);
+
+  const handleScroll = (e) => {
+    if (!hasMore || loading) return;
+    if (e.target.scrollTop === 0) {
+      const newOffset = offset + 12
+      setOffset(newOffset)
+      fetchMessages(newOffset) 
+    }
+  }
 
   return (
     <div className="chatView df cl">
       <Header pageName={name || 'chat'} />
-      <div className="MessagesContainer">
+      <div
+        className="MessagesContainer"
+        ref={messagesContainerRef}
+        onScroll={handleScroll}
+        style={{ overflowY: "auto", flex: 1 }}
+      >
         {messages.map((msg, idx) => (
           <Message msg={msg} key={idx} />
         ))}

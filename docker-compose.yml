@@ -1,12 +1,15 @@
 version: '3.8'
+networks:
+  sn:
+    driver: bridge
 
 services:
   backend:
     build: ./back-end
     ports:
       - "8080:8080"
-    volumes:
-      - ./backend:/app
+    networks:
+      - sn
 
   frontend:
     build: ./front-end
@@ -14,5 +17,5 @@ services:
       - "3000:3000"
     depends_on:
       - backend
-    volumes:
-      - ./frontend:/app
+    networks:
+      - sn

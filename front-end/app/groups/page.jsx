@@ -20,23 +20,34 @@ export default function JustMyGroupsPage() {
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const [myRes, otherRes] = await Promise.all([
-          fetch("http://localhost:8080/api/MyGroups", { credentials: "include" }),
-          fetch("http://localhost:8080/api/NotMyGroups", { credentials: "include" }),
-        ]);
-        const myData = await myRes.json();
-        const otherData = await otherRes.json();
-        setMyGroups(myData || []);
-        setOtherGroups(otherData || []);
+        const res = await fetch(`/api/MyGroups`, {
+          credentials: "include",
+        });
+        const data = await res.json();
+        setMyGroups(data || []);
       } catch (error) {
         console.error("Error fetching groups:", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchGroups();
+    const fetchNotGroups = async () => {
+      try {
+        const res = await fetch(`/api/NotMyGroups`, {
+          credentials: "include",
+        });
+        const data = await res.json();
+        setOtherGroups(data || []);
+      } catch (error) {
+        console.error("Error fetching groups:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchNotGroups()
   }, []);
+
 
   const handleCreateGroupClick = () => {
     setShowCreateGroupForm(true);
@@ -77,9 +88,9 @@ export default function JustMyGroupsPage() {
         />
 
         {showCreateGroupForm && (
-    
-            <CreateGroupForm onCreate={handleCreateGroup} onSkip={() => setShowCreateGroupForm(false)} />
-        
+
+          <CreateGroupForm onCreate={handleCreateGroup} onSkip={() => setShowCreateGroupForm(false)} />
+
         )}
 
         {renderGroupContent()}

@@ -3,7 +3,7 @@
 export default async function InviteTheFollowers(userid , groupId) {
 
     try {
-        const rep = await fetch("http://localhost:8080/api/InfiteTheFollowers", {
+        const rep = await fetch(`/api/InfiteTheFollowers`, {
             method: "POST",
             credentials: "include",
             headers: {

@@ -5,6 +5,7 @@ import { PopupProvider } from "@/components/context/popUp";
 
 export default function Layout({ children }) {
     console.log("Main layout rendered");
+    
     return (
         <html lang="en">
             <body>

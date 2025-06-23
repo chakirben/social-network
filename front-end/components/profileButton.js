@@ -10,13 +10,7 @@ export default function ProfileButton() {
 
             {user ? (
                 <div className="profileInfo df gp12 center" >
-                    <div
-                        className="Notifications" onClick={(e) => {
-                            e.stopPropagation()
-                            router.push("/notifications")
-                        }}
-                    ><img src="./images/notifications.svg"></img>
-                    </div>
+                   
                     <div
                         className="avatarAndEmail"
                         onClick={() => router.push("/profile")}>

@@ -22,7 +22,7 @@ export default function EventsList({ events, onRespond }) {
                             <p className="Eventdescription">{event.description}</p>
                             <div className="dateAndName">
                                 <div className="iconAndDate">
-                                    <img src="http://localhost:8080/uploads/dateOfBirth.svg" alt="date icon" />
+                                    <img src="./../images/dateOfBirth.svg" alt="date icon" />
                                     <p className="eventDate">{new Date(event.eventDate).toDateString()}</p>
                                 </div>
                                 <hr />

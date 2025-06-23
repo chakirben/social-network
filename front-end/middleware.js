@@ -4,7 +4,6 @@ import { NextResponse } from 'next/server';
 const protectedRoutes = [
   '/home',
   '/profile',
-  '/user',
   '/group',
   '/groups',
   '/users',
@@ -14,31 +13,41 @@ const protectedRoutes = [
 export async function middleware(req) {
   const url = req.nextUrl;
   const path = url.pathname;
-
-  const cookie = req.headers.get('cookie') || '';
-
-  const authCheck = await fetch('http://localhost:8080/api/checkAuth', {
-    headers: {
-      cookie,
-    },
-  });
-
-  const isAuthenticated = authCheck.ok;
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    path === route || path.startsWith(route + '/')
-  );
-  if (path === '/') {
-    return NextResponse.redirect(
-      new URL(isAuthenticated ? '/home' : '/login', req.url)
-    );
+  console.log(`[middleware] ${url.pathname}`);
+  if (path.startsWith('/api') || path.startsWith('/uploads')) {
+    return NextResponse.next();
   }
 
-  // Redirect unauthenticated users away from protected pages
+  const cookie = req.headers.get('cookie') || '';
+  const baseUrl = process.env.NODE_ENV === 'development'
+    ? 'http://127.0.0.1:8080'
+    : 'http://backend:8080';
+  const apiUrl = `${baseUrl}/api/checkAuth`;
+
+  let isAuthenticated = false;
+
+  try {
+    const authCheck = await fetch(apiUrl, {
+      headers: { cookie },
+      cache: 'no-store',
+    });
+    isAuthenticated = authCheck.ok;
+  } catch {
+    isAuthenticated = false;
+  }
+
+  const isProtectedRoute = protectedRoutes.some(route =>
+    path === route || path.startsWith(route + '/')
+  );
+
+  if (path === '/') {
+    return NextResponse.redirect(new URL(isAuthenticated ? '/home' : '/login', req.url));
+  }
+
   if (!isAuthenticated && isProtectedRoute) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
-  // Redirect logged-in users away from login page
   if (isAuthenticated && (path === '/login' || path === '/register')) {
     return NextResponse.redirect(new URL('/home', req.url));
   }
@@ -48,15 +57,14 @@ export async function middleware(req) {
 
 export const config = {
   matcher: [
-    '/home',
     '/',
+    '/home',
     '/profile',
-    '/user/:path*',
-    '/group/:path*',
-    '/groups',
-    '/users',
+    '/group',
+    '/groups/:path*',
+    '/users/:path*',
     '/chat',
     '/login',
-    '/register'
+    '/register',
   ],
 };

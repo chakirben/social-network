@@ -1,7 +1,8 @@
 "use client"
 export default async function FetchCreatGroup(title, description) {
     try {
-        const rep = await fetch("http://localhost:8080/api/CreatGroup", {
+        const rep = await fetch(`/api/CreatGroup`
+, {
             method: "POST",
             credentials: "include",
             headers: {

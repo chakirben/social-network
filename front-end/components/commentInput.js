@@ -28,7 +28,7 @@ export default function CommentInput({ id, setComments }) {
         }
 
         try {
-            const res = await fetch('http://localhost:8080/api/SetComment', {
+            const res = await fetch(`/api/SetComment`, {
                 credentials: 'include',
                 method: 'POST',
                 body: formData
@@ -61,7 +61,7 @@ export default function CommentInput({ id, setComments }) {
                     />
                 </div>
             )}
-            <div className="df spB center">
+            <div className="strech df spB center">
                 <div className="df gp6 center">
                     <img
                         className="icn1"

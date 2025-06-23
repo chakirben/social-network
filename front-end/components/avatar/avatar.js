@@ -3,29 +3,33 @@ import styles from './avatar.module.css';
 
 export default function Avatar({ url, name, size }) {
     const [isValid, setIsValid] = useState(null);
-
+    const fullUrl = url ? process.env.NEXT_PUBLIC_API_URL + url : null;
     useEffect(() => {
         if (!url) {
             setIsValid(false);
             return;
         }
-
         const img = new Image();
-        img.src = url;
-
+        img.src = fullUrl
         img.onload = () => setIsValid(true);
         img.onerror = () => setIsValid(false);
     }, [url]);
 
     const initial = name ? name[0].toUpperCase() : '?';
-    const classNames = `${styles.letterAvatar} ${size || ''}`;
+
+    let sizeClass = styles.md;
+    if (size === 'xs') sizeClass = styles.xs;
+    else if (size === 'big') sizeClass = styles.big;
+
+    const letterClass = `${styles.letterAvatar} ${sizeClass}`;
+    const avatarClass = `${styles.avatar} ${sizeClass}`;
 
     if (isValid === true && url) {
-        return <img className={`${styles.avatar} ${size || ''}`} src={url} alt={name || 'avatar'} />;
+        return <img className={avatarClass} src={fullUrl} alt={name || 'avatar'} />;
     }
 
     return (
-        <div className={classNames}>
+        <div className={letterClass}>
             <span>{initial}</span>
         </div>
     );

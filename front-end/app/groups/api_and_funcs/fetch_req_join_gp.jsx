@@ -2,7 +2,8 @@
 
 export default async function FetchJoinToGroup(groupId) {
     try {
-        const rep = await fetch("http://localhost:8080/api/RequestToJoinGroups", {
+        const rep = await fetch(`/api/RequestToJoinGroups`
+, {
             method: "POST",
             credentials: "include",
             headers: {

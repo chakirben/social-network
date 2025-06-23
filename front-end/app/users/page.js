@@ -9,7 +9,7 @@ export default function Users() {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/getUnfollowedUsers", { credentials: "include" });
+                const response = await fetch(`/api/getUnfollowedUsers`, { credentials: "include" });
                 const data = await response.json();
                 setUsers(data);
             } catch (error) {
