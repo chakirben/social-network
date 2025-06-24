@@ -87,7 +87,7 @@ export default function Home() {
                         <CreatePost newpost={handleNewPost} />
                         <div className="posts">
                             {posts.length === 0 ? (
-                                <div className="loading">Loading posts...</div>
+                                <div className="loading">No Posts Yet.</div>
                             ) : (
                                 posts.map((post) => (
                                     <Post key={post.id || post._id} pst={post} />

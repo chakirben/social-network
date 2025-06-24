@@ -1,12 +1,17 @@
 "use client";
 
-import { useState, useContext } from 'react';
+import { useState, useRef, useContext, useEffect } from 'react';
 import { WebSocketContext } from '../context/wsContext';
 import styles from './chatInput.module.css';
 
 export default function MessageInput({ id, type }) {
   const [message, setMessage] = useState('');
   const { socket } = useContext(WebSocketContext);
+
+  const [showEmojiModal, setShowEmojiModal] = useState(false);
+  const modalRef = useRef(null);
+  const emojis = ['😀', '😂', '😍', '😎', '😢', '🤔', '🔥', '🥳', '🙌', '💯'];
+
 
   const sendMessage = () => {
     if (message.trim() && socket && id && type) {
@@ -33,8 +38,49 @@ export default function MessageInput({ id, type }) {
     }
   };
 
+  const handleEmojiClick = (emoji) => {
+    setMessage(prev => prev + emoji);
+  };
+
+  const handleClickOutside = (e) => {
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      setShowEmojiModal(false);
+    }
+  };
+  useEffect(() => {
+    if (showEmojiModal) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showEmojiModal]);
+
+
   return (
-    <div className={styles.container}>
+    <div className={styles.container }>
+      <span
+        onClick={() => setShowEmojiModal(prev => !prev)}
+        className={styles.emojiToggle}
+      >
+        😊
+      </span>
+      {showEmojiModal && (
+        <div className={styles.emojisSection} ref={modalRef}>
+          {emojis.map((emoji) => (
+            <span
+              key={emoji}
+              onClick={() => handleEmojiClick(emoji)}
+              className={styles.emojiItem}
+            >
+              {emoji}
+            </span>
+          ))}
+        </div>
+      )}
       <input
         type="text"
         value={message}
@@ -43,7 +89,7 @@ export default function MessageInput({ id, type }) {
         placeholder="What's happening?"
         className={styles.input}
       />
-      <button 
+      <button
         onClick={sendMessage}
         className={styles.button}
       >

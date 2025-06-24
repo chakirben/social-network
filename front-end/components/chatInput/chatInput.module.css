@@ -1,5 +1,5 @@
 .container {
-   position: sticky;
+    position: sticky;
     bottom: 0px;
     align-self: stretch;
     padding: 16px 40px 16px 40px;
@@ -22,6 +22,29 @@
     color: #a0a0a0;
     opacity: 0.6;
 }
+
 .button:hover {
     background-color: #2563eb;
+}
+
+.emojiToggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size:24px;
+  align-self: center;
+}
+.emojisSection {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  z-index: 100;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }

@@ -1,27 +1,32 @@
-
 .date {
-    font-size: 12px;
-    opacity: 32%;
+  font-size: 12px;
+  opacity: 32%;
 }
+
 .MsgContent {
   background-color: #ffffff11;
   padding: 8px 12px;
-
   border-radius: 4px 16px 16px 16px;
+  width: fit-content;
+
+  word-break: break-word;
+  white-space: normal;
 }
+
 .chatName {
   font-size: 14px;
   font-weight: 600;
   opacity: 80%;
 }
+
 .message {
   display: flex;
   flex-direction: column;
   align-self: flex-start;
   gap: 4px;
-  max-width: 70%;
   width: fit-content;
 }
+
 .messageContainer {
   display: flex;
   align-self: flex-start;
@@ -29,6 +34,7 @@
   max-width: 70%;
   width: fit-content;
 }
+
 .order-first {
   order: 1;
 }
@@ -36,6 +42,7 @@
 .order-last {
   order: 2;
 }
+
 .messageContainer.me {
   align-self: flex-end;
   justify-items: flex-end;
@@ -45,20 +52,22 @@
   background: #0071E3;
   border-radius: 16px 4px 16px 16px;
 }
-.MsgContent {
-  width: fit-content;
-}
+
+
 .message.me {
   align-self: flex-end;
   align-items: flex-end;
   justify-items: flex-end;
 }
+
 .date {
   font-size: smaller;
 }
+
 .date.hidden {
   display: none;
 }
+
 .hidden {
   display: none;
 }

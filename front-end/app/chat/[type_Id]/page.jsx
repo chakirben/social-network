@@ -11,7 +11,7 @@ import { useUser } from "@/components/context/userContext"
 export default function ChatView() {
   const pathname = usePathname()
   const [messages, setMessages] = useState([])
-  const [offset, setOffset] = useState(0)         
+  const [offset, setOffset] = useState(0)
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
   const messagesContainerRef = useRef(null)
@@ -41,7 +41,7 @@ export default function ChatView() {
       })
 
       if (!res.ok) throw new Error("Failed to fetch messages")
-      const data = await res.json()
+      const data = await res.json() || []
 
       if (data?.length < 10) {
         setHasMore(false)
@@ -55,7 +55,7 @@ export default function ChatView() {
       } else {
         const container = messagesContainerRef.current
         const prevScrollHeight = container.scrollHeight
-        setMessages((prev) => [...data, ...prev])
+        setMessages((prev ) => [...data, ...prev])
         setTimeout(() => {
           const newScrollHeight = container.scrollHeight
           container.scrollTop = newScrollHeight - prevScrollHeight
@@ -75,7 +75,7 @@ export default function ChatView() {
   }, [type, id, pathname])
 
   useEffect(() => {
-    if (wsMessages.length === 0) return;
+    if (!wsMessages.length) return;
 
     const lastMsg = wsMessages[wsMessages.length - 1];
     const isRelevant =
@@ -83,20 +83,20 @@ export default function ChatView() {
       (type === "group" && lastMsg?.groupId == id);
 
     if (isRelevant) {
-      setMessages((prev) => [...prev, lastMsg]);
+      setMessages((prev) => Array.isArray(prev) ? [...prev, lastMsg] : [lastMsg]);
       setTimeout(() => {
         messagesContainerRef.current?.scrollTo(0, messagesContainerRef.current.scrollHeight);
       }, 0);
-      setOffset((prev) => prev + 1); 
+      setOffset((prev) => prev + 1);
     }
   }, [wsMessages, id, type]);
 
   const handleScroll = (e) => {
     if (!hasMore || loading) return;
     if (e.target.scrollTop === 0) {
-      const newOffset = offset + 12
+      const newOffset = offset + 14
       setOffset(newOffset)
-      fetchMessages(newOffset) 
+      fetchMessages(newOffset)
     }
   }
 
@@ -109,7 +109,7 @@ export default function ChatView() {
         onScroll={handleScroll}
         style={{ overflowY: "auto", flex: 1 }}
       >
-        {messages.map((msg, idx) => (
+        {messages?.map((msg, idx) => (
           <Message msg={msg} key={idx} />
         ))}
       </div>

@@ -7,6 +7,7 @@
   gap: 24px;
   padding-top: 24px;
   border-right: 1px solid rgba(255, 255, 255, 0.123);
+  min-width: fit-content;
 
 }
 
