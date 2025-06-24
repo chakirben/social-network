@@ -152,7 +152,6 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 				u.avatar,
 				u.firstName,
 				u.lastName,
-				// u.lastName,
 				(SELECT COUNT(*) FROM postReactions WHERE postId = p.id AND reactionType = 1) AS likeCount,
 				(SELECT COUNT(*) FROM postReactions WHERE postId = p.id AND reactionType = -1) AS dislikeCount,
 				(SELECT reactionType FROM postReactions WHERE postId = p.id AND userId = ?) AS userReaction,

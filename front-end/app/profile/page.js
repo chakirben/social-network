@@ -159,7 +159,9 @@ export default function Profile() {
                         </div>
                         <div className="nameAndAbout">
                             {profile && <h4>{profile.firstName} {profile.lastName}</h4>}
-                            {profile && <p>Hey everyone! I’ve been thinking about starting</p>}
+                            {profile && <p><strong>Username: </strong> {profile.nickname}</p>}
+                            {profile && <p>{profile.about}</p>}
+                            {profile && <p>{profile.email}</p>}
                             <div className="df gp6">
                                 {profile && <img src="images/dateOfBirth.svg" />}
                                 {profile && <p>{new Date(profile.dateOfBirth).toLocaleDateString('fr-FR')}</p>}

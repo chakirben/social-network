@@ -182,7 +182,7 @@ export default function CreatePost({ newpost }) {
                   <div className="userList df cl gp12 start">
                     {loadingUsers ? (
                       <div className="df gp12">Loading followers...</div>
-                    ) : users?.length === 0 ? (
+                    ) : !users || users?.length === 0 ? (
                       <div className="df gp12">No followers</div>
                     ) : (
                       users?.map((user) => (

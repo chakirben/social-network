@@ -30,7 +30,7 @@ export default function ProfileClient({ session, searchParams }) {
     if (profileData) {
       setFollowersCount(profileData.followers_count);
       setFollowingCount(profileData.followed_count);
-      setFollowBtnText(profileData.follow_status); 
+      setFollowBtnText(profileData.follow_status);
     }
   }, [profileData]);
 
@@ -177,9 +177,16 @@ export default function ProfileClient({ session, searchParams }) {
                 )}
               </div>
             </div>
-
+            {/* {profile && <h4>{profile.firstName} {profile.lastName}</h4>}
+            {profile && <p><strong>Username: </strong> {profile.nickname}</p>}
+            {profile && <p>{profile.about}</p>}
+            {profile && <p>{profile.email}</p>} */}
+            {personal_data[0]&& <p>{personal_data[0].Firstname+" "+ personal_data[0].Lastname }</p>}
+            {personal_data[0]&& <p><strong>Nickname: </strong>{personal_data[0].Nickname}</p>}
+            {personal_data[0]&& <p>{personal_data[0].email}</p>}
+{/* 
             <h2>{personal_data[0].Nickname || `${personal_data[0].Firstname} ${personal_data[0].Lastname}`}</h2>
-            <p>{personal_data[0].About || `${personal_data[0].Firstname}'s Profile`}</p>
+            <p>{personal_data[0].About || `${personal_data[0].Firstname}'s Profile`}</p> */}
           </div>
         </div>
 
