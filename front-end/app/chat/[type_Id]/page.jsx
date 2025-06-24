@@ -42,7 +42,6 @@ export default function ChatView() {
 
       if (!res.ok) throw new Error("Failed to fetch messages")
       const data = await res.json() || []
-
       if (data?.length < 10) {
         setHasMore(false)
       }
@@ -55,7 +54,7 @@ export default function ChatView() {
       } else {
         const container = messagesContainerRef.current
         const prevScrollHeight = container.scrollHeight
-        setMessages((prev ) => [...data, ...prev])
+        setMessages((prev) => [...data, ...prev])
         setTimeout(() => {
           const newScrollHeight = container.scrollHeight
           container.scrollTop = newScrollHeight - prevScrollHeight
@@ -67,6 +66,7 @@ export default function ChatView() {
       setLoading(false)
     }
   }
+
 
   useEffect(() => {
     setOffset(0)
@@ -113,6 +113,7 @@ export default function ChatView() {
           <Message msg={msg} key={idx} />
         ))}
       </div>
+      
       <MessageInput id={id} type={type} />
     </div>
   )

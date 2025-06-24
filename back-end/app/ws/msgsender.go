@@ -41,7 +41,8 @@ func RedirectMessage(msg Message) error {
 }
 
 func checkAuthorisation(msg Message) bool {
-	fmt.Println("_________", msg.Sender, msg.Receiver)
+	fmt.Println("Checking authorization: sender =", msg.Sender, "receiver =", msg.Receiver)
+
 	var isFollowing bool
 	err := dataB.SocialDB.QueryRow(`
 		SELECT EXISTS(
@@ -51,16 +52,9 @@ func checkAuthorisation(msg Message) bool {
 		)
 	`, msg.Sender, msg.Receiver, msg.Receiver, msg.Sender).Scan(&isFollowing)
 	if err != nil {
-		isFollowing = false
+		fmt.Println("Error checking follower relationship:", err)
+		return false
 	}
 
-	var isPublic bool
-	err = dataB.SocialDB.QueryRow(`
-		SELECT accountType = 'public' FROM Users WHERE id = ?
-	`, msg.Receiver).Scan(&isPublic)
-	if err != nil {
-		isPublic = false
-	}
-
-	return isFollowing || isPublic
+	return isFollowing
 }

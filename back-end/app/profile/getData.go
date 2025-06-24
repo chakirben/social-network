@@ -22,6 +22,7 @@ type FollowData struct {
 	Nickname  string
 	Firstname string
 	Lastname  string
+	Email     string
 	Avatar    interface{}
 	About     interface{}
 }
@@ -63,7 +64,8 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 
 	var personal_data []interface{}
 	var data FollowData
-	err = dataB.SocialDB.QueryRow("SELECT nickname, firstName, lastName, avatar, about FROM Users WHERE id=?", user_id).Scan(&data.Nickname, &data.Firstname, &data.Lastname, &data.Avatar, &data.About)
+	err = dataB.SocialDB.QueryRow("SELECT nickname, firstName, lastName, avatar, about, email FROM Users WHERE id=?", user_id).
+		Scan(&data.Nickname, &data.Firstname, &data.Lastname, &data.Avatar, &data.About, &data.Email)
 	if err != nil {
 		log.Println("Error fetching personal data:", err)
 		if err == sql.ErrNoRows {
@@ -93,7 +95,11 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 	posts := []map[string]interface{}{}
 	var profile_type string
 
+	if accountType == "public" && checkAlreadyFollow(logged_user_id, user_id) {
+	}
+
 	if accountType == "public" || checkAlreadyFollow(logged_user_id, user_id) {
+
 		profile_type = "public"
 
 		rows, errf := dataB.SocialDB.Query(`SELECT followerId FROM Followers WHERE followedId=?`, user_id)
@@ -112,7 +118,8 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 
-			err = dataB.SocialDB.QueryRow("SELECT id, nickname, firstName, lastName, avatar, about FROM Users WHERE id=?", follower_id).Scan(&followerData.ID, &followerData.Nickname, &followerData.Firstname, &followerData.Lastname, &followerData.Avatar, &followerData.About)
+			err = dataB.SocialDB.QueryRow("SELECT id, nickname, firstName, lastName, avatar, about, email FROM Users WHERE id=?", follower_id).
+				Scan(&followerData.ID, &followerData.Nickname, &followerData.Firstname, &followerData.Lastname, &followerData.Avatar, &followerData.About, &followerData.Email)
 			if err != nil {
 				log.Println("Error fetching follower data:", err)
 				continue
@@ -159,9 +166,11 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 			FROM Posts p
 			JOIN Users u ON p.CreatorId = u.id
 			WHERE p.creatorId = ?
+			AND (p.privacy = 'public' OR (? = 1 AND p.privacy = 'followers'))
 			ORDER BY p.createdAt DESC
+
 		`
-		rows, err := dataB.SocialDB.Query(query, user_id, user_id)
+		rows, err := dataB.SocialDB.Query(query, user_id, user_id, checkAlreadyFollow(logged_user_id, user_id))
 		if err != nil {
 			log.Println("Error fetching created posts:", err)
 			http.Error(w, "Internal server error fetching posts", http.StatusInternalServerError)

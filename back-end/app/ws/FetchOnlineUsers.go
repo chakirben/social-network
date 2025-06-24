@@ -31,11 +31,19 @@ func GetOnlineUsers(w http.ResponseWriter, r *http.Request) {
 	placeholders := strings.Repeat("?,", len(ids))
 	placeholders = placeholders[:len(placeholders)-1]
 
-	query := "SELECT id, firstName, lastName, avatar FROM Users WHERE id IN (" + placeholders + ")"
+	query := `
+	SELECT u.id, u.firstName, u.lastName, u.avatar
+	FROM Users u
+	JOIN Followers f ON (f.followerId = ? AND f.followedId = u.id) OR (f.followedId = ? AND f.followerId = u.id)
+	WHERE u.id IN (` + placeholders + `)
+	`
 
-	args := make([]interface{}, len(ids))
-	for i, id := range ids {
-		args[i] = id
+	// query := "SELECT id, firstName, lastName, avatar FROM Users WHERE id IN (" + placeholders + ")"
+
+	args := make([]interface{}, 0, len(ids)+2)
+	args = append(args, userID, userID)
+	for _, id := range ids {
+		args = append(args, id)
 	}
 
 	rows, err := dataB.SocialDB.Query(query, args...)

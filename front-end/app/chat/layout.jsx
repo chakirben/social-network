@@ -59,7 +59,7 @@ export default function ChatLayout({ children }) {
                 })
             const users = await response.json()
             const newStatuses = {}
-            users.forEach(user => {
+            users?.forEach(user => {
                 const id = user.id || user._id
                 newStatuses[id] = {
                     id,
