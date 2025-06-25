@@ -7,10 +7,13 @@ import { useState } from "react";
 export default function Notification({ notification }) {
     const [response, setResponse] = useState(null);
 
+
     const {
         id,
         senderFirstName,
         senderLastName,
+        groupTitle,
+        eventTitle,
         senderAvatar,
         type,
         status,
@@ -24,11 +27,11 @@ export default function Notification({ notification }) {
             case "follow_request":
                 return `${name} requested to follow you`;
             case "group_invite":
-                return `${name} invited you to join a group`;
+                return `${name} invited you to join "${groupTitle}"`;
             case "group_join_request":
-                return `${name} requested to join your group`;
+                return `${name} requested to join Group "${groupTitle}"`;
             case "new_event":
-                return `${name} created a new event`;
+                return `${name} created a new event "${eventTitle}"`;
             default:
                 return "You have a new notification";
         }
@@ -65,7 +68,7 @@ export default function Notification({ notification }) {
             <div className={styles.buttons}>
                 {response === "accept" && <span className={styles.accepted}>Accepted ! </span>}
                 {response === "decline" && <span className={styles.declined}>Declined !</span>}
-                {!response && status === "pending" && (type === "follow_request" || type === "group_invite" || type === "group_join_request"  || type === "new_event") && (
+                {!response && status === "pending" && (type === "follow_request" || type === "group_invite" || type === "group_join_request" || type === "new_event") && (
                     <>
                         <span className={styles.accept} onClick={() => handleResponse("accept")}>Accept</span>
                         <span className={styles.decline} onClick={() => handleResponse("decline")}>Decline</span>

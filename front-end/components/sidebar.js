@@ -70,14 +70,14 @@ export default function SideBar() {
                     <img src='/images/home-icon.svg' alt='Home icon' />
                     {!collapsed && 'Home'}
                 </Link>
-                <Link href='/groups' className={`navLink ${pathname === '/groups' ? 'active' : ''}`}>
-                    <img src='/images/groups-icon.svg' alt='Groups icon' />
-                    {!collapsed && 'Groups'}
-                </Link>
                 <Link href='/chat' className={`navLink ${pathname === '/chat' ? 'active' : ''}`}>
                     <img src='/images/chat-icon.svg' alt='Chat icon' />
                     {!collapsed && 'Chat'}
                     {messagesCounter ? <span className='notificationBadge'>{messagesCounter}</span> : null}
+                </Link>
+                <Link href='/groups' className={`navLink ${pathname === '/groups' ? 'active' : ''}`}>
+                    <img src='/images/groups-icon.svg' alt='Groups icon' />
+                    {!collapsed && 'Groups'}
                 </Link>
                 <Link href='/users' className={`navLink ${pathname === '/users' ? 'active' : ''}`}>
                     <img src='/images/users-icon.svg' alt='Users icon' />
@@ -92,14 +92,14 @@ export default function SideBar() {
                     {notifCounter ? <span className='notificationBadge'>{notifCounter}</span> : null}
                 </Link>
 
-        
-                    <Link
-                        href='/profile'
-                        className={`navLink ${pathname === '/profile' ? 'active' : ''}`}
-                    >
-                        <img src='/images/user.svg' alt='Users icon' />
-                        {!collapsed && 'Profile'}
-                    </Link>
+
+                <Link
+                    href='/profile'
+                    className={`navLink ${pathname === '/profile' ? 'active' : ''}`}
+                >
+                    <img src='/images/user.svg' alt='Users icon' />
+                    {!collapsed && 'Profile'}
+                </Link>
             </nav>
         </aside>
     );

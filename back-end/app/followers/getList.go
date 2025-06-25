@@ -49,12 +49,15 @@ func GetListHandler(w http.ResponseWriter, r *http.Request) {
 			requesterID, otherUserID,
 		).Scan(&isFollower)
 		if err != nil {
+			log.Printf("Error querying follower status: %v", err)
 			http.Error(w, "Internal error", http.StatusInternalServerError)
 			return
 		}
 
 		if isFollower == 0 {
-			http.Error(w, "Access denied to private account data", http.StatusForbidden)
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusForbidden)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Access denied. You need to follow this user to view their followers/following."})
 			return
 		}
 	}

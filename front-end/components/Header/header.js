@@ -5,6 +5,13 @@ export default function Header({ pageName, ele }) {
   const pathname = usePathname();
 
   const handleBack = () => {
+    console.log('paath', pathname);
+
+    if (pathname.startsWith('/post')) {
+      router.push('/home');
+      return;
+    }
+
     const parts = pathname.split('/').filter(Boolean);
 
     if (parts.length > 1) {

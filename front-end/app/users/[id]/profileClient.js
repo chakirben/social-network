@@ -75,7 +75,18 @@ export default function ProfileClient({ session, searchParams }) {
         headers: { 'Content-Type': 'application/json' },
       });
 
+      if (response.status === 403) {
+        setErrorMessage("You need to follow this user to view their followers/following.");
+        return;
+      }
+
       const data = await response.json();
+      console.log('----', data);
+
+      if (!data || data.length === 0) {
+        return;
+      }
+
       if (type === 'followers') {
         setFollowersList(data);
         setFollowersCount(data?.length);
@@ -89,6 +100,7 @@ export default function ProfileClient({ session, searchParams }) {
       console.error("Fetch user list error:", error);
     }
   };
+
   const handleFollow = async (e) => {
     e.preventDefault();
     if (!followBtnText) return;
@@ -179,10 +191,10 @@ export default function ProfileClient({ session, searchParams }) {
             </div>
             <div className="nameAndAbout">
 
-            {personal_data[0]&& <p>{personal_data[0].Firstname+" "+ personal_data[0].Lastname }</p>}
-            {personal_data[0]&& <p><strong>Nickname: </strong>{personal_data[0].Nickname}</p>}
-            {personal_data[0]&& <p>{personal_data[0].Email}</p>}
-            {personal_data[0]&& <p>{personal_data[0].About}</p>}
+              {personal_data[0] && <p>{personal_data[0].Firstname + " " + personal_data[0].Lastname}</p>}
+              {personal_data[0] && <p><strong>Nickname: </strong>{personal_data[0].Nickname}</p>}
+              {personal_data[0] && <p>{personal_data[0].Email}</p>}
+              {personal_data[0] && <p>{personal_data[0].About}</p>}
             </div>
           </div>
         </div>

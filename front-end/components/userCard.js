@@ -28,6 +28,8 @@ export default function UserCard({ user, invite, groupId }) {
 
             if (response.ok) {
                 const newText = await response.text();
+                console.log('llllllllllllll', newText);
+                
 
                 if (newText === "follow") {
                     setIsFollowed(false);
