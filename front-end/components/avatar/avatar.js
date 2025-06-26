@@ -2,15 +2,16 @@ import { useState, useEffect } from 'react';
 import styles from './avatar.module.css';
 
 export default function Avatar({ url, name, size }) {
+    console.log(url);
+    
     const [isValid, setIsValid] = useState(null);
-    const fullUrl = url ? process.env.NEXT_PUBLIC_API_URL + url : null;
     useEffect(() => {
         if (!url) {
             setIsValid(false);
             return;
         }
         const img = new Image();
-        img.src = fullUrl
+        img.src = url
         img.onload = () => setIsValid(true);
         img.onerror = () => setIsValid(false);
     }, [url]);
@@ -25,7 +26,7 @@ export default function Avatar({ url, name, size }) {
     const avatarClass = `${styles.avatar} ${sizeClass}`;
 
     if (isValid === true && url) {
-        return <img className={avatarClass} src={fullUrl} alt={name || 'avatar'} />;
+        return <img className={avatarClass} src={url} alt={name || 'avatar'} />;
     }
 
     return (
