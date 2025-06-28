@@ -5,6 +5,8 @@ export default function Avatar({ url, name, size }) {
     console.log(url);
     
     const [isValid, setIsValid] = useState(null);
+
+    const fullUrl = url;
     useEffect(() => {
         if (!url) {
             setIsValid(false);
