@@ -15,10 +15,6 @@ import "./home.css"
 import "../../styles/global.css"
 import "../groups/css/groups1.css"
 import { WebSocketContext } from "@/components/context/wsContext"
-import EventsList from "@/components/events/eventList";
-import Divider from "@/components/divider";
-import NotifPopUp from "@/components/notificationPopUp"
-import { PopupProvider, usePopup } from "@/components/context/popUp"
 
 export default function Home() {
     const router = useRouter()
