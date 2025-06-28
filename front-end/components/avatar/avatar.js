@@ -3,7 +3,7 @@ import styles from './avatar.module.css';
 
 export default function Avatar({ url, name, size }) {
     const [isValid, setIsValid] = useState(null);
-    const fullUrl = url ? process.env.NEXT_PUBLIC_API_URL + url : null;
+    const fullUrl = url;
     useEffect(() => {
         if (!url) {
             setIsValid(false);
